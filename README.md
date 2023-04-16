@@ -1,6 +1,8 @@
 # cse210-student-template
 Tracy Mann
 CSE 210
+Bro. Parrish
+Section A8
 
 
 This repository contains the starter code for many different projects. They are arranged as follows:
