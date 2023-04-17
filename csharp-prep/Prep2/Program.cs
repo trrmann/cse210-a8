@@ -64,7 +64,7 @@ class Program
     static void Main(string[] args)
     {
         // declare variables
-        string rawPercent;
+        string rawPercent, letter;
         int percent;
         // request input
         Console.Write("What is your grade percentage? ");
@@ -73,16 +73,17 @@ class Program
         percent = int.Parse(rawPercent);
         // report output
         if (percent >= 90) {
-            Console.WriteLine("Your letter grade is:  A");
+            letter = "A";
         } else if(percent >= 80) {
-            Console.WriteLine("Your letter grade is:  B");
+            letter = "B";
         } else if (percent >= 70) {
-            Console.WriteLine("Your letter grade is:  C");
+            letter = "C";
         } else if (percent >= 60) {
-            Console.WriteLine("Your letter grade is:  D");
+            letter = "D";
         } else {
-            Console.WriteLine("Your letter grade is:  F");
+            letter = "F";
         }
+        Console.WriteLine($"Your letter grade is:  {letter}");
         if (percent >= 70)
         {
             Console.WriteLine("Congratulations, you passed!");
