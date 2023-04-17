@@ -46,5 +46,8 @@ using System;
 
 class Program
 {
-    Console.WriteLine("Hello Prep3 World!");
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Hello Prep3 World!");
+    }
 }

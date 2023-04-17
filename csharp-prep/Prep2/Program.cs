@@ -61,5 +61,8 @@ using System.ComponentModel.Design;
 
 class Program
 {
-    Console.WriteLine("Hello Prep2 World!");
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Hello Prep2 World!");
+    }
 }
