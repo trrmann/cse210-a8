@@ -71,7 +71,6 @@ class Program
         rawPercent = Console.ReadLine();
         // convert input
         percent = int.Parse(rawPercent);
-        // report output
         if (percent >= 90) {
             letter = "A";
         } else if(percent >= 80) {
@@ -83,6 +82,7 @@ class Program
         } else {
             letter = "F";
         }
+        // report output
         Console.WriteLine($"Your letter grade is:  {letter}");
         if (percent >= 70)
         {
