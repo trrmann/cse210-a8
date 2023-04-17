@@ -81,6 +81,9 @@ class Program
         // report output
         if (percent >= 90) {
             letter = "A";
+            if (percent >= 93) {
+                letterMod = "";
+            }
         } else if(percent >= 80) {
             letter = "B";
         } else if (percent >= 70) {
