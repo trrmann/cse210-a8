@@ -62,8 +62,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        // declare string vaiable
-        String rawPercent;
+        // declare string vaiables
+        String rawPercent, article, letter;
         // declare int vaiable
         int percent;
         // output question for grade percentage
@@ -74,25 +74,31 @@ class Program
         percent = int.Parse(rawPercent);
         // test for a letter grade of A
         if (percent >= 90 ) {
-            Console.WriteLine($"Your letter grade is an A.");
+            article = "an";
+            letter = "A";
         }
         // test for a letter grade of B
         elif(percent >= 80) {
-            Console.WriteLine($"Your letter grade is a B.");
+            article = "a";
+            letter = "B";
         }
         // test for a letter grade of C
         elif(percent >= 70) {
-            Console.WriteLine($"Your letter grade is a C.");
+            article = "a";
+            letter = "C";
         }
         // test for a letter grade of D
         elif(percent >= 60) {
-            Console.WriteLine($"Your letter grade is a D.");
+            article = "a";
+            letter = "D";
         }
         // by default the letter grade is F
         else
         {
-            Console.WriteLine($"Your letter grade is an F.");
+            article = "an";
+            letter = "F";
         }
+        Console.WriteLine($"Your letter grade is {article} {letter}.");
         // test if passed the class
         if (percent >= 70)
         {
