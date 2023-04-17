@@ -92,6 +92,7 @@ class Program
             letter = "D";
         } else {
             letter = "F";
+            letterMod = "";
         }
         Console.WriteLine($"Your letter grade is:  {letter}{letterMod}");
         if (percent >= 70) {
