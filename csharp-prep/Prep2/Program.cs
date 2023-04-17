@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.Design;
 
 /**
  * Learning Activity - C# Prep 2
@@ -63,42 +64,57 @@ class Program
     static void Main(string[] args)
     {
         // declare string vaiables
-        String rawPercent, article, letter;
+        String rawPercent, article, letter, letterMod;
         // declare int vaiable
-        int percent;
+        int percent, tens, ones;
         // output question for grade percentage
         Console.Write("Please enter your grade percentage:  ");
         // store input to question for grade percentage
         rawPercent = Console.ReadLine();
         // store converted value from input to question for grade percentage
         percent = int.Parse(rawPercent);
-        // test for a letter grade of A
-        if (percent >= 90 ) {
-            article = "an";
-            letter = "A";
+        tens = (percent / 10);
+        ones = (percent % 10);
+        if (ones >= 7) {
+            letterMod = "+";
+        } else if(ones < 3) {
+            letterMod = "-";
+        } else {
+            letterMod = "";
         }
-        // test for a letter grade of B
-        elif(percent >= 80) {
-            article = "a";
-            letter = "B";
-        }
-        // test for a letter grade of C
-        elif(percent >= 70) {
-            article = "a";
-            letter = "C";
-        }
-        // test for a letter grade of D
-        elif(percent >= 60) {
-            article = "a";
-            letter = "D";
-        }
-        // by default the letter grade is F
-        else
+        switch (tens)
         {
-            article = "an";
-            letter = "F";
+            case 6:
+                article = "a";
+                letter = "D";
+                break;
+            case 7:
+                article = "a";
+                letter = "C";
+                break;
+            case 8:
+                article = "a";
+                letter = "B";
+                break;
+            case 9:
+                article = "an";
+                letter = "A";
+                if (letterMod == "+") {
+                    letterMod = "";
+                }
+                break;
+            case 10:
+                article = "an";
+                letter = "A";
+                letterMod = "";
+                break;
+            default:
+                article = "an";
+                letter = "F";
+                letterMod = "";
+                break;
         }
-        Console.WriteLine($"Your letter grade is {article} {letter}.");
+        Console.WriteLine($"Your letter grade is {article} {letter}{letterMod}.");
         // test if passed the class
         if (percent >= 70)
         {
