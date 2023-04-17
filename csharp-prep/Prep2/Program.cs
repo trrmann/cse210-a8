@@ -118,8 +118,7 @@ class Program
         // test if passed the class
         if (percent >= 70)
         {
-            Console.WriteLine("Concgratulations, you passed!");
-
+            Console.WriteLine("Congratulations, you passed!");
         }
         // by default failed the class.
         else
