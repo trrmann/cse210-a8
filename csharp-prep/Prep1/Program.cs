@@ -15,19 +15,5 @@ using System;
 
 class Program
 {
-    static void Main(string[] args)
-    {
-        // declare string vaiables
-        String first, last;
-        // output question for first name
-        Console.Write("What is your first name? ");
-        // store input to question for first name
-        first = Console.ReadLine();
-        // output question for last name
-        Console.Write("What is yout Last name? ");
-        // store input to question for last name
-        last = Console.ReadLine();
-        // output response as required:  "Your name is last-name, first-name, last-name"
-        Console.WriteLine($"\nYour name is {last}, {first} {last}.");
-    }
+    Console.WriteLine("Hello Prep1 World!");
 }
