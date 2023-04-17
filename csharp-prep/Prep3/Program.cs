@@ -52,24 +52,35 @@ class Program
         String rawMagic, rawGuess;
         // declare int vaiable
         int magic, guess;
+        // declare boolean vaiable
+        bool complete = false;
         // output question for magic number
         Console.Write("What is the magic number? ");
         // store input to question for magic number
         rawMagic = Console.ReadLine();
         // store converted value from input to question for magic number
         magic = int.Parse(rawMagic);
-        // output question for a guess
-        Console.Write("What is your guess? ");
-        // store input to question for a guess
-        rawGuess = Console.ReadLine();
-        // store converted value from input to question for a guess
-        guess = int.Parse(rawGuess);
-        if (guess < magic) {
-            Console.WriteLine("Higher");
-        } else if (guess > magic) {
-            Console.WriteLine("Lower");
-        } else {
-            Console.WriteLine("You guessed it!");
-        }
+        do
+        {
+            // output question for a guess
+            Console.Write("What is your guess? ");
+            // store input to question for a guess
+            rawGuess = Console.ReadLine();
+            // store converted value from input to question for a guess
+            guess = int.Parse(rawGuess);
+            if (guess < magic)
+            {
+                Console.WriteLine("Higher");
+            }
+            else if (guess > magic)
+            {
+                Console.WriteLine("Lower");
+            }
+            else
+            {
+                Console.WriteLine("You guessed it!");
+                complete = true;
+            }
+        } while (!complete);
     }
 }
