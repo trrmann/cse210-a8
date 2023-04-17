@@ -78,7 +78,6 @@ class Program
         } else {
             letterMod = "";
         }
-        // report output
         if (percent >= 90) {
             letter = "A";
             if (percent >= 93) {
@@ -94,6 +93,7 @@ class Program
             letter = "F";
             letterMod = "";
         }
+        // report output
         Console.WriteLine($"Your letter grade is:  {letter}{letterMod}");
         if (percent >= 70) {
             Console.WriteLine("Congratulations, you passed!");
