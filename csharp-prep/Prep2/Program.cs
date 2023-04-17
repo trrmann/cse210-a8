@@ -74,25 +74,24 @@ class Program
         percent = int.Parse(rawPercent);
         // test for a letter grade of A
         if (percent >= 90 ) {
-            Console.WriteLine($"your letter grade is an A.);
+            Console.WriteLine($"your letter grade is an A.");
         }
         // test for a letter grade of B
         elif(percent >= 80) {
-            Console.WriteLine($"your letter grade is a B.);
+            Console.WriteLine($"your letter grade is a B.");
         }
         // test for a letter grade of C
         elif(percent >= 70) {
-            Console.WriteLine($"your letter grade is a C.);
+            Console.WriteLine($"your letter grade is a C.");
         }
         // test for a letter grade of D
         elif(percent >= 60) {
-            Console.WriteLine($"your letter grade is a D.);
+            Console.WriteLine($"your letter grade is a D.");
         }
         // by default the letter grade is F
         else
         {
-            Console.WriteLine($"your letter grade is a F.);
+            Console.WriteLine($"your letter grade is a F.");
         }
-        
     }
 }
