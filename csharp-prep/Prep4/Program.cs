@@ -66,10 +66,16 @@ class Program
         }
         // looked up casting at https://www.w3schools.com/cs/cs_type_casting.php
         avg = (double)sum / (double)numbers.Count;
+        // looked up sort at https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.sort?view=net-7.0
+        numbers.Sort();
         // report output
         Console.WriteLine($"The sum is:  {sum}");
         Console.WriteLine($"The average is:  {avg}");
         Console.WriteLine($"The largest number is:  {max}");
         Console.WriteLine($"The smallest positive number is:  {posMin}");
+        Console.WriteLine("The sorted list is:");
+        foreach (int aNumber in numbers) {
+            Console.WriteLine(aNumber);
+        }
     }
 }
