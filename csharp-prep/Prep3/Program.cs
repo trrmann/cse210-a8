@@ -50,9 +50,9 @@ class Program
     {
         // declare variables
         Random randomGenerator = new Random();
-        string rawMagic, rawGuess;
+        string rawMagic, rawGuess, again;
         int magic, guess, counter=0;
-        bool done = false;
+        bool done = false, exit = false;
         // request input
         //Console.Write("What is the magic number? ");
         //rawMagic = Console.ReadLine();
@@ -60,23 +60,37 @@ class Program
         //magic = int.Parse(rawMagic);
         // get random number
         magic = randomGenerator.Next(1, 100);
-        do
+        while (!exit)
         {
+            do
+            {
+                // request input
+                Console.Write("What is your guess? ");
+                rawGuess = Console.ReadLine();
+                // convert input
+                guess = int.Parse(rawGuess);
+                // report output
+                if (guess > magic) {
+                    Console.WriteLine("Lower");
+                } else if (guess < magic) {
+                    Console.WriteLine("Higher");
+                } else {
+                    Console.WriteLine($"You guessed it in {counter+1} tries!");
+                    done = true;
+                }
+                counter++;
+            } while (!done);
             // request input
-            Console.Write("What is your guess? ");
-            rawGuess = Console.ReadLine();
+            Console.Write("Would you like to play again? ");
+            again = Console.ReadLine();
             // convert input
-            guess = int.Parse(rawGuess);
-            // report output
-            if (guess > magic) {
-                Console.WriteLine("Lower");
-            } else if (guess < magic) {
-                Console.WriteLine("Higher");
+            if (again != "yes") {
+                exit = true;
             } else {
-                Console.WriteLine($"You guessed it in {counter+1} tries!");
-                done = true;
+                done = false;
+                counter = 0;
+                magic = randomGenerator.Next(1, 100);
             }
-            counter++;
-        } while (!done);
+        }
     }
 }
