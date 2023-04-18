@@ -51,21 +51,28 @@ class Program
         // declare variables
         string rawMagic, rawGuess;
         int magic, guess;
+        bool done = false;
         // request input
         Console.Write("What is the magic number? ");
         rawMagic = Console.ReadLine();
-        Console.Write("What is your guess? ");
-        rawGuess = Console.ReadLine();
         // convert input
         magic = int.Parse(rawMagic);
-        guess = int.Parse(rawGuess);
-        // report output
-        if (guess > magic) {
-            Console.WriteLine("Lower");
-        } else if (guess < magic) {
-            Console.WriteLine("Higher");
-        } else {
-            Console.WriteLine("You guessed it!");
-        }
+        do
+        {
+            // request input
+            Console.Write("What is your guess? ");
+            rawGuess = Console.ReadLine();
+            // convert input
+            guess = int.Parse(rawGuess);
+            // report output
+            if (guess > magic) {
+                Console.WriteLine("Lower");
+            } else if (guess < magic) {
+                Console.WriteLine("Higher");
+            } else {
+                Console.WriteLine("You guessed it!");
+                done = true;
+            }
+        } while (!done);
     }
 }
