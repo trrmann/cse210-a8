@@ -34,7 +34,7 @@ class Program
         List<int> numbers = new List<int>();
         string rawNumber;
         double avg;
-        int number, index, sum = 0;
+        int number, index, sum = 0, max = 0;
         bool exit = false;
         // present instructions
         Console.WriteLine("Enter a list of numbers, type 0 when finished.");
@@ -55,11 +55,15 @@ class Program
         for (index = 0; index < numbers.Count; index++)
         {
             sum += numbers[index];
+            if (numbers[index] > max) {
+                max = numbers[index];
+            }
         }
         // looked up casting at https://www.w3schools.com/cs/cs_type_casting.php
         avg = (double)sum / (double)numbers.Count;
         // report output
         Console.WriteLine($"The sum is:  {sum}");
         Console.WriteLine($"The average is:  {avg}");
+        Console.WriteLine($"The largest number is:  {max}");
     }
 }
