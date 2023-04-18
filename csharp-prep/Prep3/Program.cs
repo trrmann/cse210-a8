@@ -48,6 +48,24 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello Prep3 World!");
+        // declare variables
+        string rawMagic, rawGuess;
+        int magic, guess;
+        // request input
+        Console.Write("What is the magic number? ");
+        rawMagic = Console.ReadLine();
+        Console.Write("What is your guess? ");
+        rawGuess = Console.ReadLine();
+        // convert input
+        magic = int.Parse(rawMagic);
+        guess = int.Parse(rawGuess);
+        // report output
+        if (guess > magic) {
+            Console.WriteLine("Lower");
+        } else if (guess < magic) {
+            Console.WriteLine("Higher");
+        } else {
+            Console.WriteLine("You guessed it!");
+        }
     }
 }
