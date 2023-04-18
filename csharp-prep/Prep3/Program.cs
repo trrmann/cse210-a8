@@ -51,7 +51,7 @@ class Program
         // declare variables
         Random randomGenerator = new Random();
         string rawMagic, rawGuess;
-        int magic, guess;
+        int magic, guess, counter=0;
         bool done = false;
         // request input
         //Console.Write("What is the magic number? ");
@@ -73,9 +73,10 @@ class Program
             } else if (guess < magic) {
                 Console.WriteLine("Higher");
             } else {
-                Console.WriteLine("You guessed it!");
+                Console.WriteLine($"You guessed it in {counter+1} tries!");
                 done = true;
             }
+            counter++;
         } while (!done);
     }
 }
