@@ -49,14 +49,17 @@ class Program
     static void Main(string[] args)
     {
         // declare variables
+        Random randomGenerator = new Random();
         string rawMagic, rawGuess;
         int magic, guess;
         bool done = false;
         // request input
-        Console.Write("What is the magic number? ");
-        rawMagic = Console.ReadLine();
+        //Console.Write("What is the magic number? ");
+        //rawMagic = Console.ReadLine();
         // convert input
-        magic = int.Parse(rawMagic);
+        //magic = int.Parse(rawMagic);
+        // get random number
+        magic = randomGenerator.Next(1, 100);
         do
         {
             // request input
