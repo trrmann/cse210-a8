@@ -33,6 +33,7 @@ class Program
         // declare variables
         List<int> numbers = new List<int>();
         string rawNumber;
+        double avg;
         int number, index, sum = 0;
         bool exit = false;
         // present instructions
@@ -55,7 +56,10 @@ class Program
         {
             sum += numbers[index];
         }
+        // looked up casting at https://www.w3schools.com/cs/cs_type_casting.php
+        avg = (double)sum / (double)numbers.Count;
         // report output
         Console.WriteLine($"The sum is:  {sum}");
+        Console.WriteLine($"The average is:  {avg}");
     }
 }
