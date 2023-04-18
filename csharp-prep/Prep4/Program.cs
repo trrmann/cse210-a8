@@ -34,7 +34,7 @@ class Program
         List<int> numbers = new List<int>();
         string rawNumber;
         double avg;
-        int number, index, sum = 0, max = 0;
+        int number, index, sum = 0, max = 0, posMin = 0;
         bool exit = false;
         // present instructions
         Console.WriteLine("Enter a list of numbers, type 0 when finished.");
@@ -58,6 +58,11 @@ class Program
             if (numbers[index] > max) {
                 max = numbers[index];
             }
+            if (posMin == 0) {
+                posMin = numbers[index];
+            } else if (numbers[index] > 0 && numbers[index] < posMin) {
+                posMin = numbers[index];
+            }
         }
         // looked up casting at https://www.w3schools.com/cs/cs_type_casting.php
         avg = (double)sum / (double)numbers.Count;
@@ -65,5 +70,6 @@ class Program
         Console.WriteLine($"The sum is:  {sum}");
         Console.WriteLine($"The average is:  {avg}");
         Console.WriteLine($"The largest number is:  {max}");
+        Console.WriteLine($"The smallest positive number is:  {posMin}");
     }
 }
