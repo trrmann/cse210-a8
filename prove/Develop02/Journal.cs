@@ -64,11 +64,7 @@ public class Journal
         foreach (string line in lines)
         {
             Entry entry = new Entry();
-            string[] parts = line.Split(",");
-            string date_str = parts[0];
-            entry._date = DateTime.Parse(date_str);
-            entry._prompt = parts[1];
-            entry._response = parts[2];
+            entry.ParseCSV(line);
             _entries.Add(entry);
         }
     }
@@ -79,7 +75,7 @@ public class Journal
         {
             Console.WriteLine("saving to file...");
             foreach (Entry entry in _entries) {
-                output.WriteLine($"{entry._date.ToString()},{entry._prompt},{entry._response}");
+                entry.WriteCSV(output);
             };
         }
     }

@@ -130,5 +130,7 @@ class Program
  *              response String
  *          Behaviors:
  *              display entry
+ *              parse csv
+ *              write csv
  *          
  */
