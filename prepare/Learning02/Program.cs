@@ -23,6 +23,7 @@ class Program
         resume._name = "Tracy Mann";
         resume._jobs.Add(job1);
         resume._jobs.Add(job2);
-        Console.WriteLine(resume._jobs[0]._jobTitle);
+        //Console.WriteLine(resume._jobs[0]._jobTitle);
+        resume.Display();
     }
 }
