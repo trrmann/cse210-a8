@@ -133,4 +133,5 @@ class Program
  *              parse csv
  *              write csv
  *          
+ *      I found the json format notes on stack overflow:  https://stackoverflow.com/questions/16921652/how-to-write-a-json-file-in-c
  */
