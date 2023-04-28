@@ -28,7 +28,7 @@ public class Journal
         return prompt;
     }
 
-    public string ReadEntryResponse()
+    public string ReadResponse()
     {
         return Console.ReadLine();
     }
@@ -56,20 +56,17 @@ public class Journal
         Console.Write(">  ");
     }
 
-    public string ReadFilenamePrompt()
-    {
-        return Console.ReadLine();
-    }
-
     public void LoadEntries(string filename)
     {
         _entries.Clear();
+        Console.WriteLine("loading from file...");
         string[] lines = System.IO.File.ReadAllLines(filename);
         foreach (string line in lines)
         {
-            string[] parts = line.Split(",");
             Entry entry = new Entry();
-            entry._date = DateTime.ParseExact(parts[0]);
+            string[] parts = line.Split(",");
+            string date_str = parts[0];
+            entry._date = DateTime.Parse(date_str);
             entry._prompt = parts[1];
             entry._response = parts[2];
             _entries.Add(entry);
@@ -80,10 +77,10 @@ public class Journal
     {
         using (StreamWriter output = new StreamWriter(filename))
         {
-            _entries.ForEach(entry =>
-            {
+            Console.WriteLine("saving to file...");
+            foreach (Entry entry in _entries) {
                 output.WriteLine($"{entry._date.ToString()},{entry._prompt},{entry._response}");
-            })
+            };
         }
     }
 }

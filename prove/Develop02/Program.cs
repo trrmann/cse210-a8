@@ -77,7 +77,11 @@ class Program
  *      3)  request filename prompt.
  *              please enter the filename:
  *              >
- *      4)  display journal entries.
+ *      4)  report saving file.
+ *              saving to file...
+ *      5)  report loading file.
+ *              loading from file...
+ *      6)  display journal entries.
  *              Journal:
  *              
  *                  {date} prompt: {prompt}
@@ -111,11 +115,10 @@ class Program
  *          Behaviors:
  *              get entry prompts
  *              prompt for entry
- *              read entry response
+ *              read response
  *              add a new journal entry
  *              display all journal entries
  *              prompt for filename
- *              read filename response
  *              save journal entries
  *              load journal entries
  *      Entry:

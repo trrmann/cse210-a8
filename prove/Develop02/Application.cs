@@ -39,18 +39,18 @@ public class Application
         {
             case "1":
                 prompt = _journal.PromptForEntry(_journal.GetEntryPrompts());
-                _journal.AddJournalEntry(prompt, _journal.ReadEntryResponse());
+                _journal.AddJournalEntry(prompt, _journal.ReadResponse());
                 return true;
             case "2":
                 _journal.Display();
                 return true;
             case "3":
                 _journal.PromptForFilename();
-                _journal.LoadEntries(_journal.ReadFilenamePrompt());
+                _journal.LoadEntries(_journal.ReadResponse());
                 return true;
             case "4":
                 _journal.PromptForFilename();
-                _journal.SaveEntries(_journal.ReadFilenamePrompt());
+                _journal.SaveEntries(_journal.ReadResponse());
                 return true;
             case "5":
                 return false;
