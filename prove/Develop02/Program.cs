@@ -58,6 +58,7 @@ class Program
  *    5)  Add last date used for prompt questions.
  *    6)  Add distribution balancer for random selection of prompt questions.
  *    7)  Add freeform prompt when all prompts have been used in the same day.
+ *    8)  Ensure csv files are safe for MS Excell loading.
  *   
  * What user inputs does it have?
  *      1)  menu prompt response.
@@ -94,7 +95,11 @@ class Program
  *              saving to file...
  *      6)  report loading file.
  *              loading from file...
- *      7)  display journal entries.
+ *      7)  report unable to read csv.
+ *              Unable to read file as CSV.
+ *      8)  report unable to read json.
+ *              Unable to read file as JSON.
+ *      9)  display journal entries.
  *              Journal:
  *              
  *                  {date} prompt: {prompt}
@@ -103,7 +108,7 @@ class Program
  *                  {date} prompt: {prompt}
  *                  {response}
  *                  ...
- *      8)  exit message
+ *      10)  exit message
  *              Thank you for using the Journal Program.
  * How does the program end?
  *      The user will select the exit option from the menu.
@@ -125,17 +130,24 @@ class Program
  *              to add, hold and display journal entries.
  *          State:
  *              entries List<Entry>
+ *              configurationFile string
  *          Behaviors:
  *              get entry prompts
  *              get entry prompt for entry
  *              prompt for entry
  *              read response
  *              add a new journal entry
+ *              update prompt data
  *              display all journal entries
  *              prompt for filename
+ *              evaluate file format
  *              prompt for file format
+ *              verify is csv data
+ *              verify is json data
  *              save journal entries
  *              load journal entries
+ *              get json
+ *              set json
  *      Prompt:
  *          Responsibilty:
  *              to hold information about the available prompts for jornal entries.
@@ -145,8 +157,8 @@ class Program
  *              lastUsed DateTime
  *          Behaviors:
  *              display prompt
- *              parse json
- *              write json
+ *              get json
+ *              set json
  *      Entry:
  *          Resonsibility:
  *              to hold and display information about an individual event.
@@ -158,9 +170,16 @@ class Program
  *              display entry
  *              parse csv
  *              write csv
- *              parse json
- *              write json
- *          
+ *              get json
+ *              set json
+ *              
  *      Notes:
  *          I found the json format notes on stack overflow:  https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-7-0
+ *          file exists test:  https://learn.microsoft.com/en-us/dotnet/api/system.io.file.exists?redirectedfrom=MSDN&view=net-7.0#System_IO_File_Exists_System_String_
+ *          for loop:  https://www.w3schools.com/cs/cs_for_loop.php
+ *          date compare:  https://learn.microsoft.com/en-us/dotnet/api/system.datetime.compare?view=net-8.0
+ *          clean time from date:  https://stackoverflow.com/questions/1859248/how-to-change-time-in-datetime
+ *          
+ *          
+ *          
  */

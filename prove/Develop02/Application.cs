@@ -34,12 +34,13 @@ public class Application
 
     public Boolean EvaluateMenu(string Response)
     {
-        string prompt;
+        Prompt prompt;
         switch (Response)
         {
             case "1":
-                prompt = _journal.PromptForEntry(_journal.GetEntryPrompts());
-                _journal.AddJournalEntry(prompt, _journal.ReadResponse());
+                prompt = _journal.PromptForEntry(_journal.GetEntryPrompt(_journal.GetEntryPrompts()));
+                prompt = _journal.AddJournalEntry(prompt, _journal.ReadResponse());
+                _journal.UpdatePromptData(_journal.GetEntryPrompts(), prompt);
                 return true;
             case "2":
                 _journal.Display();
