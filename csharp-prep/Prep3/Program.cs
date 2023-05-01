@@ -48,6 +48,49 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello Prep3 World!");
+        // declare variables
+        Random randomGenerator = new Random();
+        string rawMagic, rawGuess, again;
+        int magic, guess, counter=0;
+        bool done = false, exit = false;
+        // request input
+        //Console.Write("What is the magic number? ");
+        //rawMagic = Console.ReadLine();
+        // convert input
+        //magic = int.Parse(rawMagic);
+        // get random number
+        magic = randomGenerator.Next(1, 100);
+        while (!exit)
+        {
+            do
+            {
+                // request input
+                Console.Write("What is your guess? ");
+                rawGuess = Console.ReadLine();
+                // convert input
+                guess = int.Parse(rawGuess);
+                // report output
+                if (guess > magic) {
+                    Console.WriteLine("Lower");
+                } else if (guess < magic) {
+                    Console.WriteLine("Higher");
+                } else {
+                    Console.WriteLine($"You guessed it in {counter+1} tries!");
+                    done = true;
+                }
+                counter++;
+            } while (!done);
+            // request input
+            Console.Write("Would you like to play again? ");
+            again = Console.ReadLine();
+            // convert input
+            if (again != "yes") {
+                exit = true;
+            } else {
+                done = false;
+                counter = 0;
+                magic = randomGenerator.Next(1, 100);
+            }
+        }
     }
 }
