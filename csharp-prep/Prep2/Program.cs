@@ -18,25 +18,25 @@ using System.ComponentModel.Design;
  *   the concepts.
  *   
  * Core Requirements
- *      Ask the user for their grade percentage, then write a series of
+ *      1) Ask the user for their grade percentage, then write a series of
  *   if-elif-else statements to print out the appropriate letter grade.
  *   (At this point, you'll have a separate print statement for each grade
  *   letter in the appropriate block.)
  *   
- *      Assume that you must have at least a 70 to pass the class. After
+ *      2) Assume that you must have at least a 70 to pass the class. After
  *   determining the letter grade and printing it out. Add a separate if
  *   statement to determine if the user passed the course, and if so display
  *   a message to congratulate them. If not, display a different message to
  *   encourage them for next time.
  *   
- *      Change your code from the first part, so that instead of printing the
+ *      3) Change your code from the first part, so that instead of printing the
  *   letter grade in the body of each if, elif, or else block, instead create
  *   a new variable called letter and then in each block, set this variable to
  *   the appropriate value. Finally, after the whole series of if-elif-else
  *   statements, have a single print statement that prints the letter grade once.
  *  
  * Stretch Challenge
- *      Add to your code the ability to include a "+" or "-" next to the letter
+ *      1) Add to your code the ability to include a "+" or "-" next to the letter
  *   grade, such as B+ or A-. For each grade, you'll know it is a "+" if the last
  *   digit is >= 7. You'll know it is a minus if the last digit is < 3 and otherwise
  *   it has no sign.
@@ -52,10 +52,10 @@ using System.ComponentModel.Design;
  *     
  *   At this point, don't worry about the exceptional cases of A+, F+, or F-.
  *   
- *   Recognize that there is no A+ grade, only A and A-. Add some additional logic
+ *      2) Recognize that there is no A+ grade, only A and A-. Add some additional logic
  *   to your program to detect this case and handle it correctly.
  *   
- *   Similarly, recognize that there is no F+ or F- grades, only F. Add additional
+ *      3) Similarly, recognize that there is no F+ or F- grades, only F. Add additional
  *   logic to your program to detect these cases and handle them correctly.
  */
 
@@ -63,6 +63,43 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello Prep2 World!");
+        // declare variables
+        string rawPercent, letter, letterMod;
+        int percent;
+        // request input
+        Console.Write("What is your grade percentage? ");
+        rawPercent = Console.ReadLine();
+        // convert input
+        percent = int.Parse(rawPercent);
+        if ((percent % 10) < 3) {
+            letterMod = "-";
+        } else if ((percent % 10) >= 7) {
+            letterMod = "+";
+        } else {
+            letterMod = "";
+        }
+        if (percent >= 90) {
+            letter = "A";
+            if (percent >= 93) {
+                letterMod = "";
+            }
+        } else if(percent >= 80) {
+            letter = "B";
+        } else if (percent >= 70) {
+            letter = "C";
+        } else if (percent >= 60) {
+            letter = "D";
+        } else {
+            letter = "F";
+            letterMod = "";
+        }
+        // report output
+        // report output
+        Console.WriteLine($"Your letter grade is:  {letter}{letterMod}");
+        if (percent >= 70) {
+            Console.WriteLine("Congratulations, you passed!");
+        } else {
+            Console.WriteLine("I am sure you will do better next time.");
+        }
     }
 }
