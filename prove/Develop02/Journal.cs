@@ -152,7 +152,8 @@ public class Journal
                     [Prompts].[TimesUsed],
                     [Prompts].[LastUsed]
                 FROM [Entries]
-                LEFT OUTER JOIN [Prompts];";
+                LEFT OUTER JOIN [Prompts]
+                ON [Entries].[PromptID] = [Prompts].[ID];";
         foreach (object[] element in GetDBQueryObjectList(sql, 1))
         {
             foreach (object value in element)
@@ -511,9 +512,27 @@ public Prompt GetEntryPrompt()
     {
         List<string> results = new List<string>();
         string result;
-        string sql = $@"DELETE FROM entries;
-                        UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'entries';
-                        VACUUM;";
+        string sql = $@"DELETE FROM entries;";
+        foreach (object[] element in GetDBQueryObjectList(sql, 1))
+        {
+            result = "";
+            foreach (object x in element)
+            {
+                result += x.ToString();
+            }
+            results.Add(result);
+        }
+        sql = $@"UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'entries';";
+        foreach (object[] element in GetDBQueryObjectList(sql, 1))
+        {
+            result = "";
+            foreach (object x in element)
+            {
+                result += x.ToString();
+            }
+            results.Add(result);
+        }
+        sql = $@"VACUUM;";
         foreach (object[] element in GetDBQueryObjectList(sql, 1))
         {
             result = "";
