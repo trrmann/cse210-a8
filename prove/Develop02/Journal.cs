@@ -412,7 +412,7 @@ public Prompt GetEntryPrompt()
         List<Prompt> prompts = ReadDBPrompts();
         foreach (Prompt pmpt in prompts)
         {
-            if(pmpt._value == prompt._value)
+            if(pmpt._value.CompareTo(prompt._value)==0)
             {
                 pmpt._timesUsed = prompt._timesUsed;
                 pmpt._lastUsed = prompt._lastUsed;
@@ -546,7 +546,6 @@ public Prompt GetEntryPrompt()
     }
     public void LoadEntries(string filename)
     {
-        // change to database
         Console.WriteLine("loading from file...");
         switch (EvaluateFileFormat(filename))
         {
@@ -590,6 +589,32 @@ public Prompt GetEntryPrompt()
             default:
                 break;
         }
+        LoadEntryPrompts();
+        List<Prompt> prompts = ReadDBPrompts();
+        foreach (Prompt prompt in prompts)
+        {
+            prompt._timesUsed = 0;
+            prompt._lastUsed = DateTime.Parse("0001-01-01 00:00:00");
+        }
+        foreach (Entry entry in ReadDBEnties())
+        {
+            string prompt_value = entry._prompt._value;
+            foreach (Prompt prompt in prompts)
+            {
+                if (prompt._value.CompareTo(prompt_value) == 0)
+                {
+                    if (DateTime.Compare(prompt._lastUsed, entry._date) < 0)
+                    {
+                        prompt._lastUsed = entry._date;
+                    }
+                    prompt._timesUsed++;
+                }
+            }
+        }
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        string promptsJSONString = JsonSerializer.Serialize(prompts, options);
+        File.WriteAllText(_JSON_CONFIG_FILE, promptsJSONString);
+        UpdateDBPrompts(prompts);
     }
     public bool IsCSV(string[] data)
     {
