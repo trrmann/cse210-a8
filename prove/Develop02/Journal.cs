@@ -611,12 +611,13 @@ public Prompt GetEntryPrompt()
         if (data == null) return false;
         if (data[0].CompareTo('[') == 0
             && data[data.Count() - 1].CompareTo(']') == 0
-            && data.Contains("_date")
+            && ((data.Contains("_date")
             && data.Contains("_prompt")
             && data.Contains("_value")
             && data.Contains("_timesUsed")
             && data.Contains("_lastUsed")
-            && data.Contains("_response"))
+            && data.Contains("_response")) 
+            || (data.Length==2)))
         {
             return true;
         };
