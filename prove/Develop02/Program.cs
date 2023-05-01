@@ -59,6 +59,7 @@ class Program
  *    6)  Add distribution balancer for random selection of prompt questions.
  *    7)  Add freeform prompt when all prompts have been used in the same day.
  *    8)  Ensure csv files are safe for MS Excell loading.
+ *    9)  Change data store to a sqlite DB instead of list of enties in memory and json file for prompts.
  *   
  * What user inputs does it have?
  *      1)  menu prompt response.
@@ -198,7 +199,8 @@ class Program
  *          for loop:  https://www.w3schools.com/cs/cs_for_loop.php
  *          date compare:  https://learn.microsoft.com/en-us/dotnet/api/system.datetime.compare?view=net-8.0
  *          clean time from date:  https://stackoverflow.com/questions/1859248/how-to-change-time-in-datetime
- *          
- *          
+ *          I had added sqlite toolbox to my VS IDE and sqlite package to add the Microsoft.Data.Sqlite package.
+ *          I had used the micrsoft documentation for sqlite implementation.
+ *          I used my basic understanding of sql from work to build the db schema and sql queries/updates/inserts.
  *          
  */
