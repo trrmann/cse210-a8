@@ -91,6 +91,7 @@ class Program
             letter = "D";
         } else {
             letter = "F";
+            letterMod = "";
         }
         // report output
         Console.WriteLine($"Your letter grade is:  {letter}{letterMod}");
