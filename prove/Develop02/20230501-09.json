@@ -1,0 +1,83 @@
+[
+  {
+    "_date": "2023-05-01T17:11:23",
+    "_prompt": {
+      "_value": "What did you ponder over in your scriptures today?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:11:23"
+    },
+    "_response": "one"
+  },
+  {
+    "_date": "2023-05-01T17:12:25",
+    "_prompt": {
+      "_value": "How were you helped today and by who?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:12:25"
+    },
+    "_response": "two"
+  },
+  {
+    "_date": "2023-05-01T17:13:17",
+    "_prompt": {
+      "_value": "Who was the most interesting person I interacted with today ?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:13:17"
+    },
+    "_response": "three"
+  },
+  {
+    "_date": "2023-05-01T17:14:21",
+    "_prompt": {
+      "_value": "If I had one thing I could do over today, what would it be?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:14:21"
+    },
+    "_response": "four"
+  },
+  {
+    "_date": "2023-05-01T17:15:11",
+    "_prompt": {
+      "_value": "What did you do today to serve someone?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:15:11"
+    },
+    "_response": "five"
+  },
+  {
+    "_date": "2023-05-01T17:15:46",
+    "_prompt": {
+      "_value": "What would you like to write in your journal?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:15:46"
+    },
+    "_response": "six"
+  },
+  {
+    "_date": "2023-05-01T17:16:47",
+    "_prompt": {
+      "_value": "What was the best part of my day?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:16:47"
+    },
+    "_response": "seven"
+  },
+  {
+    "_date": "2023-05-01T17:17:31",
+    "_prompt": {
+      "_value": "What outside event did you witness or ponder today?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:17:31"
+    },
+    "_response": "eight"
+  },
+  {
+    "_date": "2023-05-01T17:17:57",
+    "_prompt": {
+      "_value": "How did I see the hand of the Lord in my life today ?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:17:57"
+    },
+    "_response": "nine"
+  }
+]

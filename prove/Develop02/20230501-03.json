@@ -1,0 +1,29 @@
+[
+  {
+    "_date": "2023-05-01T17:11:23",
+    "_prompt": {
+      "_value": "What did you ponder over in your scriptures today?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:11:23"
+    },
+    "_response": "one"
+  },
+  {
+    "_date": "2023-05-01T17:12:25",
+    "_prompt": {
+      "_value": "How were you helped today and by who?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:12:25"
+    },
+    "_response": "two"
+  },
+  {
+    "_date": "2023-05-01T17:13:17",
+    "_prompt": {
+      "_value": "Who was the most interesting person I interacted with today ?",
+      "_timesUsed": 1,
+      "_lastUsed": "2023-05-01T17:13:17"
+    },
+    "_response": "three"
+  }
+]
