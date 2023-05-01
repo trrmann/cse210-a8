@@ -49,7 +49,7 @@ public class Entry
 
     public void SetJSON(string input)
     {
-        Entry? entry = JsonSerializer.Deserialize<Entry>(input);
+        Entry entry = JsonSerializer.Deserialize<Entry>(input);
         this._date = entry._date;
         this._prompt = entry._prompt;
         this._response = entry._response;

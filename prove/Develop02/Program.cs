@@ -129,10 +129,16 @@ class Program
  *          Resonsibility:
  *              to add, hold and display journal entries.
  *          State:
- *              entries List<Entry>
+ *              json initialization
+ *              db initialization
  *              configurationFile string
+ *              db filename
+ *              db mode
+ *              db cache type
+ *              db use foreign keys
+ *              db default timeout
  *          Behaviors:
- *              get entry prompts
+ *              load entry prompts
  *              get entry prompt for entry
  *              prompt for entry
  *              read response
@@ -148,6 +154,19 @@ class Program
  *              load journal entries
  *              get json
  *              set json
+ *              get db connection string
+ *              get db connection
+ *              get db query object list
+ *              is db defined
+ *              define db
+ *              are db prompts defined
+ *              define db prompts
+ *              read db prompts
+ *              update db prompts
+ *              does json config exist
+ *              add db journal entry
+ *              read db entries
+ *              truncate db entries
  *      Prompt:
  *          Responsibilty:
  *              to hold information about the available prompts for jornal entries.

@@ -34,18 +34,17 @@ public class Application
 
     public Boolean EvaluateMenu(string Response)
     {
-        Prompt prompt;
         switch (Response)
         {
             case "1":
-                prompt = _journal.PromptForEntry(_journal.GetEntryPrompt(_journal.GetEntryPrompts()));
-                prompt = _journal.AddJournalEntry(prompt, _journal.ReadResponse());
-                _journal.UpdatePromptData(_journal.GetEntryPrompts(), prompt);
+                _journal.LoadEntryPrompts();
+                _journal.UpdatePromptData(_journal.AddJournalEntry(_journal.PromptForEntry(_journal.GetEntryPrompt()), _journal.ReadResponse()));
                 return true;
             case "2":
                 _journal.Display();
                 return true;
             case "3":
+                _journal.LoadEntryPrompts();
                 _journal.PromptForFilename();
                 _journal.LoadEntries(_journal.ReadResponse());
                 return true;
