@@ -1,0 +1,14 @@
+[
+  {
+    "Date": "2023-05-11T10:32:28",
+    "Prompt": {
+      "Value": "What was the best part of my day?",
+      "LastUsed": "2023-05-11T10:32:28",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What was the best part of my day?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T10:32:28",
+    "Response": "one"
+  }
+]

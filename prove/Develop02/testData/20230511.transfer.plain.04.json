@@ -1,0 +1,50 @@
+[
+  {
+    "Date": "2023-05-11T10:32:28",
+    "Prompt": {
+      "Value": "What was the best part of my day?",
+      "LastUsed": "2023-05-11T10:32:28",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What was the best part of my day?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T10:32:28",
+    "Response": "one"
+  },
+  {
+    "Date": "2023-05-11T10:56:31",
+    "Prompt": {
+      "Value": "How did I see the hand of the Lord in my life today?",
+      "LastUsed": "2023-05-11T10:56:31",
+      "TimesUsed": 1
+    },
+    "PromptValue": "How did I see the hand of the Lord in my life today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T10:56:31",
+    "Response": "two"
+  },
+  {
+    "Date": "2023-05-11T11:17:16",
+    "Prompt": {
+      "Value": "If I had one thing I could do over today, what would it be?",
+      "LastUsed": "2023-05-11T11:17:16",
+      "TimesUsed": 1
+    },
+    "PromptValue": "If I had one thing I could do over today, what would it be?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T11:17:16",
+    "Response": "three"
+  },
+  {
+    "Date": "2023-05-11T11:18:22",
+    "Prompt": {
+      "Value": "What happened today that you didn\u0027t like and how could you manage it better?",
+      "LastUsed": "2023-05-11T11:18:22",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What happened today that you didn\u0027t like and how could you manage it better?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T11:18:22",
+    "Response": "four"
+  }
+]

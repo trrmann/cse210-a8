@@ -1,0 +1,206 @@
+[
+  {
+    "Date": "2023-05-11T10:32:28",
+    "Prompt": {
+      "Value": "What was the best part of my day?",
+      "LastUsed": "2023-05-11T10:32:28",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What was the best part of my day?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T10:32:28",
+    "Response": "one"
+  },
+  {
+    "Date": "2023-05-11T10:56:31",
+    "Prompt": {
+      "Value": "How did I see the hand of the Lord in my life today?",
+      "LastUsed": "2023-05-11T10:56:31",
+      "TimesUsed": 1
+    },
+    "PromptValue": "How did I see the hand of the Lord in my life today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T10:56:31",
+    "Response": "two"
+  },
+  {
+    "Date": "2023-05-11T11:17:16",
+    "Prompt": {
+      "Value": "If I had one thing I could do over today, what would it be?",
+      "LastUsed": "2023-05-11T11:17:16",
+      "TimesUsed": 1
+    },
+    "PromptValue": "If I had one thing I could do over today, what would it be?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T11:17:16",
+    "Response": "three"
+  },
+  {
+    "Date": "2023-05-11T11:18:22",
+    "Prompt": {
+      "Value": "What happened today that you didn\u0027t like and how could you manage it better?",
+      "LastUsed": "2023-05-11T11:18:22",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What happened today that you didn\u0027t like and how could you manage it better?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T11:18:22",
+    "Response": "four"
+  },
+  {
+    "Date": "2023-05-11T11:19:13",
+    "Prompt": {
+      "Value": "What would you like to write in your journal?",
+      "LastUsed": "2023-05-11T18:01:40",
+      "TimesUsed": 3
+    },
+    "PromptValue": "What would you like to write in your journal?",
+    "TimesPromptUsed": 3,
+    "PromptLastUsed": "2023-05-11T18:01:40",
+    "Response": "five"
+  },
+  {
+    "Date": "2023-05-11T16:37:53",
+    "Prompt": {
+      "Value": "Who was the most interesting person I interacted with today?",
+      "LastUsed": "2023-05-11T16:37:53",
+      "TimesUsed": 1
+    },
+    "PromptValue": "Who was the most interesting person I interacted with today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T16:37:53",
+    "Response": "six"
+  },
+  {
+    "Date": "2023-05-11T17:52:01",
+    "Prompt": {
+      "Value": "What did you learn today?",
+      "LastUsed": "2023-05-11T17:52:01",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What did you learn today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:52:01",
+    "Response": "seven"
+  },
+  {
+    "Date": "2023-05-11T17:52:57",
+    "Prompt": {
+      "Value": "What did you do today, that was enjoyable?",
+      "LastUsed": "2023-05-11T17:52:57",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What did you do today, that was enjoyable?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:52:57",
+    "Response": "eight"
+  },
+  {
+    "Date": "2023-05-11T17:53:51",
+    "Prompt": {
+      "Value": "What did you do today to serve someone?",
+      "LastUsed": "2023-05-11T17:53:51",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What did you do today to serve someone?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:53:51",
+    "Response": "nine"
+  },
+  {
+    "Date": "2023-05-11T17:54:58",
+    "Prompt": {
+      "Value": "What did you ponder over in your scriptures today?",
+      "LastUsed": "2023-05-11T17:54:58",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What did you ponder over in your scriptures today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:54:58",
+    "Response": "ten"
+  },
+  {
+    "Date": "2023-05-11T17:55:49",
+    "Prompt": {
+      "Value": "What outside event did you witness or ponder today?",
+      "LastUsed": "2023-05-11T17:55:49",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What outside event did you witness or ponder today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:55:49",
+    "Response": "eleven"
+  },
+  {
+    "Date": "2023-05-11T17:56:50",
+    "Prompt": {
+      "Value": "What did you improve in your life today?",
+      "LastUsed": "2023-05-11T17:56:50",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What did you improve in your life today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:56:50",
+    "Response": "twelve"
+  },
+  {
+    "Date": "2023-05-11T17:57:57",
+    "Prompt": {
+      "Value": "How were you helped today and by who?",
+      "LastUsed": "2023-05-11T17:57:57",
+      "TimesUsed": 1
+    },
+    "PromptValue": "How were you helped today and by who?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:57:57",
+    "Response": "thirteen"
+  },
+  {
+    "Date": "2023-05-11T17:59:11",
+    "Prompt": {
+      "Value": "What Christ-like attribute did you emulate today and how?",
+      "LastUsed": "2023-05-11T17:59:11",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What Christ-like attribute did you emulate today and how?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:59:11",
+    "Response": "fourteen"
+  },
+  {
+    "Date": "2023-05-11T17:59:59",
+    "Prompt": {
+      "Value": "What was the strongest emotion I felt today?",
+      "LastUsed": "2023-05-11T17:59:59",
+      "TimesUsed": 1
+    },
+    "PromptValue": "What was the strongest emotion I felt today?",
+    "TimesPromptUsed": 1,
+    "PromptLastUsed": "2023-05-11T17:59:59",
+    "Response": "fifteen"
+  },
+  {
+    "Date": "2023-05-11T18:00:46",
+    "Prompt": {
+      "Value": "What would you like to write in your journal?",
+      "LastUsed": "2023-05-11T18:01:40",
+      "TimesUsed": 3
+    },
+    "PromptValue": "What would you like to write in your journal?",
+    "TimesPromptUsed": 3,
+    "PromptLastUsed": "2023-05-11T18:01:40",
+    "Response": "sixteen"
+  },
+  {
+    "Date": "2023-05-11T18:01:40",
+    "Prompt": {
+      "Value": "What would you like to write in your journal?",
+      "LastUsed": "2023-05-11T18:01:40",
+      "TimesUsed": 3
+    },
+    "PromptValue": "What would you like to write in your journal?",
+    "TimesPromptUsed": 3,
+    "PromptLastUsed": "2023-05-11T18:01:40",
+    "Response": "seventeen"
+  }
+]
