@@ -395,6 +395,10 @@ public class JournalDatabaseConnection
                 result += value.ToString();
             }
         }
+        if(result.CompareTo("")==0)
+        {
+            throw new Exception($"Prompt ('{entry.PromptOpenValue(encryption)}') not found!");
+        }
         int promptID = int.Parse(result);
         sql = $@"INSERT INTO Entries (
                 [Date],

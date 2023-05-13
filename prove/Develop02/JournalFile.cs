@@ -166,65 +166,190 @@ public class JournalFile
         string baseFileName = journal.ReadResponse();
         string plainText = "";
         Console.WriteLine("loading from file...");
-        if (baseFileName.CompareTo("") != 0)
-        {
-            plainText = DecryptFileRSA(encryption, filename, baseFileName);
-        } else
-        {
-            plainText = File.ReadAllText(filename);
-        }
-        switch (EvaluateFileFormat(journal, filename))
-        {
-            case "csv":
-                JournalDatabaseConnection.TruncateDBEnties();
-                if (IsCSV(plainText))
-                {
-                    SetCSV(encryption, plainText, encrypted);
-                }
-                else
-                {
-                    Console.WriteLine("Unable to read file as CSV.");
-                }
-                break;
-            case "json":
-                if (IsJSON(plainText))
-                {
-                    SetJSON(encryption, plainText, encrypted);
-                }
-                else
-                {
-                    Console.WriteLine("Unable to read file as JSON.");
-                }
-                break;
-            default:
-                break;
-        }
-        LoadEntryPrompts(database);
-        List<Prompt> prompts = JournalDatabaseConnection.ReadDBPrompts(encryption);
-        foreach (Prompt prompt in prompts)
-        {
-            prompt.TimesUsedInt(encryption, 0);
-            prompt.LastUsedDate(encryption, DateTime.Parse("0001-01-01 00:00:00"));
-        }
-        foreach (Entry entry in JournalDatabaseConnection.ReadDBEnties(encryption))
-        {
-            string prompt_value = entry.PromptValue;
+        try {
+            if (baseFileName.CompareTo("") != 0)
+            {
+                plainText = DecryptFileRSA(encryption, filename, baseFileName);
+            } else
+            {
+                plainText = File.ReadAllText(filename);
+            }
+            switch (EvaluateFileFormat(journal, filename))
+            {
+                case "csv":
+                    JournalDatabaseConnection.TruncateDBEnties();
+                    if (IsCSV(plainText))
+                    {
+                        try
+                        {
+                            SetCSV(encryption, plainText, encrypted);
+                        }
+                        catch (FormatException ex)
+                        {
+                            if(ex.Message.CompareTo("The input string '' was not in a correct format.")==0)
+                            {
+                                if(encrypted)
+                                {
+                                    Console.WriteLine("File is not backup encrypted!");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("File is backup encrypted!");
+                                }
+                            }
+                            else if(ex.Message.Contains("The string '")&&ex.Message.Contains("' was not recognized as a valid DateTime. There is an unknown word starting at index '"))
+                            {
+                                Console.WriteLine("File has a bad date entry!");
+                                Console.WriteLine(ex.Message);
+                            }
+                            else if(ex.Message.CompareTo("The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or an illegal character among the padding characters.")==0)
+                            {
+                                Console.WriteLine("File is not backup encrypted!");
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message.Contains("Prompt ")&&ex.Message.Contains(" not found!")) {
+                                Console.WriteLine("File has a bad prompt entry!");
+                                Console.WriteLine(ex.Message);
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unable to read file as CSV.");
+                    }
+                    break;
+                case "json":
+                    if (IsJSON(plainText))
+                    {
+                        try
+                        {
+                            SetJSON(encryption, plainText, encrypted);
+                        }
+                        catch (JsonException ex)
+                        {
+                            if (ex.Message.CompareTo("The JSON value could not be converted to Prompt. Path: $[0].Prompt.TimesUsed | LineNumber: 6 | BytePositionInLine: 20.")==0)
+                            {
+                                if (ex.InnerException.Message.CompareTo("Cannot get the value of a token type 'Number' as a string.")==0)
+                                {
+                                    Console.WriteLine("file is not backup encrypted!");
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            else if (ex.Message.CompareTo("The JSON value could not be converted to Entry+OpenEntry. Path: $[0].Date | LineNumber: 2 | BytePositionInLine: 58.")==0)
+                            {
+                                if (ex.InnerException.Message.CompareTo("The JSON value is not in a supported DateTime format.")==0)
+                                {
+                                    Console.WriteLine("file is backup encrypted!");
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            else if (ex.Message.Contains("The JSON value could not be converted to Entry+OpenEntry. Path: $[0].Date | LineNumber: 2 | BytePositionInLine:"))
+                            {
+                                if (ex.InnerException.Message.CompareTo("The JSON value is not in a supported DateTime format.")==0)
+                                {
+                                    Console.WriteLine("file entry has a bad date format!");
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message.Contains("Prompt ")&&ex.Message.Contains(" not found!")) {
+                                Console.WriteLine("File has a bad prompt entry!");
+                                Console.WriteLine(ex.Message);
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unable to read file as JSON.");
+                    }
+                    break;
+                default:
+                    break;
+            }
+            LoadEntryPrompts(database);
+            List<Prompt> prompts = JournalDatabaseConnection.ReadDBPrompts(encryption);
             foreach (Prompt prompt in prompts)
             {
-                if (prompt.Value.CompareTo(prompt_value) == 0)
+                prompt.TimesUsedInt(encryption, 0);
+                prompt.LastUsedDate(encryption, DateTime.Parse("0001-01-01 00:00:00"));
+            }
+            foreach (Entry entry in JournalDatabaseConnection.ReadDBEnties(encryption))
+            {
+                string prompt_value = entry.PromptValue;
+                foreach (Prompt prompt in prompts)
                 {
-                    if (DateTime.Compare(prompt.LastUsedDate(encryption), entry.OpenDateTime(encryption)) < 0)
+                    if (prompt.Value.CompareTo(prompt_value) == 0)
                     {
-                        prompt.LastUsedDate(encryption, entry.OpenDateTime(encryption));
+                        if (DateTime.Compare(prompt.LastUsedDate(encryption), entry.OpenDateTime(encryption)) < 0)
+                        {
+                            prompt.LastUsedDate(encryption, entry.OpenDateTime(encryption));
+                        }
+                        prompt.TimesUsedInt(encryption, prompt.TimesUsedInt(encryption) + 1);
                     }
-                    prompt.TimesUsedInt(encryption, prompt.TimesUsedInt(encryption) + 1);
                 }
             }
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string promptsJSONString = JsonSerializer.Serialize(prompts, options);
+            File.WriteAllText(PromptDataFile, encryption.EncryptStringAES(promptsJSONString));
+            JournalDatabaseConnection.UpdateDBPrompts(encryption, prompts);
         }
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        string promptsJSONString = JsonSerializer.Serialize(prompts, options);
-        File.WriteAllText(PromptDataFile, encryption.EncryptStringAES(promptsJSONString));
-        JournalDatabaseConnection.UpdateDBPrompts(encryption, prompts);
+        catch (FormatException ex)
+        {
+            if(ex.Message.CompareTo("The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or an illegal character among the padding characters.")==0)
+            {
+                Console.WriteLine("Invalid private Key!");
+            }
+            else
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+        catch (System.Security.Cryptography.CryptographicException ex)
+        {
+            if(ex.Message.CompareTo("The parameter is incorrect.")==0)
+            {
+                Console.WriteLine("Invalid private Key!");
+            }
+            else
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+        catch (System.IO.FileNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
     public bool IsCSV(string data)
     {
