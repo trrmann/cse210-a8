@@ -124,7 +124,7 @@ class JournalDatabaseConnection
     {static} + string GetDBConnectionString()
     {static} + SqliteConnection GetDBConnection(string connectionString)
     {static} + List<Object> GetDBQueryObjectList(string query, int resultColCount)
-    {static} + Boolean IsDBDefined
+    {static} + Boolean IsDBDefined()
     {static} + List<string> DefineDB()
     {static} + Boolean AreDBPromptsDefined()
     {static} + List<string> DefineDBPrompts(Encryption encryption, List<Prompt> prompts)
