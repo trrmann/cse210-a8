@@ -2,24 +2,24 @@
 
 public class Fraction
 {
-	private int _top;
-    private int _bottom;
+    public int Top { get; set; }
+    public int Bottom { get; set; }
 
     public Fraction()
     {
-        _top = 1;
-        _bottom = 1;
+        Top = 1;
+        Bottom = 1;
     }
 
     public Fraction(int top)
     {
-        _top = top;
-        _bottom = 1;
+        Top = top;
+        Bottom = 1;
     }
 
     public Fraction(int top, int bottom)
     {
-        _top = top;
-        _bottom = bottom;
+        Top = top;
+        Bottom = bottom;
     }
 }
