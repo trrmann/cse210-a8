@@ -22,4 +22,21 @@ public class Fraction
         Top = top;
         Bottom = bottom;
     }
+
+    public string GetFractionString()
+    {
+        return $"{Top}/{Bottom}";
+    }
+
+    public double GetDecimalValue()
+    {
+        if (Bottom == 0)
+        {
+            return 0.0;
+        }
+        else
+        {
+            return Convert.ToDouble(Top) / Convert.ToDouble(Bottom);
+        }
+    }
 }
