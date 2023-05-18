@@ -1,356 +1,158 @@
 ﻿@startuml
-package Microsoft.Data.Sqlite {
-    class SqliteConnection{}
-}
-
-package System.Security.Cryptography {
-    class Aes {}
-    class RSACryptoServiceProvider {}
-    class RSAParameters{}
-    class KeySizes{}
-    enum CipherMode{}
-    enum PaddingMode{}
-}
 
 class Application
 {
-    - Boolean _isRunning;
-    - Journal _journal;
+    - Boolean _isRunning
+    - Scriptures _scriptures
+    - Scripture _current
+
     + Application()
-    + Journal Journal()
-    + void Journal(Journal journal)
-    + Boolean IsRunning()
-    + void IsRunning(Boolean state)
-    + JournalDatabaseConnection Database()
-    + void Database(JournalDatabaseConnection database)
-    + Encryption Encryption()
-    + void Encryption(Encryption encryption)
-    + byte[] InitializationVector()
-    + void InitializationVector(byte[] key)
-    + byte[] SecretKey()
-    + void SecretKey(byte[] key)
-    + JournalFile File()
-    + void File(JournalFile file)
+
+    - Boolean IsRunning()
+    - void ResetHidden()
+    - void ResetUsageData()
+
     + void Run()
-    + void DisplayMenu()
-    + string ReadMenu()
-    + Boolean EvaluateMenu(string Response)
-    + void Exit()
+    - string ReadResponse()
+    - Boolean EvaluateResponse(Scripture scripture, string response)
+    - void Exit()
 }
-Application *-- Journal
-Application <|-- JournalDatabaseConnection
-Application <|-- Encryption
-Application <|-- JournalFile
+Application *-- Scriptures
+Application <|-- Scripture
 
-class Journal
+class Scriptures
 {
-    - JournalFile _file;
-    - JournalDatabaseConnection _database;
-    + Journal()
-    + JournalFile File()
-    + void File(JournalFile file)
-    + JournalDatabaseConnection Database()
-    + void Database(JournalDatabaseConnection connection)
-    + Encryption Encryption()
-    + void Encryption(Encryption encryption)
-    + Prompt PromptForEntry(Prompt prompt)
-    + string ReadResponse()
-    + Prompt AddJournalEntry(Prompt prompt, string response)
-    + void Display()
-}
-Journal *-- JournalFile
-Journal *-- JournalDatabaseConnection
-Journal <|-- Encryption
-Journal <|-- Prompt
+    {static} - string _FILENAME
+    - List<Scripture> _scriptures
 
-class JournalFile
-{
-    {static} - string _PROMPT_DATA_FILE = "journal.dat";
-    - Boolean _prompts_json_init;
-    + JournalFile()
-    {static} + string PromptDataFile()
-    {static} # void PromptDataFile(string filename)
-    {static} + Boolean DoesPromptDatExist()
-    + Boolean PromptsJSONInit()
-    + void PromptsJSONInit(Boolean state)
-    + void LoadEntryPrompts(JournalDatabaseConnection database)
-    + void UpdatePromptData(Encryption encryption, Prompt prompt)
-    + void PromptForFilename()
-    + string EvaluateFileFormat(Journal journal, string filename)
-    + void PromptForFileFormat()
-    + void PromptForBaseFilename(string keyType)
-    + void LoadEntries(Journal journal, string filename)
-    + bool IsCSV(string data)
-    + bool IsJSON(string data)
-    + void SaveEntries(Journal journal, string filename)
-    + string GetCSV(Encryption encryption, Boolean encrypted = false)
-    + void SetCSV(Encryption encryption, string input, Boolean encrypted = false)
-    + string GetJSON(Encryption encryption, Boolean encrypted = false)
-    + void SetJSON(Encryption encryption, string input, Boolean encrypted = false)
-    + void PromptAesEncryptedResponse()
-    + Boolean GetAesEncryptedResponse(Journal journal)
-    + void EncryptFileRSA(String plainText, Encryption encryption, string plainTextFilename, string baseFileName)
-    + string DecryptFileRSA(Encryption encryption, string cypherTextFilename, string baseFileName)
-}
-JournalFile <|-- JournalDatabaseConnection
-JournalFile <|-- Encryption
-JournalFile <|-- Prompt
-JournalFile <|-- Journal
+    + Scriptures()
+    + Scriptures(List<Scripture> scriptures)
+    {static} - Scriptures DefineScriptures()
 
-class JournalDatabaseConnection
-{
-    {static} - string _DB_FILENAME = "Journal.db";
-    {static} - string _DB_MODE = "ReadWriteCreate";
-    {static} - string _DB_CACHE = "Private";
-    {static} - string _DB_USEFK = "True";
-    {static} - string _DB_DEF_TIMEOUT = "60";
-    - bool _init;
-    - Encryption _encryption;
-    + JournalDatabaseConnection(bool doesPromptDatExist, Encryption encryption)
-    {static} + string DbFilename()
-    {static} # void DbFilename(string filename)
-    {static} + string DbMode()
-    {static} # void DbMode(string mode)
-    {static} + string DbCache()
-    {static} # void DbCache(string cache)
-    {static} + string DbUseForiegnKey()
-    {static} # void DbUseForiegnKey(string state)
-    {static} + string DbDefaultTimeout()
-    {static} # void DbDefaultTimeout(string timeout)
-    + bool IsInit()
-    + void IsInit(bool state)
-    + Encryption Encryption()
-    + void Encryption(Encryption encryption)
-    {static} + string GetDBConnectionString()
-    {static} + SqliteConnection GetDBConnection(string connectionString)
-    {static} + List<Object> GetDBQueryObjectList(string query, int resultColCount)
-    {static} + Boolean IsDBDefined()
-    {static} + List<string> DefineDB()
-    {static} + Boolean AreDBPromptsDefined()
-    {static} + List<string> DefineDBPrompts(Encryption encryption, List<Prompt> prompts)
-    {static} + List<Prompt> ReadDBPrompts(Encryption encryption)
-    {static} + List<string> UpdateDBPrompts(Encryption encryption, List<Prompt> prompts)
-    {static} + Prompt GetEntryPrompt(Encryption encryption)
-    {static} + List<string> AddDBJournalEntry(Encryption encryption, Entry entry)
-    {static} + List<Entry> ReadDBEnties(Encryption encryption)
-    {static} + List<string> TruncateDBEnties()
-}
-JournalDatabaseConnection *-- Encryption : uses >
-JournalDatabaseConnection <|-- Prompt
-JournalDatabaseConnection <|-- Entry
-JournalDatabaseConnection o-- Prompt
-JournalDatabaseConnection o-- Entry
-JournalDatabaseConnection <|-- SqliteConnection : gets >
+    - string ToJSON()
+    - void FromJSON(string json)
+    + void ResetUsageData()
+    + void ResetHidden()
+    + Scripture SelectScripture()
 
-class Encryption
-{
-    {static} - int _AES_BLOCK_SIZE = 128;
-    {static} - int _AES_FEEDBACK_SIZE = 8;
-    {static} - int _AES_KEY_SIZE = 256;
-    {static} - CipherMode _AES_MODE = CipherMode.CBC;
-    {static} - PaddingMode _AES_PADDING = PaddingMode.PKCS7;
-    {static} - KeySizes _AES_LEGAL_BLOCK_SIZES = new KeySizes(128, 128, 0);
-    {static} - KeySizes _AES_LEGAL_KEY_SIZES = new KeySizes(128, 256, 64);
-    {static} - int _RSA_CSP_BITS = 2048;
-    - Aes _aes;
-    - RSACryptoServiceProvider _csp;
-    + Encryption(KeySizes legalBlockSizes=null, KeySizes legalKeySizes=null, Aes aes=null, RSACryptoServiceProvider csp=null)
-    {static} + int AESBlockSize()
-    {static} # void AESBlockSize(int size)
-    {static} + int AESFeedbackSize()
-    {static} # void AESFeedbackSize(int size)
-    {static} + int AESKeySize()
-    {static} # void AESKeySize(int size)
-    {static} + CipherMode AESCipherMode()
-    {static} # void AESCipherMode(CipherMode mode)
-    {static} + PaddingMode AESPaddingMode()
-    {static} # void AESPaddingMode(PaddingMode mode)
-    {static} + KeySizes AESLegalBlockSizes()
-    {static} # void AESLegalBlockSizes(KeySizes size)
-    {static} + KeySizes AESLegalKeySizes()
-    {static} # void AESLegalKeySizes(KeySizes size)
-    {static} + int RSACSPBits()
-    {static} # void RSACSPBits(int bits)
-    + Aes AES()
-    + void AES(Aes aes)
-    + RSACryptoServiceProvider RSACryptoServiceProvider()
-    + void RSACryptoServiceProvider(RSACryptoServiceProvider csp)
-    + void SetAes(byte[] initializationVector, byte[] secretKey, int? blockSize = null, int? feedbackSize = null, int? keySize = null, KeySizes legalBlockSizes = null, KeySizes leagKeySizes = null, CipherMode? mode = null, PaddingMode? padding = null)
-    + string EncryptStringAES(string plainText)
-    + string DecryptStringAES(string ciphered)
-    + void PromptForBaseFilename()
-    + string ReadResponse()
-    + void DisplayPublicPrivateKeyPair()
-    + Tuple<string, string> GetNewPublicPrivateKeyPair()
-    + string GetPublicKey(RSACryptoServiceProvider csp = null)
-    + string GetPrivateKey(RSACryptoServiceProvider csp = null)
-    + RSAParameters GetRSAParameter(string key)
-    + string GetRSAKeyString(RSAParameters key)
-    + void SetRSAKey(string key)
-    + string EncryptStringRSA(string plainText, string baseFileName)
-    + string DecryptStringRSA(string cypherText, string baseFileName)
-    + String[] EncryptLargeStringRSA(String plainText, string baseFileName)
-    + String DecryptLargeStringRSA(String[] cypherText, string baseFileName)
+    + void SaveScriptures()
+    + void LoadScriptures()
 }
-Encryption *-- Aes
-Encryption *-- RSACryptoServiceProvider
-Encryption <|-- KeySizes
-Encryption <|-- CipherMode
-Encryption <|-- PaddingMode
-Encryption <|-- RSAParameters
+Scriptures o-- Scripture
+Scriptures <|-- ScriptureFile
 
-class Prompt
+class Scripture
 {
-    - string _value;
-    - string _timesUsed;
-    - string _lastUsed;
-    + Prompt(string value, string lastUsed, string timesUsed)
-    + Prompt(Encryption encryption, string value, string lastUsed, string timesUsed)
-    + Prompt(Encryption encryption, string value, DateTime lastUsed, int timesUsed = 0)
-    + string Value()
-    + void Value(string value)
-    + void OpenValue(Encryption encryption, string value)
-    + string OpenValue(Encryption encryption)
-    + string LastUsed()
-    + void LastUsed(string lastUsed)
-    + void OpenLastUsed(Encryption encryption, string lastUsed)
-    + string OpenLastUsed(Encryption encryption)
-    + void LastUsedDate(Encryption encryption, DateTime lastUsed)
-    + DateTime LastUsedDate(Encryption encryption)
-    + string TimesUsed()
-    + void TimesUsed(string timesUsed)
-    + void OpenTimesUsed(Encryption encryption, string timesUsed)
-    + string OpenTimesUsed(Encryption encryption)
-    + void TimesUsedInt(Encryption encryption, int timesUsed)
-    + int TimesUsedInt(Encryption encryption)
-    + void Display(Encryption encryption)
-    # string JSON()
-    # void JSON(string json)
-    - OpenPrompt ToOpenPrompt(Encryption encryption)
-}
-Prompt <|-- Encryption
-Prompt <|-- OpenPrompt
+    - Reference _reference
+    - int _timesUsed
+    - DateTime _lastUsed
+    - Verses _verses
 
-class OpenPrompt
-{
-    - string _value;
-    - int _timesUsed;
-    - DateTime _lastUsed;
-    + OpenPrompt(string value, string lastUsed, string timesUsed)
-    + OpenPrompt(Encryption encryption, string cipheredValue, string cipheredLastUsed, string cipheredTimesUsed)
-    + OpenPrompt(string value, DateTime lastUsed, int timesUsed = 0)
-    + string Value()
-    + void Value(string value)
-    + void CipheredValue(Encryption encryption, string cipheredValue)
-    + string CipheredValue(Encryption encryption)
-    + DateTime LastUsed()
-    + void LastUsed(DateTime lastUsed)
-    + void CipheredLastUsed(Encryption encryption, string cipheredLastUsed)
-    + string CipheredLastUsed(Encryption encryption)
-    + void LastUsedString(string lastUsed)
-    + string LastUsedString()
-    + int TimesUsed()
-    + void TimesUsed(int timesUsed)
-    + void CipheredTimesUsed(Encryption encryption, string cipheredTimesUsed)
-    + string CipheredTimesUsed(Encryption encryption)
-    + void TimesUsedString(string timesUsed)
-    + string TimesUsedString()
-    # string JSON()
-    # void JSON(string json)
-    + Prompt ToPrompt(Encryption encryption)
-}
-OpenPrompt <|-- Encryption
-OpenPrompt <|-- Prompt
+    + Scripture(Reference reference, Verses verses)
+    + Scripture(Reference reference, Verse verse)
 
-class Entry
-{
-    - string _date;
-    - Prompt _prompt;
-    - string _response;
-    + Entry(string date, Prompt prompt, string response)
-    + Entry(Encryption encryption, DateTime date, Prompt prompt, string response)
-    + Entry(Encryption encryption, string date, Prompt prompt, string response)
-    + string Date()
-    + void Date(string date)
-    + void OpenDateTime(Encryption encryption, DateTime date)
-    + DateTime OpenDateTime(Encryption encryption)
-    + void OpenDate(Encryption encryption, string date)
-    + string OpenDate(Encryption encryption)
-    + Prompt Prompt()
-    + void Prompt(Prompt prompt)
-    + string PromptValue()
-    + void PromptValue(string value)
-    + void PromptOpenValue(Encryption encryption, string value)
-    + string PromptOpenValue(Encryption encryption)
-    + string TimesPromptUsed()
-    + void TimesPromptUsed(string timesUsed)
-    + void TimesPromptUsedInt(Encryption encryption, int timesUsed)
-    + int TimesPromptUsedInt(Encryption encryption)
-    + void OpenTimesPromptUsed(Encryption encryption, string timesUsed)
-    + string OpenTimesPromptUsed(Encryption encryption)
-    + string PromptLastUsed()
-    + void PromptLastUsed(string lastUsed)
-    + void PromptLastUsedDate(Encryption encryption, DateTime lastUsed)
-    + DateTime PromptLastUsedDate(Encryption encryption)
-    + void OpenPromptLastUsed(Encryption encryption, string lastUsed)
-    + string OpenPromptLastUsed(Encryption encryption)
-    + string Response()
-    + void Response(string response)
-    + void OpenResponse(Encryption encryption, string response)
-    + string OpenResponse(Encryption encryption)
-    + void Display(Encryption encryption)
-    + string GetCSV(Encryption encryption, Boolean encrypted)
-    + void ParseCSV(string input, Encryption encryption, Boolean encrypted)
-    # string JSON()
-    # void JSON(string json)
-    - OpenEntry ToOpenEntry(Encryption encryption)
-}
-Entry *-- Prompt
-Entry <|-- Encryption
-Entry <|-- OpenEntry
+    {static} + Scripture SelectScripture(Scriptures scriptures)
+    + void ResetUsageData()
+    + Boolean AreAllHidden()
+    + void HideWords()
+    + void ResetHidden()
+    + string ToString()
 
-class OpenEntry
-{
-    - DateTime _date;
-    - OpenPrompt _prompt;
-    - string _response;
-    + OpenEntry(string date, OpenPrompt prompt, string response)
-    + OpenEntry(DateTime date, OpenPrompt prompt, string response)
-    + OpenEntry(Encryption encryption, string date, OpenPrompt prompt, string response)
-    + DateTime Date()
-    + void Date(DateTime date)
-    + void DateString(string date)
-    + string DateString()
-    + void CipheredDate(Encryption encryption, string date)
-    + string CipheredDate(Encryption encryption)
-    + OpenPrompt Prompt()
-    + void Prompt(OpenPrompt prompt)
-    + string PromptValue()
-    + void PromptValue(string value)
-    + void PromptCipheredValue(Encryption encryption, string value)
-    + string PromptCipheredValue(Encryption encryption)
-    + int TimesPromptUsed()
-    + void TimesPromptUsed(int timesUsed)
-    + void TimesPromptUsedString(string timesUsed)
-    + string TimesPromptUsedString()
-    + void CipheredTimesPromptUsed(Encryption encryption, string timesUsed)
-    + string CipheredTimesPromptUsed(Encryption encryption)
-    + DateTime PromptLastUsed()
-    + void PromptLastUsed(DateTime date)
-    + void PromptLastUsedString(string lastUsed)
-    + string PromptLastUsedString()
-    + void CipheredPromptLastUsed(Encryption encryption, string lastUsed)
-    + string CipheredPromptLastUsed(Encryption encryption)
-    + string Response()
-    + void Response(string response)
-    + void CipheredResponse(Encryption encryption, string response)
-    + string CipheredResponse(Encryption encryption)
-    # string JSON()
-    # void JSON(string json)
-    + Entry ToEntry(Encryption encryption)
+    {static} + void DisplayScripture(Scripture scripture)
+    # Tuple<Boolean, int, int> ScriptureSelectionApproved(List<Scripture> scriptures, Tuple<int, int>)
 }
-OpenEntry *-- OpenPrompt
-OpenEntry <|-- Encryption
-OpenEntry <|-- Entry
+Scripture *-- Reference
+Scripture *-- Verses
+
+class Reference
+{
+    {static} - string _bookChapterDelimiter = " "
+    {static} - string _chapterVersesDelimiter = ":"
+    {static} - string _verseDelimiter = "-"
+    - string _book
+    - int _chapter
+    - int _startVerse
+    - int _endVerse
+
+    + Reference(string Book, int Chapter, int Verse)
+    + Reference(string Book, int Chapter, int StartVerse, int EndVerse)
+
+    + Boolean ValidateVersesToReference(Verses)
+    + Boolean ValidateVerseToReference(Verse)
+    + string ToString()
+    + void Parse(string reference)
+}
+
+class Verses
+{
+    - List<Verse> _verses
+
+    + Verses(List<Verse>)
+
+    + Boolean AreAllHidden()
+    + int VerseCount()
+    + int WordCount()
+    + int WordCount(int verseNumber)
+    + Boolean IsHidden(int verseNumber)
+    + Boolean IsHidden(int verseNumber, int wordNumber)
+    + void Show(int verseNumber, int wordNumber)
+    + void Hide(int verseNumber, int wordNumber)
+    + string ToString()
+    + void Parse(string verses, string verseDelimiter)
+}
+Verses o-- Verse
+
+class Verse
+{
+    - List<Word> _words
+
+    + Verse(List<Word>)
+
+    + int WordCount()
+    + Boolean AreAllHidden()
+    + Boolean IsHidden(int wordNumber)
+    + void Show(int wordNumber)
+    + void Hide(int wordNumber)
+    + string ToString()
+    + void Parse(string verse, string wordDelimiter)
+}
+Verse o-- Word
+
+class Word
+{
+    - string _word
+    - string _preFixPunctuation
+    - string _postFixPunctuation
+    - Boolean _show
+    - char _charUsedToHide
+
+    + Word(string Word)
+    + Word(string PreFixPunctuation, string Word)
+    + Word(string Word, PostFixPunctuation)
+    + Word(PreFixPunctuation, string Word, PostFixPunctuation)
+    + Word(string Word, char CharUsedToHide)
+    + Word(string PreFixPunctuation, string Word, char CharUsedToHide)
+    + Word(string Word, PostFixPunctuation, char CharUsedToHide)
+    + Word(PreFixPunctuation, string Word, PostFixPunctuation, char CharUsedToHide)
+
+    + Boolean IsHidden()
+    + void Show()
+    + void Hide()
+    + string ToString()
+    + void Parse(string word)
+}
+
+class ScriptureFile
+{
+    - string _filename
+
+    + ScriptureFile()
+    + ScriptureFile(string filename)
+
+    + Boolean DoesFileExist()
+    + void WriteFile(string contents)
+    + string ReadFile()
+    - void DeleteFile()
+}
 
 @enduml
