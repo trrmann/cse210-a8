@@ -126,6 +126,7 @@
     static public void DisplayScripture(Scripture scripture)
     {
         Console.WriteLine(scripture.ToString);
+        Console.Write("\nPress enter to continue or type 'quit' to finish:  ");
     }
     public Tuple<Boolean, Tuple<int,int>> ScriptureSelectionApproved(List<Scripture> scriptures, Tuple<int, int> minMax, Boolean accepted=false)
     {
