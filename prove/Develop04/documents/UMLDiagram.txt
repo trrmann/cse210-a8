@@ -1,0 +1,158 @@
+﻿@startuml
+
+class Application
+{
+    - Boolean _isRunning
+    - Scriptures _scriptures
+    - Scripture _current
+
+    + Application()
+
+    - Boolean IsRunning()
+    - void ResetHidden()
+    - void ResetUsageData()
+
+    + void Run()
+    - string ReadResponse()
+    - Boolean EvaluateResponse(Scripture scripture, string response)
+    - void Exit()
+}
+Application *-- Scriptures
+Application <|-- Scripture
+
+class Scriptures
+{
+    {static} - string _FILENAME
+    - List<Scripture> _scriptures
+
+    + Scriptures()
+    + Scriptures(List<Scripture> scriptures)
+    {static} - Scriptures DefineScriptures()
+
+    - string ToJSON()
+    - void FromJSON(string json)
+    + void ResetUsageData()
+    + void ResetHidden()
+    + Scripture SelectScripture()
+
+    + void SaveScriptures()
+    + void LoadScriptures()
+}
+Scriptures o-- Scripture
+Scriptures <|-- ScriptureFile
+
+class Scripture
+{
+    - Reference _reference
+    - int _timesUsed
+    - DateTime _lastUsed
+    - Verses _verses
+
+    + Scripture(Reference reference, Verses verses)
+    + Scripture(Reference reference, Verse verse)
+
+    {static} + Scripture SelectScripture(Scriptures scriptures)
+    + void ResetUsageData()
+    + Boolean AreAllHidden()
+    + void HideWords()
+    + void ResetHidden()
+    + string ToString()
+
+    {static} + void DisplayScripture(Scripture scripture)
+    # Tuple<Boolean, int, int> ScriptureSelectionApproved(List<Scripture> scriptures, Tuple<int, int>)
+}
+Scripture *-- Reference
+Scripture *-- Verses
+
+class Reference
+{
+    {static} - string _bookChapterDelimiter = " "
+    {static} - string _chapterVersesDelimiter = ":"
+    {static} - string _verseDelimiter = "-"
+    - string _book
+    - int _chapter
+    - int _startVerse
+    - int _endVerse
+
+    + Reference(string Book, int Chapter, int Verse)
+    + Reference(string Book, int Chapter, int StartVerse, int EndVerse)
+
+    + Boolean ValidateVersesToReference(Verses)
+    + Boolean ValidateVerseToReference(Verse)
+    + string ToString()
+    + void Parse(string reference)
+}
+
+class Verses
+{
+    - List<Verse> _verses
+
+    + Verses(List<Verse>)
+
+    + Boolean AreAllHidden()
+    + int VerseCount()
+    + int WordCount()
+    + int WordCount(int verseNumber)
+    + Boolean IsHidden(int verseNumber)
+    + Boolean IsHidden(int verseNumber, int wordNumber)
+    + void Show(int verseNumber, int wordNumber)
+    + void Hide(int verseNumber, int wordNumber)
+    + string ToString()
+    + void Parse(string verses, string verseDelimiter)
+}
+Verses o-- Verse
+
+class Verse
+{
+    - List<Word> _words
+
+    + Verse(List<Word>)
+
+    + int WordCount()
+    + Boolean AreAllHidden()
+    + Boolean IsHidden(int wordNumber)
+    + void Show(int wordNumber)
+    + void Hide(int wordNumber)
+    + string ToString()
+    + void Parse(string verse, string wordDelimiter)
+}
+Verse o-- Word
+
+class Word
+{
+    - string _word
+    - string _preFixPunctuation
+    - string _postFixPunctuation
+    - Boolean _show
+    - char _charUsedToHide
+
+    + Word(string Word)
+    + Word(string PreFixPunctuation, string Word)
+    + Word(string Word, PostFixPunctuation)
+    + Word(PreFixPunctuation, string Word, PostFixPunctuation)
+    + Word(string Word, char CharUsedToHide)
+    + Word(string PreFixPunctuation, string Word, char CharUsedToHide)
+    + Word(string Word, PostFixPunctuation, char CharUsedToHide)
+    + Word(PreFixPunctuation, string Word, PostFixPunctuation, char CharUsedToHide)
+
+    + Boolean IsHidden()
+    + void Show()
+    + void Hide()
+    + string ToString()
+    + void Parse(string word)
+}
+
+class ScriptureFile
+{
+    - string _filename
+
+    + ScriptureFile()
+    + ScriptureFile(string filename)
+
+    + Boolean DoesFileExist()
+    + void WriteFile(string contents)
+    + string ReadFile()
+    - void DeleteFile()
+}
+
+@enduml
