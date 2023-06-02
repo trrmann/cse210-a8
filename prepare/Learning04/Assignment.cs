@@ -1,4 +1,4 @@
-class Assignment
+public class Assignment
 {
     private String _studentName;
     private String _topic;
