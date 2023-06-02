@@ -1,6 +1,6 @@
 public class Assignment
 {
-    private String _studentName;
+    protected String _studentName;
     private String _topic;
 
     public Assignment(String studentName, String topic)
