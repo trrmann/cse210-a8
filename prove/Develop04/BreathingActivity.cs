@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Develop04
+﻿namespace Develop04
 {
     public class BreathingActivity : Activity
     {
+        private static List<String> messages;
+
+        public BreathingActivity(int defaultDuration) { }
+
+        public void RunBreathingActivity(int? duration = null) { }
+        public void ResetQuestionUsageData() { }
     }
 }
