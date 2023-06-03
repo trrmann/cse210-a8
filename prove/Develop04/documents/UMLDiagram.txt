@@ -3,156 +3,94 @@
 class Application
 {
     - Boolean _isRunning
-    - Scriptures _scriptures
-    - Scripture _current
+    - List<Activity> _activities
+    - Activity _current
 
     + Application()
 
     - Boolean IsRunning()
-    - void ResetHidden()
-    - void ResetUsageData()
 
     + void Run()
     - string ReadResponse()
-    - Boolean EvaluateResponse(Scripture scripture, string response)
+    - Boolean EvaluateResponse(Activity activity, string response)
     - void Exit()
 }
-Application *-- Scriptures
-Application <|-- Scripture
+Application *-- Activity
 
-class Scriptures
+class Activity
 {
-    {static} - string _FILENAME
-    - List<Scripture> _scriptures
-
-    + Scriptures()
-    + Scriptures(List<Scripture> scriptures)
-    {static} - Scriptures DefineScriptures()
-
-    - string ToJSON()
-    - void FromJSON(string json)
-    + void ResetUsageData()
-    + void ResetHidden()
-    + Scripture SelectScripture()
-
-    + void SaveScriptures()
-    + void LoadScriptures()
-}
-Scriptures o-- Scripture
-Scriptures <|-- ScriptureFile
-
-class Scripture
-{
-    - Reference _reference
+    - {static} int _maxActivityUseSpread
+    - {static} int _maxActivityDurationSpread
+    - {static} List<String> _spinnerStrings
+    - {static} int _spinner_delay
+    - String _activityName
+    - String _activityMenuDescription
+    - String _startingMessage
+    - String _activityDescription
+    - String _finishingMessage
+    - int _defaultDuration
+    - int _duration
+    - long _totalDuration
     - int _timesUsed
     - DateTime _lastUsed
-    - Verses _verses
+    - int _pauseTime
 
-    + Scripture(Reference reference, Verses verses)
-    + Scripture(Reference reference, Verse verse)
-
-    {static} + Scripture SelectScripture(Scriptures scriptures)
-    + void ResetUsageData()
-    + Boolean AreAllHidden()
-    + void HideWords()
-    + void ResetHidden()
-    + string ToString()
-
-    {static} + void DisplayScripture(Scripture scripture)
-    # Tuple<Boolean, int, int> ScriptureSelectionApproved(List<Scripture> scriptures, Tuple<int, int>)
+    + Activity()
+    + Activity(String activityName, String activityMenuDescription, String startingMessage, String activityDescription, String finishingMessage, int defaultDuration, int pauseTime)
+    - {static} List<Activity> DefineActivities()
+    # {static} void DisplaySpinner(int duration)
+    + void ResetActivityUsageData()
+    # void SaveActivityUsageData()
+    # void LoadActivityUsageData()
 }
-Scripture *-- Reference
-Scripture *-- Verses
+Activity <|-- BreathingActivity
+Activity <|-- ReflectionActivity
+Activity <|-- ListingActivity
 
-class Reference
+class BreathingActivity
 {
-    {static} - string _bookChapterDelimiter = " "
-    {static} - string _chapterVersesDelimiter = ":"
-    {static} - string _verseDelimiter = "-"
-    - string _book
-    - int _chapter
-    - int _startVerse
-    - int _endVerse
+    - {static} List<String> messages
 
-    + Reference(string Book, int Chapter, int Verse)
-    + Reference(string Book, int Chapter, int StartVerse, int EndVerse)
+    + BreathingActivity(int defaultDuration)
 
-    + Boolean ValidateVersesToReference(Verses)
-    + Boolean ValidateVerseToReference(Verse)
-    + string ToString()
-    + void Parse(string reference)
+    + void RunBreathingActivity(int? duration=null)
+    + void ResetQuestionUsageData()
 }
 
-class Verses
+class ReflectionActivity
 {
-    - List<Verse> _verses
+    - {static} int _maxQuestionUseSpread
+    - {static} int _maxMessageUseSpread
+    - {static} List<String> questions
+    - {static} List<String> messages
+    - List<int> questionsTimesUsed
+    - List<List<int>> messagesTimesUsed
+    - List<DateTime> questionsLastUsed
+    - List<List<DateTime>> messagesLastUsed
 
-    + Verses(List<Verse>)
+    + ReflectionActivity(int defaultDuration)
 
-    + Boolean AreAllHidden()
-    + int VerseCount()
-    + int WordCount()
-    + int WordCount(int verseNumber)
-    + Boolean IsHidden(int verseNumber)
-    + Boolean IsHidden(int verseNumber, int wordNumber)
-    + void Show(int verseNumber, int wordNumber)
-    + void Hide(int verseNumber, int wordNumber)
-    + string ToString()
-    + void Parse(string verses, string verseDelimiter)
-}
-Verses o-- Verse
+    + void RunReflectionActivity(int? duration=null)
 
-class Verse
-{
-    - List<Word> _words
-
-    + Verse(List<Word>)
-
-    + int WordCount()
-    + Boolean AreAllHidden()
-    + Boolean IsHidden(int wordNumber)
-    + void Show(int wordNumber)
-    + void Hide(int wordNumber)
-    + string ToString()
-    + void Parse(string verse, string wordDelimiter)
-}
-Verse o-- Word
-
-class Word
-{
-    - string _word
-    - string _preFixPunctuation
-    - string _postFixPunctuation
-    - Boolean _show
-    - char _charUsedToHide
-
-    + Word(string Word)
-    + Word(string PreFixPunctuation, string Word)
-    + Word(string Word, PostFixPunctuation)
-    + Word(PreFixPunctuation, string Word, PostFixPunctuation)
-    + Word(string Word, char CharUsedToHide)
-    + Word(string PreFixPunctuation, string Word, char CharUsedToHide)
-    + Word(string Word, PostFixPunctuation, char CharUsedToHide)
-    + Word(PreFixPunctuation, string Word, PostFixPunctuation, char CharUsedToHide)
-
-    + Boolean IsHidden()
-    + void Show()
-    + void Hide()
-    + string ToString()
-    + void Parse(string word)
+    # {static} String SelectReflectionActivityQuestion() 
+    + void ResetQuestionUsageData()
+    # List<int> AvailableQuestionIndexes()
+    # List<List<int>> AvailableMessageIndexesPerQuestionIndexes(List<int> QuestionIndexes)
 }
 
-class ScriptureFile
+class ListingActivity
 {
-    - string _filename
+    - {static} int _maxQuestionUseSpread
+    - {static} List<String> questions
+    - List<int> questionsTimesUsed
+    - List<DateTime> questionsLastUsed
 
-    + ScriptureFile()
-    + ScriptureFile(string filename)
+    + ListingActivity(int defaultDuration)
 
-    + Boolean DoesFileExist()
-    + void WriteFile(string contents)
-    + string ReadFile()
-    - void DeleteFile()
+    + void RunListingActivity(int? duration=null)
+
+    # {static} String SelectListingActivityQuestion() 
+    # List<int> AvailableQuestionIndexi()
 }
 
 @enduml
