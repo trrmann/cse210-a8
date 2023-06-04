@@ -14,6 +14,7 @@
         }
 
         public void RunListingActivity(int? duration = null) { }
+        public void ResetQuestionUsageData() { }
 
         protected static String SelectListingActivityQuestion() { return ""; }
         protected List<int> AvailableQuestionIndexi() { return new List<int>(); }

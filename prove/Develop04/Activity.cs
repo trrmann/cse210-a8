@@ -14,7 +14,7 @@ namespace MindfullnessProgram
         protected String _startingMessage = "Uninitialized";
         protected String _activityDescription = "Uninitialized";
         protected String _finishingMessage = "Uninitialized";
-        private int _defaultDuration = 30;
+        protected int _defaultDuration = 30;
         protected int _duration = 0;
         private long _totalDuration = 0;
         private int _timesUsed = 0;
