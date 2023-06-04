@@ -1,4 +1,4 @@
-﻿namespace Develop04
+﻿namespace MindfullnessProgram
 {
     public class ListingActivity : Activity
     {
@@ -8,6 +8,10 @@
         private List<DateTime> questionsLastUsed;
 
         public ListingActivity(int defaultDuration) { }
+
+        public ListingActivity()
+        {
+        }
 
         public void RunListingActivity(int? duration = null) { }
 

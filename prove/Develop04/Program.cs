@@ -1,9 +1,10 @@
-using System;
+using MindfullnessProgram;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello Develop04 World!");
+        Application application = new();
+        application.Run();
     }
 }

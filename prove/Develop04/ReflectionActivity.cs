@@ -1,4 +1,4 @@
-﻿namespace Develop04
+﻿namespace MindfullnessProgram
 {
     public class ReflectionActivity : Activity
     {
@@ -12,6 +12,10 @@
         private List<List<DateTime>> messagesLastUsed;
 
         public ReflectionActivity(int defaultDuration) { }
+
+        public ReflectionActivity()
+        {
+        }
 
         public void RunReflectionActivity(int? duration = null) { }
 
