@@ -8,7 +8,7 @@
         private static readonly int _breathingDefaultDuration = 20;
         private static readonly int _breathingPauseTime = 600;
         private int _spinnerTime = 6;
-        private static readonly List<String> messages = new(){"Breathe in...", "Breathe out..."};
+        private static readonly List<String> _messages = new(){"Breathe in...", "Breathe out..."};
         public BreathingActivity(int defaultDuration) : base(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime) {
             Init(defaultDuration);
         }
@@ -27,13 +27,51 @@
             Init(20);
         }
         public void RunBreathingActivity() {
-            int duration = _defaultDuration;
-            Activity.DisplaySpinner(0, _spinnerTime);
             Console.WriteLine(_startingMessage);
-            DisplayCounter(duration, 1000);
+            PromptForDuration();
+            PrepareForStart(0, _spinnerTime);
+            DateTime dateTime = DateTime.Now;
+            DateTime done = dateTime.AddSeconds(_duration);
+            int eventTime;
+            int eventUnitMS;
+            Boolean first = true;
+            if (_duration > 20)
+            {
+                eventTime = 5;
+                eventUnitMS = 1000;
+            }
+            else if (_duration > 15)
+            {
+                eventTime = 4;
+                eventUnitMS = 1000;
+            }
+            else if (_duration > 5)
+            {
+                eventTime = 3;
+                eventUnitMS = 1000;
+            }
+            else
+            {
+                eventTime = 1;
+                eventUnitMS = 250;
+            }
+            while (done.CompareTo(DateTime.Now) > 0)
+            {
+                if(first)
+                {
+                    Console.WriteLine(_messages[0]);                    
+                    DisplayCounter(eventTime, eventUnitMS);
+                }
+                else
+                {
+                    Console.WriteLine(_messages[1]);
+                    DisplayCounter(eventTime, eventUnitMS, true, true);
+                }
+                first=!first;
+            }
+            Console.WriteLine(_finishingMessage);
             Activity.DisplaySpinner(1, _spinnerTime);
-            DisplayCounter(duration, 1000, true, true);
-            ReportUsage(duration);
+            ReportUsage(_duration);
         }
     }
 }

@@ -34,13 +34,14 @@
             Init(20);
         }
         public void RunListingActivity() {
-            int duration = _defaultDuration;
-            Activity.DisplaySpinner(2, _spinnerTime);
             Console.WriteLine(_startingMessage);
-            DisplayCounter(duration, 500, true, false, false);
+            PromptForDuration();
+            PrepareForStart(2, _spinnerTime);
+            DisplayCounter(_duration, 500, true, false, false);
             Activity.DisplaySpinner(3, _spinnerTime);
-            DisplayCounter(duration, 1000, true, true, false);
-            ReportUsage(duration);
+            DisplayCounter(_duration, 1000, true, true, false);
+            Console.WriteLine(_finishingMessage);
+            ReportUsage(_duration);
         }
         public void ResetQuestionUsageData() { }
 

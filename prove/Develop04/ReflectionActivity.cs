@@ -38,14 +38,15 @@
             Init(20);
         }
         public void RunReflectionActivity() {
-            int duration = _defaultDuration;
-            Activity.DisplaySpinner(2, _spinnerTime);
             Console.WriteLine(_startingMessage);
-            DisplayCounter(duration, 500, false);
-            DisplayCounter(duration, 500, false, true);
+            PromptForDuration();
+            PrepareForStart(2, _spinnerTime);
+            DisplayCounter(_duration, 500, false);
+            DisplayCounter(_duration, 500, false, true);
             Activity.DisplaySpinner(3, _spinnerTime);
-            DisplayCounter(duration, 500, false, true, true, 0);
-            ReportUsage(duration);
+            DisplayCounter(_duration, 500, false, true, true, 0);
+            Console.WriteLine(_finishingMessage);
+            ReportUsage(_duration);
         }
 
         protected static String SelectReflectionActivityQuestion() { return ""; }

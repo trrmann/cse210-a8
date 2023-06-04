@@ -103,6 +103,33 @@ namespace MindfullnessProgram
         {
             Console.WriteLine($"{menuOptionNumber}{separator}{_activityMenuDescription}");
         }
+        protected void PromptForDuration()
+        {
+            Console.WriteLine("How long would you like to perform this activity in seconds?");
+            Console.Write(">  ");
+            String response = Console.ReadLine();
+            int duration;
+            try
+            {
+                duration = int.Parse(response);
+            }
+            catch (FormatException)
+            {
+                duration = _defaultDuration;
+            }
+            if (duration < 0) duration = _defaultDuration;
+            _duration = duration;
+        }
+        protected static void PrepareForStart(int spinnerIndex, int spinnerTime)
+        {
+            Console.WriteLine("Prepare to begin... ");
+            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Console.WriteLine("On your mark... ");
+            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Console.WriteLine("Get set... ");
+            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Console.WriteLine("Go!");
+        }
         protected static void DisplaySpinner(int spinnerIndex, int duration) {
             DateTime dateTime = DateTime.Now;
             DateTime done = dateTime.AddSeconds(duration);
