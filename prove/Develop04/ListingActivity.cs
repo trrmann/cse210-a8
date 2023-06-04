@@ -18,14 +18,8 @@
             "Who are some of your personal heroes?"
         };
         private readonly int _spinnerTime = 6;
-        private List<int> questionsTimesUsed = new() { 0, 0, 0, 0, 0 };
-        private List<DateTime> questionsLastUsed = new() {
-            DateTime.MinValue,
-            DateTime.MinValue,
-            DateTime.MinValue,
-            DateTime.MinValue,
-            DateTime.MinValue
-        };
+        private List<int> questionsTimesUsed;
+        private List<DateTime> questionsLastUsed;
         public ListingActivity(int defaultDuration) : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
         {
             Init(defaultDuration);
@@ -38,6 +32,7 @@
         {
             if (callBaseInit) Init(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime);
             _defaultDuration = defaultDuration;
+            ResetQuestionUsageData();
         }
         protected void Init(Boolean callBaseInit = false)
         {
@@ -73,6 +68,7 @@
                 DateTime.MinValue,
                 DateTime.MinValue
             };
+            ResetActivityUsageData();
         }
         protected List<int> AvailableQuestionIndexes() {
             int minCount = int.MaxValue;
@@ -89,8 +85,8 @@
                 int index = questions.IndexOf(question);
                 int timesUsedSpread = questionsTimesUsed[index] - minCount;
                 int lastUsedSpread = (questionsLastUsed[index] - minLastUsed).Days;
-                if (timesUsedSpread > _maxQuestionUseSpread) available = false;
-                if (questionsLastUsed[index] > DateTime.MinValue && lastUsedSpread < _minDaysQuestionUseSpread) available = false;
+                if (timesUsedSpread >= _maxQuestionUseSpread) available = false;
+                if (questionsLastUsed[index] > DateTime.MinValue && lastUsedSpread <= _minDaysQuestionUseSpread) available = false;
                 if (available) result.Add(index);
             });
             if (result.Count == 0)
@@ -108,7 +104,8 @@
         }
         protected static String SelectListingActivityQuestion(List<int> availableIndexes) {
             Random random = new();
-            return questions[random.Next(0, availableIndexes.Count)];
+            int index = random.Next(0, availableIndexes.Count);
+            return questions[availableIndexes[index]];
         }
         protected void ReportUsage(int duration, String question, DateTime? dateTime = null)
         {

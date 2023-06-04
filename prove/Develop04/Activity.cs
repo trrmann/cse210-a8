@@ -21,9 +21,9 @@ namespace MindfullnessProgram
         protected String _startingMessage = "Uninitialized";
         protected int _defaultDuration = 30;
         protected int _duration = 0;
-        private long _totalDuration = 0;
-        private int _timesUsed = 0;
-        private DateTime _lastUsed = DateTime.MinValue;
+        private long _totalDuration;
+        private int _timesUsed;
+        private DateTime _lastUsed;
         private int _pauseTime = 500;
         public Activity(String activityName, String activityMenuDescription, String startingMessage, int defaultDuration, int pauseTime)
         {
@@ -48,7 +48,8 @@ namespace MindfullnessProgram
             _startingMessage = startingMessage;
             _defaultDuration = defaultDuration;
             _pauseTime = pauseTime;
-            if(_activityName != "Undefined") LoadActivityUsageData();
+            ResetActivityUsageData();
+            if (_activityName != "Undefined") LoadActivityUsageData();
         }
         protected void Init()
         {
@@ -94,9 +95,9 @@ namespace MindfullnessProgram
             int timesSpread = _timesUsed - minCount;
             long durationSpread = _totalDuration - minTotalDuration;
             TimeSpan dateSpread = _lastUsed - minLastUsed;
-            if(timesSpread > _maxActivityUseSpread) available = false;
-            if (durationSpread > _maxActivityDurationSpread) available = false;
-            if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days < _minDaysSpread) available = false;
+            if(timesSpread >= _maxActivityUseSpread) available = false;
+            if (durationSpread >= _maxActivityDurationSpread) available = false;
+            if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days <= _minDaysSpread) available = false;
             return available;
         }
         public void DisplayMenuLine(int menuOptionNumber, String separator)

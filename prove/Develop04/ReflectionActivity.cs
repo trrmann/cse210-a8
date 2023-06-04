@@ -7,10 +7,9 @@
         private static readonly String _reflectionStartingMessage = "This activity will help you reflect on times in your life when you have shown strength and resilience. This will help you recognize the power you have and how you can use it in other aspects of your life.";
         private static readonly int _reflectionDefaultDuration = 40;
         private static readonly int _reflectionPauseTime = 400;
-        private readonly int _spinnerTime = 6;
-        private static int _maxQuestionUseSpread = 5;
+        private static readonly int _maxQuestionUseSpread = 1;
         private static readonly int _minDaysQuestionUseSpread = 1;
-        private static int _maxMessageUseSpread = 5;
+        private static readonly int _maxMessageUseSpread = 1;
         private static readonly int _minDaysMessageUseSpread = 1;
         private static readonly List<String> questions = new() {
             "Think of a time when you stood up for someone else.",
@@ -29,26 +28,11 @@
             "What did you learn about yourself through this experience?",
             "How can you keep this experience in mind in the future?"
         };
-        private List<int> questionsTimesUsed = new(){0,0,0,0};
-        private List<List<int>> messagesTimesUsed = new() {
-            new(){ 0,0,0,0,0,0,0,0,0},
-            new(){ 0,0,0,0,0,0,0,0,0},
-            new(){ 0,0,0,0,0,0,0,0,0},
-            new(){ 0,0,0,0,0,0,0,0,0}
-        };
-        private List<DateTime> questionsLastUsed = new() {
-            DateTime.MinValue,
-            DateTime.MinValue,
-            DateTime.MinValue,
-            DateTime.MinValue
-        };
-        private List<List<DateTime>> messagesLastUsed = new() {
-            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
-            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
-            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
-            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue }
-        };
-
+        private readonly int _spinnerTime = 6;
+        private List<int> questionsTimesUsed;
+        private List<List<int>> messagesTimesUsed;
+        private List<DateTime> questionsLastUsed;
+        private List<List<DateTime>> messagesLastUsed;
         public ReflectionActivity(int defaultDuration) : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
         {
             Init(defaultDuration);
@@ -63,6 +47,7 @@
         {
             if (callBaseInit) Init(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime);
             _defaultDuration = defaultDuration;
+            ResetQuestionUsageData();
         }
         protected void Init(Boolean callBaseInit = false)
         {
@@ -82,7 +67,28 @@
         }
 
         protected static String SelectReflectionActivityQuestion() { return ""; }
-        public void ResetQuestionUsageData() { }
+        public void ResetQuestionUsageData() {
+            questionsTimesUsed = new() { 0, 0, 0, 0 };
+            messagesTimesUsed = new() {
+                new(){ 0,0,0,0,0,0,0,0,0},
+                new(){ 0,0,0,0,0,0,0,0,0},
+                new(){ 0,0,0,0,0,0,0,0,0},
+                new(){ 0,0,0,0,0,0,0,0,0}
+            };
+            questionsLastUsed = new() {
+                DateTime.MinValue,
+                DateTime.MinValue,
+                DateTime.MinValue,
+                DateTime.MinValue
+            };
+            messagesLastUsed = new() {
+                new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+                new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+                new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+                new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue }
+            };
+            ResetActivityUsageData();
+        }
         protected List<int> AvailableQuestionIndexes() { return new List<int>(); }
         protected List<List<int>> AvailableMessageIndexesPerQuestionIndexes(List<int> QuestionIndexes) { return new List<List<int>>(); }
     }
