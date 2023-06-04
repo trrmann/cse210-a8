@@ -31,8 +31,8 @@ namespace MindfullnessProgram
             List<Activity> result = new()
             {
                 new BreathingActivity()
-//                , new ReflectionActivity()
-//                , new ListingActivity()
+                , new ReflectionActivity()
+                , new ListingActivity()
             };
             return result;
         }
@@ -102,7 +102,7 @@ namespace MindfullnessProgram
         }
         protected static void DisplaySpinner(int duration) {
             DateTime dateTime = DateTime.Now;
-            DateTime done = new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second + duration, dateTime.Millisecond);
+            DateTime done = dateTime.AddSeconds(duration);
             int index = 0;
             Boolean init = false;
             while(done.CompareTo(DateTime.Now) > 0)

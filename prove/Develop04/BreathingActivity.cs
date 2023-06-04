@@ -2,7 +2,7 @@
 {
     public class BreathingActivity : Activity
     {
-        private int _spinnerTime = 10;
+        private int _spinnerTime = 0;
         private static List<String> messages;
         public BreathingActivity(int defaultDuration) : base("BreathingActivity", "Breathing Activity", "to do", "to do", "to do", 20, 600) {
             Init(defaultDuration);

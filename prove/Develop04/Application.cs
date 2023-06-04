@@ -32,16 +32,23 @@
         }
         private static String ReadResponse() { return Console.ReadLine(); }
         private Boolean EvaluateResponse(List<Activity> activities, String response) {
-            int optionSelected = int.Parse(response);
-            if (optionSelected > 0 && optionSelected <= activities.Count) {
-                _current = activities[optionSelected - 1];
-                if (_current.GetType()==typeof(BreathingActivity)) ((BreathingActivity)_current).RunBreathingActivity();
-                else if (_current.GetType() == typeof(ReflectionActivity)) ((ReflectionActivity)_current).RunReflectionActivity();
-                else if (_current.GetType() == typeof(ListingActivity)) ((ListingActivity)_current).RunListingActivity();
+            try
+            {
+                int optionSelected = int.Parse(response);
+                if (optionSelected > 0 && optionSelected <= activities.Count) {
+                    _current = activities[optionSelected - 1];
+                    if (_current.GetType()==typeof(BreathingActivity)) ((BreathingActivity)_current).RunBreathingActivity();
+                    else if (_current.GetType() == typeof(ReflectionActivity)) ((ReflectionActivity)_current).RunReflectionActivity();
+                    else if (_current.GetType() == typeof(ListingActivity)) ((ListingActivity)_current).RunListingActivity();
+                    return true;
+                }
+                else if(optionSelected == activities.Count+1) return false;
+                else return true;
+                }
+            catch (FormatException)
+            {
                 return true;
             }
-            else if(optionSelected == activities.Count+1) return false;
-            else return true;
         }
         private void Exit() {
             _isRunning = false;
