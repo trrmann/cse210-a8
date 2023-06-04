@@ -2,7 +2,12 @@
 {
     public class ReflectionActivity : Activity
     {
-        private int _spinnerTime = 0;
+        private static readonly String _reflectionName = "ReflectionActivity";
+        private static readonly String _reflectionMenuDescription = "Reflection Activity";
+        private static readonly String _reflectionStartingMessage = "to do.";
+        private static readonly int _reflectionDefaultDuration = 40;
+        private static readonly int _reflectionPauseTime = 400;
+        private int _spinnerTime = 6;
         private static int _maxQuestionUseSpread;
         private static int _maxMessageUseSpread;
         private static List<String> questions;
@@ -12,19 +17,19 @@
         private List<DateTime> questionsLastUsed;
         private List<List<DateTime>> messagesLastUsed;
 
-        public ReflectionActivity(int defaultDuration) : base("ReflectionActivity", "Reflection Activity", "to do", "to do", "to do", 20, 600)
+        public ReflectionActivity(int defaultDuration) : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
         {
             Init(defaultDuration);
         }
 
-        public ReflectionActivity() : base("ReflectionActivity", "Reflection Activity", "to do", "to do", "to do", 20, 600)
+        public ReflectionActivity() : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
         {
             Init();
         }
 
         protected void Init(int defaultDuration, Boolean callBaseInit = false)
         {
-            if (callBaseInit) Init("ReflectionActivity", "Reflection Activity", "to do", "to do", "to do", 20, 600);
+            if (callBaseInit) Init(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime);
             _defaultDuration = defaultDuration;
         }
         protected void Init(Boolean callBaseInit = false)
@@ -32,10 +37,15 @@
             if (callBaseInit) base.Init();
             Init(20);
         }
-        public void RunReflectionActivity(int? duration = null) {
-            duration ??= _defaultDuration;
-            Activity.DisplaySpinner(_spinnerTime);
-            ReportUsage((int)duration);
+        public void RunReflectionActivity() {
+            int duration = _defaultDuration;
+            Activity.DisplaySpinner(2, _spinnerTime);
+            Console.WriteLine(_startingMessage);
+            DisplayCounter(duration, 500, false);
+            DisplayCounter(duration, 500, false, true);
+            Activity.DisplaySpinner(3, _spinnerTime);
+            DisplayCounter(duration, 500, false, true, true, 0);
+            ReportUsage(duration);
         }
 
         protected static String SelectReflectionActivityQuestion() { return ""; }

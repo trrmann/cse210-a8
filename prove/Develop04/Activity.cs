@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 
 namespace MindfullnessProgram
 {
@@ -7,22 +8,26 @@ namespace MindfullnessProgram
         private static readonly int _maxActivityUseSpread = 5;
         private static readonly int _maxActivityDurationSpread = 60 * 60 * 12;
         private static readonly int _minDaysSpread = 1;
-        private static readonly List<String> _spinnerStrings = new() {"-","\\","|","/"};
+        private static readonly List<List<String>> _spinnerStrings = new() {
+            new() {"-","\\","|","/"},
+            new() {"^",">","v","<"},
+            new() {".","o","O","o"},
+            new() {".","x","X","x"}
+        };
         private static readonly int _spinner_delay = 750;
+        protected static readonly String _finishingMessage = "to do.";
         private String _activityName = "Uninitialized";
         private String _activityMenuDescription = "Uninitialized";
         protected String _startingMessage = "Uninitialized";
-        protected String _activityDescription = "Uninitialized";
-        protected String _finishingMessage = "Uninitialized";
         protected int _defaultDuration = 30;
         protected int _duration = 0;
         private long _totalDuration = 0;
         private int _timesUsed = 0;
         private DateTime _lastUsed = DateTime.MinValue;
         private int _pauseTime = 500;
-        public Activity(String activityName, String activityMenuDescription, String startingMessage, String activityDescription, String finishingMessage, int defaultDuration, int pauseTime)
+        public Activity(String activityName, String activityMenuDescription, String startingMessage, int defaultDuration, int pauseTime)
         {
-            Init(activityName, activityMenuDescription, startingMessage, activityDescription, finishingMessage, defaultDuration, pauseTime);
+            Init(activityName, activityMenuDescription, startingMessage, defaultDuration, pauseTime);
         }
         public Activity() {
             Init();
@@ -36,20 +41,18 @@ namespace MindfullnessProgram
             };
             return result;
         }
-        protected void Init(String activityName, String activityMenuDescription, String startingMessage, String activityDescription, String finishingMessage, int defaultDuration, int pauseTime)
+        protected void Init(String activityName, String activityMenuDescription, String startingMessage, int defaultDuration, int pauseTime)
         {
             _activityName = activityName;
             _activityMenuDescription = activityMenuDescription;
             _startingMessage = startingMessage;
-            _activityDescription = activityDescription;
-            _finishingMessage = finishingMessage;
             _defaultDuration = defaultDuration;
             _pauseTime = pauseTime;
             if(_activityName != "Undefined") LoadActivityUsageData();
         }
         protected void Init()
         {
-            Init("Undefined", "Undefined", "Undefined", "Undefined", "Undefined", _defaultDuration, _pauseTime);
+            Init("Undefined", "Undefined", "Undefined", _defaultDuration, _pauseTime);
         }
         public static List<Activity> AvailableActivities(List<Activity> allActivities)
         {
@@ -100,7 +103,7 @@ namespace MindfullnessProgram
         {
             Console.WriteLine($"{menuOptionNumber}{separator}{_activityMenuDescription}");
         }
-        protected static void DisplaySpinner(int duration) {
+        protected static void DisplaySpinner(int spinnerIndex, int duration) {
             DateTime dateTime = DateTime.Now;
             DateTime done = dateTime.AddSeconds(duration);
             int index = 0;
@@ -109,12 +112,67 @@ namespace MindfullnessProgram
             {
                 if (init) Console.Write("\b \b");
                 init = true;
-                Console.Write(_spinnerStrings[index]);
+                Console.Write(_spinnerStrings[spinnerIndex][index]);
                 Thread.Sleep(_spinner_delay);
                 index++;
-                if (index >= _spinnerStrings.Count) index = 0;
+                if (index >= _spinnerStrings[spinnerIndex].Count) index = 0;
             }
             Console.Write("\b \b");
+        }
+        protected static void DisplayCounter(int durationInSeconds, int incrementalPauseMS, Boolean showNumeric=true, Boolean numericForward=false, Boolean cleanNumeric=true, int maxNonNumeric = 10)
+        {
+            DateTime dateTime = DateTime.Now;
+            DateTime done = dateTime.AddSeconds(durationInSeconds);
+            int index;
+            if (incrementalPauseMS < 1) incrementalPauseMS = 1;
+            if (maxNonNumeric < 0) maxNonNumeric = 0;
+            if (numericForward)
+            {
+                index = 1;
+            }
+            else
+            {
+                index = durationInSeconds * (1000/incrementalPauseMS);
+            }
+            String prev;
+            Boolean init = false;
+            while (done.CompareTo(DateTime.Now) > 0)
+            {
+                if (init && showNumeric && cleanNumeric)
+                {
+                    if (numericForward) prev = (index - 1).ToString();
+                    else prev = (index + 1).ToString();
+                    foreach (char c in prev) Console.Write("\b");
+                    foreach (char c in prev) Console.Write(" ");
+                    foreach (char c in prev) Console.Write("\b");
+                } else if (init && showNumeric && !cleanNumeric)
+                {
+                    Console.Write(" ");
+                }
+                init = true;
+                if (showNumeric) Console.Write(index);
+                else if(maxNonNumeric>0) {
+                    if (!showNumeric && !numericForward && (index / maxNonNumeric) % 2 == 0) Console.Write("\b \b");
+                    else if (!showNumeric && numericForward && (index / maxNonNumeric) % 2 == 1) Console.Write("\b \b");
+                    else Console.Write(".");
+                }
+                else Console.Write(".");
+                Thread.Sleep(incrementalPauseMS);
+                if (numericForward) index++;
+                else index--;
+            }
+            if (init && showNumeric && cleanNumeric)
+            {
+                if (numericForward) prev = (index - 1).ToString();
+                else prev = (index + 1).ToString();
+                for (int i = 0; i < prev.Length; i++) Console.Write("\b");
+                for (int i = 0; i < prev.Length; i++) Console.Write(" ");
+                for (int i = 0; i < prev.Length; i++) Console.Write("\b");
+            }
+            else
+            {
+                Console.WriteLine("");
+            }
         }
         protected void ReportUsage(int duration, DateTime? dateTime = null)
         {

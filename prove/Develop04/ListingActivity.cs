@@ -2,25 +2,30 @@
 {
     public class ListingActivity : Activity
     {
-        private int _spinnerTime = 0;
+        private static readonly String _listingName = "ListingActivity";
+        private static readonly String _listingMenuDescription = "Listing Activity";
+        private static readonly String _listingStartingMessage = "to do.";
+        private static readonly int _listingDefaultDuration = 30;
+        private static readonly int _listingPauseTime = 500;
+        private int _spinnerTime = 6;
         private static int _maxQuestionUseSpread;
         private static List<String> questions;
         private List<int> questionsTimesUsed;
         private List<DateTime> questionsLastUsed;
 
-        public ListingActivity(int defaultDuration) : base("ListingActivity", "Listing Activity", "to do", "to do", "to do", 20, 600)
+        public ListingActivity(int defaultDuration) : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
         {
             Init(defaultDuration);
         }
 
-        public ListingActivity() : base("ListingActivity", "Listing Activity", "to do", "to do", "to do", 20, 600)
+        public ListingActivity() : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
         {
             Init();
         }
 
         protected void Init(int defaultDuration, Boolean callBaseInit = false)
         {
-            if (callBaseInit) Init("ListingActivity", "Listing Activity", "to do", "to do", "to do", 20, 600);
+            if (callBaseInit) Init(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime);
             _defaultDuration = defaultDuration;
         }
         protected void Init(Boolean callBaseInit = false)
@@ -28,10 +33,14 @@
             if (callBaseInit) base.Init();
             Init(20);
         }
-        public void RunListingActivity(int? duration = null) {
-            duration ??= _defaultDuration;
-            Activity.DisplaySpinner(_spinnerTime);
-            ReportUsage((int)duration);
+        public void RunListingActivity() {
+            int duration = _defaultDuration;
+            Activity.DisplaySpinner(2, _spinnerTime);
+            Console.WriteLine(_startingMessage);
+            DisplayCounter(duration, 500, true, false, false);
+            Activity.DisplaySpinner(3, _spinnerTime);
+            DisplayCounter(duration, 1000, true, true, false);
+            ReportUsage(duration);
         }
         public void ResetQuestionUsageData() { }
 
