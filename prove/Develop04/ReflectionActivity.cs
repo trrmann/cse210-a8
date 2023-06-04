@@ -4,18 +4,50 @@
     {
         private static readonly String _reflectionName = "ReflectionActivity";
         private static readonly String _reflectionMenuDescription = "Reflection Activity";
-        private static readonly String _reflectionStartingMessage = "to do.";
+        private static readonly String _reflectionStartingMessage = "This activity will help you reflect on times in your life when you have shown strength and resilience. This will help you recognize the power you have and how you can use it in other aspects of your life.";
         private static readonly int _reflectionDefaultDuration = 40;
         private static readonly int _reflectionPauseTime = 400;
-        private int _spinnerTime = 6;
-        private static int _maxQuestionUseSpread;
-        private static int _maxMessageUseSpread;
-        private static List<String> questions;
-        private static List<String> messages;
-        private List<int> questionsTimesUsed;
-        private List<List<int>> messagesTimesUsed;
-        private List<DateTime> questionsLastUsed;
-        private List<List<DateTime>> messagesLastUsed;
+        private readonly int _spinnerTime = 6;
+        private static int _maxQuestionUseSpread = 5;
+        private static readonly int _minDaysQuestionUseSpread = 1;
+        private static int _maxMessageUseSpread = 5;
+        private static readonly int _minDaysMessageUseSpread = 1;
+        private static readonly List<String> questions = new() {
+            "Think of a time when you stood up for someone else.",
+            "Think of a time when you did something really difficult.",
+            "Think of a time when you helped someone in need.",
+            "Think of a time when you did something truly selfless."
+        };
+        private static readonly List<String> messages = new() {
+            "Why was this experience meaningful to you?",
+            "Have you ever done anything like this before?",
+            "How did you get started?",
+            "How did you feel when it was complete?",
+            "What made this time different than other times when you were not as successful?",
+            "What is your favorite thing about this experience?",
+            "What could you learn from this experience that applies to other situations?",
+            "What did you learn about yourself through this experience?",
+            "How can you keep this experience in mind in the future?"
+        };
+        private List<int> questionsTimesUsed = new(){0,0,0,0};
+        private List<List<int>> messagesTimesUsed = new() {
+            new(){ 0,0,0,0,0,0,0,0,0},
+            new(){ 0,0,0,0,0,0,0,0,0},
+            new(){ 0,0,0,0,0,0,0,0,0},
+            new(){ 0,0,0,0,0,0,0,0,0}
+        };
+        private List<DateTime> questionsLastUsed = new() {
+            DateTime.MinValue,
+            DateTime.MinValue,
+            DateTime.MinValue,
+            DateTime.MinValue
+        };
+        private List<List<DateTime>> messagesLastUsed = new() {
+            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue },
+            new(){ DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue, DateTime.MinValue }
+        };
 
         public ReflectionActivity(int defaultDuration) : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
         {
