@@ -37,12 +37,10 @@
         {
             Init(defaultDuration);
         }
-
         public ReflectionActivity() : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
         {
             Init();
         }
-
         protected void Init(int defaultDuration, Boolean callBaseInit = false)
         {
             if (callBaseInit) Init(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime);
@@ -57,16 +55,34 @@
         public void RunReflectionActivity() {
             Console.WriteLine(_startingMessage);
             PromptForDuration();
-            PrepareForStart(2, _spinnerTime);
-            DisplayCounter(_duration, 500, false);
-            DisplayCounter(_duration, 500, false, true);
-            Activity.DisplaySpinner(3, _spinnerTime);
-            DisplayCounter(_duration, 500, false, true, true, 0);
+            String question = SelectListingActivityQuestion(AvailableQuestionIndexes());
+            Console.WriteLine("\n" + question + "\n");
+            DisplayCounter(5, 1000);
+            PrepareForStart(3, _spinnerTime);
+            DateTime dateTime = DateTime.Now;
+            DateTime done = dateTime.AddSeconds(_duration);
+            int timeRemain = _duration;
+            String message;
+            while (done.CompareTo(DateTime.Now) > 0)
+            {
+                message = SelectListingActivityMessage(AvailableMessageIndexesPerQuestionIndexes(question));
+                Console.WriteLine("\n"+ message+"\n");
+                if(timeRemain < 20)
+                {
+                    DisplayCounter(timeRemain, 1000);
+                    timeRemain -= timeRemain;
+                }
+                else
+                {
+                    DisplayCounter(10, 1000);
+                    timeRemain -= 10;
+                }
+                ReportMessageUsage(question, message);
+            }
             Console.WriteLine(_finishingMessage);
+            DisplayCounter(8, 100, false);
             ReportUsage(_duration);
         }
-
-        protected static String SelectReflectionActivityQuestion() { return ""; }
         public void ResetQuestionUsageData() {
             questionsTimesUsed = new() { 0, 0, 0, 0 };
             messagesTimesUsed = new() {
@@ -89,7 +105,88 @@
             };
             ResetActivityUsageData();
         }
-        protected List<int> AvailableQuestionIndexes() { return new List<int>(); }
-        protected List<List<int>> AvailableMessageIndexesPerQuestionIndexes(List<int> QuestionIndexes) { return new List<List<int>>(); }
+        protected static String SelectListingActivityQuestion(List<int> availableIndexes)
+        {
+            Random random = new();
+            int index = random.Next(0, availableIndexes.Count);
+            return questions[availableIndexes[index]];
+        }
+        protected List<int> AvailableQuestionIndexes()
+        {
+            int minCount = int.MaxValue;
+            DateTime minLastUsed = DateTime.MaxValue;
+            questionsTimesUsed.ForEach((count) => {
+                if (count < minCount) minCount = count;
+            });
+            questionsLastUsed.ForEach((dateTime) => {
+                if (dateTime < minLastUsed) minLastUsed = dateTime;
+            });
+            List<int> result = new();
+            questions.ForEach((question) => {
+                Boolean available = true;
+                int index = questions.IndexOf(question);
+                int timesUsedSpread = questionsTimesUsed[index] - minCount;
+                int lastUsedSpread = (questionsLastUsed[index] - minLastUsed).Days;
+                if (timesUsedSpread >= _maxQuestionUseSpread) available = false;
+                if (questionsLastUsed[index] > DateTime.MinValue && lastUsedSpread <= _minDaysQuestionUseSpread) available = false;
+                if (available) result.Add(index);
+            });
+            if (result.Count == 0)
+            {
+                questions.ForEach((question) => {
+                    Boolean available = true;
+                    int index = questions.IndexOf(question);
+                    int timesUsedSpread = questionsTimesUsed[index] - minCount;
+                    int lastUsedSpread = (questionsLastUsed[index] - minLastUsed).Days;
+                    if (timesUsedSpread > _maxQuestionUseSpread) available = false;
+                    if (available) result.Add(index);
+                });
+            }
+            return result;
+        }
+        protected static String SelectListingActivityMessage(List<int> availableIndexes)
+        {
+            Random random = new();
+            int index = random.Next(0, availableIndexes.Count);
+            return messages[availableIndexes[index]];
+        }
+        protected List<int> AvailableMessageIndexesPerQuestionIndexes(String question) {
+            int questionIndex = questions.IndexOf(question);
+            int minCount = int.MaxValue;
+            DateTime minLastUsed = DateTime.MaxValue;
+            messagesTimesUsed[questionIndex].ForEach((count) => {
+                if (count < minCount) minCount = count;
+            });
+            messagesLastUsed[questionIndex].ForEach((dateTime) => {
+                if (dateTime < minLastUsed) minLastUsed = dateTime;
+            });
+            List<int> result = new();
+            messages.ForEach((message) => {
+                Boolean available = true;
+                int index = messages.IndexOf(message);
+                int timesUsedSpread = messagesTimesUsed[questionIndex][index] - minCount;
+                int lastUsedSpread = (messagesLastUsed[questionIndex][index] - minLastUsed).Days;
+                if (timesUsedSpread >= _maxMessageUseSpread) available = false;
+                if (messagesLastUsed[questionIndex][index] > DateTime.MinValue && lastUsedSpread <= _minDaysMessageUseSpread) available = false;
+                if (available) result.Add(index);
+            });
+            if (result.Count == 0)
+            {
+                messages.ForEach((message) => {
+                    Boolean available = true;
+                    int index = messages.IndexOf(message);
+                    int timesUsedSpread = messagesTimesUsed[questionIndex][index] - minCount;
+                    if (timesUsedSpread >= _maxMessageUseSpread) available = false;
+                    if (available) result.Add(index);
+                });
+            }
+            return result; 
+        }
+        protected void ReportMessageUsage(String question, String message) {
+            int questionIndex = questions.IndexOf(question);
+            int messageIndex = messages.IndexOf(message);
+            messagesTimesUsed[questionIndex][messageIndex]++;
+            messagesLastUsed[questionIndex][messageIndex] = DateTime.Now;
+        }
     }
 }

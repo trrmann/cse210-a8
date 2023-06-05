@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-
-namespace MindfullnessProgram
+﻿namespace MindfullnessProgram
 {
     public class Activity
     {
@@ -215,7 +212,9 @@ namespace MindfullnessProgram
             _timesUsed = 0;
             _lastUsed = DateTime.MinValue;
         }
-        protected void SaveActivityUsageData() { }
-        protected void LoadActivityUsageData() { }
+        protected void SaveActivityUsageData() {
+        }
+        protected void LoadActivityUsageData() {
+        }
     }
 }
