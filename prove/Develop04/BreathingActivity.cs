@@ -5,28 +5,30 @@
         private static readonly String _breathingName = "BreathingActivity";
         private static readonly String _breathingMenuDescription = "Breathing Activity";
         private static readonly String _breathingStartingMessage = "This activity will help you relax by walking your through breathing in and out slowly. Clear your mind and focus on your breathing.";
+        private static readonly List<String> _messages = new() { "Breathe in...", "Breathe out..." };
+        private static readonly int _spinnerTime = 10;
         private static readonly int _breathingDefaultDuration = 20;
         private static readonly int _breathingPauseTime = 600;
-        private int _spinnerTime = 6;
-        private static readonly List<String> _messages = new(){"Breathe in...", "Breathe out..."};
-        public BreathingActivity(int defaultDuration) : base(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime) {
+        private void Init(int defaultDuration, Boolean callBaseInit = false)
+        {
+            if (callBaseInit) Init(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime);
+            _defaultDuration = defaultDuration;
+        }
+        private void Init(Boolean callBaseInit = false)
+        {
+            if (callBaseInit) base.Init();
+            Init(_breathingDefaultDuration);
+        }
+        public BreathingActivity(int defaultDuration) : base(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime)
+        {
             Init(defaultDuration);
         }
         public BreathingActivity() : base(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime)
         {
             Init();
         }
-        protected void Init(int defaultDuration, Boolean callBaseInit=false)
+        public void RunBreathingActivity()
         {
-            if (callBaseInit) Init(_breathingName, _breathingMenuDescription, _breathingStartingMessage, _breathingDefaultDuration, _breathingPauseTime);
-            _defaultDuration = defaultDuration;
-        }
-        protected void Init(Boolean callBaseInit = false)
-        {
-            if (callBaseInit) base.Init();
-            Init(20);
-        }
-        public void RunBreathingActivity() {
             Console.WriteLine(_startingMessage);
             PromptForDuration();
             PrepareForStart(0, _spinnerTime);
@@ -57,17 +59,17 @@
             }
             while (done.CompareTo(DateTime.Now) > 0)
             {
-                if(first)
+                if (first)
                 {
-                    Console.WriteLine(_messages[0]);                    
+                    Console.WriteLine("\n" + _messages[0] + "\n");
                     DisplayCounter(eventTime, eventUnitMS);
                 }
                 else
                 {
-                    Console.WriteLine(_messages[1]);
+                    Console.WriteLine("\n" + _messages[1] + "\n");
                     DisplayCounter(eventTime, eventUnitMS, true, true);
                 }
-                first=!first;
+                first = !first;
             }
             Console.WriteLine(_finishingMessage);
             Activity.DisplaySpinner(1, _spinnerTime);

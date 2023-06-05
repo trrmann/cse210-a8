@@ -2,18 +2,47 @@
 {
     public class Application
     {
-        private Boolean _isRunning;
         private List<Activity> _activities;
         private Activity? _current;
-        public Application() {
+        private Boolean _isRunning;
+        private static String ReadResponse() { return Console.ReadLine(); }
+        private Boolean IsRunning() { return _isRunning; }
+        private Boolean EvaluateResponse(List<Activity> activities, String response)
+        {
+            try
+            {
+                int optionSelected = int.Parse(response);
+                if (optionSelected > 0 && optionSelected <= activities.Count)
+                {
+                    _current = activities[optionSelected - 1];
+                    if (_current.GetType() == typeof(BreathingActivity)) ((BreathingActivity)_current).RunBreathingActivity();
+                    else if (_current.GetType() == typeof(ReflectionActivity)) ((ReflectionActivity)_current).RunReflectionActivity();
+                    else if (_current.GetType() == typeof(ListingActivity)) ((ListingActivity)_current).RunListingActivity();
+                    return true;
+                }
+                else if (optionSelected == activities.Count + 1) return false;
+                else return true;
+            }
+            catch (FormatException)
+            {
+                return true;
+            }
+        }
+        private void Exit()
+        {
+            _isRunning = false;
+            _current = null;
+        }
+        public Application()
+        {
             _isRunning = false;
             _current = null;
             _activities = Activity.DefineActivities();
         }
-        private Boolean IsRunning() { return _isRunning; }
-        public void Run() {
+        public void Run()
+        {
             _isRunning = true;
-            while(IsRunning())
+            while (IsRunning())
             {
                 List<Activity> activities = Activity.AvailableActivities(_activities);
                 List<Activity> menuListIndex = new();
@@ -29,30 +58,6 @@
                 _isRunning = EvaluateResponse(menuListIndex, ReadResponse());
             }
             Exit();
-        }
-        private static String ReadResponse() { return Console.ReadLine(); }
-        private Boolean EvaluateResponse(List<Activity> activities, String response) {
-            try
-            {
-                int optionSelected = int.Parse(response);
-                if (optionSelected > 0 && optionSelected <= activities.Count) {
-                    _current = activities[optionSelected - 1];
-                    if (_current.GetType()==typeof(BreathingActivity)) ((BreathingActivity)_current).RunBreathingActivity();
-                    else if (_current.GetType() == typeof(ReflectionActivity)) ((ReflectionActivity)_current).RunReflectionActivity();
-                    else if (_current.GetType() == typeof(ListingActivity)) ((ListingActivity)_current).RunListingActivity();
-                    return true;
-                }
-                else if(optionSelected == activities.Count+1) return false;
-                else return true;
-                }
-            catch (FormatException)
-            {
-                return true;
-            }
-        }
-        private void Exit() {
-            _isRunning = false;
-            _current = null;
         }
     }
 }

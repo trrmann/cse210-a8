@@ -5,12 +5,6 @@
         private static readonly String _reflectionName = "ReflectionActivity";
         private static readonly String _reflectionMenuDescription = "Reflection Activity";
         private static readonly String _reflectionStartingMessage = "This activity will help you reflect on times in your life when you have shown strength and resilience. This will help you recognize the power you have and how you can use it in other aspects of your life.";
-        private static readonly int _reflectionDefaultDuration = 40;
-        private static readonly int _reflectionPauseTime = 400;
-        private static readonly int _maxQuestionUseSpread = 1;
-        private static readonly int _minDaysQuestionUseSpread = 1;
-        private static readonly int _maxMessageUseSpread = 1;
-        private static readonly int _minDaysMessageUseSpread = 1;
         private static readonly List<String> questions = new() {
             "Think of a time when you stood up for someone else.",
             "Think of a time when you did something really difficult.",
@@ -28,62 +22,39 @@
             "What did you learn about yourself through this experience?",
             "How can you keep this experience in mind in the future?"
         };
-        private readonly int _spinnerTime = 6;
+        private static readonly int _spinnerTime = 10;
+        private static readonly int _reflectionDefaultDuration = 40;
+        private static readonly int _reflectionPauseTime = 400;
+        private static readonly int _maxQuestionUseSpread = 1;
+        private static readonly int _minDaysQuestionUseSpread = 1;
+        private static readonly int _maxMessageUseSpread = 1;
+        private static readonly int _minDaysMessageUseSpread = 1;
+        private static readonly Random random = new();
         private List<int> questionsTimesUsed;
         private List<List<int>> messagesTimesUsed;
         private List<DateTime> questionsLastUsed;
         private List<List<DateTime>> messagesLastUsed;
-        public ReflectionActivity(int defaultDuration) : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
+        private static String SelectListingActivityQuestion(List<int> availableIndexes)
         {
-            Init(defaultDuration);
+            return questions[availableIndexes[random.Next(0, availableIndexes.Count)]];
         }
-        public ReflectionActivity() : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
+        private static String SelectListingActivityMessage(List<int> availableIndexes)
         {
-            Init();
+            return messages[availableIndexes[random.Next(0, availableIndexes.Count)]];
         }
-        protected void Init(int defaultDuration, Boolean callBaseInit = false)
+        private void Init(int defaultDuration, Boolean callBaseInit = false)
         {
             if (callBaseInit) Init(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime);
             _defaultDuration = defaultDuration;
             ResetQuestionUsageData();
         }
-        protected void Init(Boolean callBaseInit = false)
+        private void Init(Boolean callBaseInit = false)
         {
             if (callBaseInit) base.Init();
-            Init(20);
+            Init(_reflectionDefaultDuration);
         }
-        public void RunReflectionActivity() {
-            Console.WriteLine(_startingMessage);
-            PromptForDuration();
-            String question = SelectListingActivityQuestion(AvailableQuestionIndexes());
-            Console.WriteLine("\n" + question + "\n");
-            DisplayCounter(5, 1000);
-            PrepareForStart(3, _spinnerTime);
-            DateTime dateTime = DateTime.Now;
-            DateTime done = dateTime.AddSeconds(_duration);
-            int timeRemain = _duration;
-            String message;
-            while (done.CompareTo(DateTime.Now) > 0)
-            {
-                message = SelectListingActivityMessage(AvailableMessageIndexesPerQuestionIndexes(question));
-                Console.WriteLine("\n"+ message+"\n");
-                if(timeRemain < 20)
-                {
-                    DisplayCounter(timeRemain, 1000);
-                    timeRemain -= timeRemain;
-                }
-                else
-                {
-                    DisplayCounter(10, 1000);
-                    timeRemain -= 10;
-                }
-                ReportMessageUsage(question, message);
-            }
-            Console.WriteLine(_finishingMessage);
-            DisplayCounter(8, 100, false);
-            ReportUsage(_duration);
-        }
-        public void ResetQuestionUsageData() {
+        private void ResetQuestionUsageData()
+        {
             questionsTimesUsed = new() { 0, 0, 0, 0 };
             messagesTimesUsed = new() {
                 new(){ 0,0,0,0,0,0,0,0,0},
@@ -105,13 +76,7 @@
             };
             ResetActivityUsageData();
         }
-        protected static String SelectListingActivityQuestion(List<int> availableIndexes)
-        {
-            Random random = new();
-            int index = random.Next(0, availableIndexes.Count);
-            return questions[availableIndexes[index]];
-        }
-        protected List<int> AvailableQuestionIndexes()
+        private List<int> AvailableQuestionIndexes()
         {
             int minCount = int.MaxValue;
             DateTime minLastUsed = DateTime.MaxValue;
@@ -144,13 +109,8 @@
             }
             return result;
         }
-        protected static String SelectListingActivityMessage(List<int> availableIndexes)
+        private List<int> AvailableMessageIndexesPerQuestionIndexes(String question)
         {
-            Random random = new();
-            int index = random.Next(0, availableIndexes.Count);
-            return messages[availableIndexes[index]];
-        }
-        protected List<int> AvailableMessageIndexesPerQuestionIndexes(String question) {
             int questionIndex = questions.IndexOf(question);
             int minCount = int.MaxValue;
             DateTime minLastUsed = DateTime.MaxValue;
@@ -180,13 +140,56 @@
                     if (available) result.Add(index);
                 });
             }
-            return result; 
+            return result;
         }
-        protected void ReportMessageUsage(String question, String message) {
+        private void ReportMessageUsage(String question, String message)
+        {
             int questionIndex = questions.IndexOf(question);
             int messageIndex = messages.IndexOf(message);
             messagesTimesUsed[questionIndex][messageIndex]++;
             messagesLastUsed[questionIndex][messageIndex] = DateTime.Now;
+        }
+        public ReflectionActivity(int defaultDuration) : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
+        {
+            Init(defaultDuration);
+        }
+        public ReflectionActivity() : base(_reflectionName, _reflectionMenuDescription, _reflectionStartingMessage, _reflectionDefaultDuration, _reflectionPauseTime)
+        {
+            Init();
+        }
+        public void RunReflectionActivity()
+        {
+            Console.WriteLine(_startingMessage);
+            PromptForDuration();
+            String question = SelectListingActivityQuestion(AvailableQuestionIndexes());
+            Console.WriteLine("\n" + question + "\n");
+            DisplayCounter(5, 1000);
+            PrepareForStart(3, _spinnerTime);
+            DateTime dateTime = DateTime.Now;
+            DateTime done = dateTime.AddSeconds(_duration);
+            int timeRemain = _duration;
+            int messageTime = 10;
+            if (_duration > messageTime * messages.Count) messageTime = _duration / messages.Count;
+            String message;
+            while (done.CompareTo(DateTime.Now) > 0)
+            {
+                message = SelectListingActivityMessage(AvailableMessageIndexesPerQuestionIndexes(question));
+                Console.WriteLine("\n" + message + "\n");
+                if (timeRemain < (messageTime * 2))
+                {
+                    DisplayCounter(timeRemain, 1000);
+                    timeRemain -= timeRemain;
+                }
+                else
+                {
+                    DisplayCounter(messageTime, 1000);
+                    timeRemain -= messageTime;
+                }
+                ReportMessageUsage(question, message);
+            }
+            Console.WriteLine(_finishingMessage);
+            DisplayCounter(8, 100, false);
+            ReportUsage(_duration);
         }
     }
 }

@@ -5,10 +5,6 @@
         private static readonly String _listingName = "ListingActivity";
         private static readonly String _listingMenuDescription = "Listing Activity";
         private static readonly String _listingStartingMessage = "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.";
-        private static readonly int _listingDefaultDuration = 30;
-        private static readonly int _listingPauseTime = 500;
-        private static readonly int _maxQuestionUseSpread = 1;
-        private static readonly int _minDaysQuestionUseSpread = 1;
         private static readonly List<String> questions = new()
         {
             "Who are people that you appreciate?",
@@ -17,49 +13,32 @@
             "When have you felt the Holy Ghost this month?",
             "Who are some of your personal heroes?"
         };
-        private readonly int _spinnerTime = 6;
+        private static readonly int _spinnerTime = 10;
+        private static readonly int _listingDefaultDuration = 30;
+        private static readonly int _listingPauseTime = 500;
+        private static readonly int _maxQuestionUseSpread = 1;
+        private static readonly int _minDaysQuestionUseSpread = 1;
         private List<int> questionsTimesUsed;
         private List<DateTime> questionsLastUsed;
-        public ListingActivity(int defaultDuration) : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
+        private static String SelectListingActivityQuestion(List<int> availableIndexes)
         {
-            Init(defaultDuration);
+            Random random = new();
+            int index = random.Next(0, availableIndexes.Count);
+            return questions[availableIndexes[index]];
         }
-        public ListingActivity() : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
-        {
-            Init();
-        }
-        protected void Init(int defaultDuration, Boolean callBaseInit = false)
+        private void Init(int defaultDuration, Boolean callBaseInit = false)
         {
             if (callBaseInit) Init(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime);
             _defaultDuration = defaultDuration;
             ResetQuestionUsageData();
         }
-        protected void Init(Boolean callBaseInit = false)
+        private void Init(Boolean callBaseInit = false)
         {
             if (callBaseInit) base.Init();
-            Init(20);
+            Init(_listingDefaultDuration);
         }
-        public void RunListingActivity() {
-            Console.WriteLine(_startingMessage);
-            PromptForDuration();
-            String question = SelectListingActivityQuestion(AvailableQuestionIndexes());
-            Console.WriteLine("\n"+question+"\n");
-            DisplayCounter(5, 1000);
-            PrepareForStart(2, _spinnerTime);
-            DateTime dateTime = DateTime.Now;
-            DateTime done = dateTime.AddSeconds(_duration);
-            int counter = 0;
-            while (done.CompareTo(DateTime.Now) > 0)
-            {
-                String response = Console.ReadLine();
-                if(response!="") counter++;
-            }
-            Console.WriteLine($"You entered {counter} items.");
-            Activity.DisplaySpinner(3, _spinnerTime);
-            Console.WriteLine(_finishingMessage);
-            ReportUsage(_duration, question);
-        }
-        public void ResetQuestionUsageData() {
+        private void ResetQuestionUsageData()
+        {
             questionsTimesUsed = new() { 0, 0, 0, 0, 0 };
             questionsLastUsed = new() {
                 DateTime.MinValue,
@@ -70,11 +49,12 @@
             };
             ResetActivityUsageData();
         }
-        protected List<int> AvailableQuestionIndexes() {
+        private List<int> AvailableQuestionIndexes()
+        {
             int minCount = int.MaxValue;
             DateTime minLastUsed = DateTime.MaxValue;
             questionsTimesUsed.ForEach((count) => {
-                if(count < minCount) minCount= count;
+                if (count < minCount) minCount = count;
             });
             questionsLastUsed.ForEach((dateTime) => {
                 if (dateTime < minLastUsed) minLastUsed = dateTime;
@@ -102,18 +82,42 @@
             }
             return result;
         }
-        protected static String SelectListingActivityQuestion(List<int> availableIndexes) {
-            Random random = new();
-            int index = random.Next(0, availableIndexes.Count);
-            return questions[availableIndexes[index]];
-        }
-        protected void ReportUsage(int duration, String question, DateTime? dateTime = null)
+        private void ReportUsage(int duration, String question, DateTime? dateTime = null)
         {
             dateTime ??= DateTime.Now;
             int index = questions.IndexOf(question);
             questionsTimesUsed[index]++;
             questionsLastUsed[index] = (DateTime)dateTime;
             ReportUsage(duration, dateTime);
+        }
+        public ListingActivity(int defaultDuration) : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
+        {
+            Init(defaultDuration);
+        }
+        public ListingActivity() : base(_listingName, _listingMenuDescription, _listingStartingMessage, _listingDefaultDuration, _listingPauseTime)
+        {
+            Init();
+        }
+        public void RunListingActivity()
+        {
+            Console.WriteLine(_startingMessage);
+            PromptForDuration();
+            String question = SelectListingActivityQuestion(AvailableQuestionIndexes());
+            Console.WriteLine("\n" + question + "\n");
+            DisplayCounter(5, 1000);
+            PrepareForStart(2, _spinnerTime);
+            DateTime dateTime = DateTime.Now;
+            DateTime done = dateTime.AddSeconds(_duration);
+            int counter = 0;
+            while (done.CompareTo(DateTime.Now) > 0)
+            {
+                String response = Console.ReadLine();
+                if (response != "") counter++;
+            }
+            Console.WriteLine($"You entered {counter} items.");
+            Activity.DisplaySpinner(3, _spinnerTime);
+            Console.WriteLine(_finishingMessage);
+            ReportUsage(_duration, question);
         }
     }
 }
