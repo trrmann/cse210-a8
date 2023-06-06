@@ -10,7 +10,8 @@
         };
         private static readonly int _SPINNER_MS_DELAY = 250;
         private static readonly int _MAX_ACTIVITY_USE_SPREAD = 5;
-        private static readonly long _MAX_ACTIVITY_DURATION_SECONDS_SPREAD = 60 * 60 * 12; // 12 hours
+        //private static readonly long _MAX_ACTIVITY_DURATION_SECONDS_SPREAD = 60 * 60 * 12; // 12 hours
+        private static readonly long _MAX_ACTIVITY_DURATION_SECONDS_SPREAD = 60 * 5; // 5 minutes
         private static readonly int _MIN_DAYS_SPREAD = 1;
         private String _activityName = "Uninitialized";
         private String _activityMenuDescription = "Uninitialized";
@@ -40,58 +41,58 @@
             if (_lastUsed < minLastUsed) return _lastUsed;
             else return minLastUsed;
         }
-        private Boolean Available(int minCount, long minTotalDuration, DateTime minLastUsed, Boolean useLastUsed = true)
+        private Boolean Available(int minCount, long minTotalDuration, DateTime minLastUsed, Boolean useLastUsed = true, Boolean useTimesUsed = true)
         {
             Boolean available = true;
             int timesSpread = _timesUsed - minCount;
             long durationSpread = _totalDuration - minTotalDuration;
             TimeSpan dateSpread = _lastUsed - minLastUsed;
-            if (timesSpread >= _MAX_ACTIVITY_USE_SPREAD) available = false;
+            if (useTimesUsed && timesSpread >= _MAX_ACTIVITY_USE_SPREAD) available = false;
             if (durationSpread >= _MAX_ACTIVITY_DURATION_SECONDS_SPREAD) available = false;
             if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days <= _MIN_DAYS_SPREAD) available = false;
             return available;
         }
         private String ToJSON()
         {
-            if (GetType() == typeof(Activity)) return "{" +
-                $"activityName : \"{_activityName}\" , " +
-                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
-                $"lastUsed : {_lastUsed} , " +
-                $"totalDuration : {_totalDuration} , " +
-                $"timesUsed : {_timesUsed} , " +
-                $"pauseTime : {_pauseTime}" +
+            if (GetType() == typeof(Activity)) return "{\n" +
+                $"\tactivityName : \"{_activityName}\",\n" +
+                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
+                $"\tlastUsed : {_lastUsed},\n" +
+                $"\ttotalDuration : {_totalDuration},\n" +
+                $"\ttimesUsed : {_timesUsed},\n" +
+                $"\tpauseTime : {_pauseTime}\n" +
                 "}";
-            else if (GetType() == typeof(BreathingActivity)) return "{" +
-                $"activityName : \"{_activityName}\" , " +
-                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
-                $"lastUsed : {_lastUsed} , " +
-                $"totalDuration : {_totalDuration} , " +
-                $"timesUsed : {_timesUsed} , " +
-                $"pauseTime : {_pauseTime}" +
+            else if (GetType() == typeof(BreathingActivity)) return "{\n" +
+                $"\tactivityName : \"{_activityName}\",\n" +
+                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
+                $"\tlastUsed : {_lastUsed},\n" +
+                $"\ttotalDuration : {_totalDuration},\n" +
+                $"\ttimesUsed : {_timesUsed},\n" +
+                $"\tpauseTime : {_pauseTime}\n" +
                 "}";
-            else if (GetType() == typeof(ReflectionActivity)) return "{" +
-                $"activityName : \"{_activityName}\" , " +
-                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
-                $"lastUsed : {_lastUsed} , " +
-                $"totalDuration : {_totalDuration} , " +
-                $"timesUsed : {_timesUsed} , " +
-                $"pauseTime : {_pauseTime} , " +
-                $"{((ReflectionActivity)this).GetJSONInfo()}" +
+            else if (GetType() == typeof(ReflectionActivity)) return "{\n" +
+                $"\tactivityName : \"{_activityName}\",\n" +
+                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
+                $"\tlastUsed : {_lastUsed},\n" +
+                $"\ttotalDuration : {_totalDuration},\n" +
+                $"\ttimesUsed : {_timesUsed},\n" +
+                $"\tpauseTime : {_pauseTime},\n" +
+                $"{((ReflectionActivity)this).GetJSONInfo()}\n" +
                 "}";
-            else if (GetType() == typeof(ListingActivity)) return "{" +
-                $"activityName : \"{_activityName}\" , " +
-                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
-                $"lastUsed : {_lastUsed} , " +
-                $"totalDuration : {_totalDuration} , " +
-                $"timesUsed : {_timesUsed} , " +
-                $"pauseTime : {_pauseTime} , " +
-                $"{((ListingActivity)this).GetJSONInfo()}" +
+            else if (GetType() == typeof(ListingActivity)) return "{\n" +
+                $"\tactivityName : \"{_activityName}\",\n" +
+                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
+                $"\tlastUsed : {_lastUsed},\n" +
+                $"\ttotalDuration : {_totalDuration},\n" +
+                $"\ttimesUsed : {_timesUsed},\n" +
+                $"\tpauseTime : {_pauseTime},\n" +
+                $"{((ListingActivity)this).GetJSONInfo()}\n" +
                 "}";
-            else return "{}";
+            else return "{\n}";
         }
         private void ParseJSON(String json)
         {
-            string[] allParts = json.Split(" , ");
+            string[] allParts = json.Split(",\n");
             List<String> allPartsList = new(allParts);
             List<String> partsList = new();
             int counter = 0;
@@ -100,7 +101,19 @@
                 {
                     part= part.Substring(1);
                 }
+                if (part.StartsWith("\n"))
+                {
+                    part= part.Substring(1);
+                }
+                if (part.StartsWith("\t"))
+                {
+                    part= part.Substring(1);
+                }
                 if(part.EndsWith("}"))
+                {
+                    part = part.Substring(0,part.Length-1);
+                }
+                if(part.EndsWith("\n"))
                 {
                     part = part.Substring(0,part.Length-1);
                 }
@@ -109,7 +122,7 @@
                     partsList.Insert(counter, part);
                     counter++;
                 }
-                else partsList[counter - 1]= partsList[counter-1] + " , " + part;
+                else partsList[counter - 1]= partsList[counter-1] + ",\n" + part;
             });
             partsList.ForEach((part) => {
                 List<String> pair = new();
@@ -147,17 +160,17 @@
                     case "pauseTime":
                         _pauseTime = int.Parse(pair[1]);
                         break;
-                    case "_questionsTimesUsed":
+                    case "questionsTimesUsed":
                         if (GetType() == typeof(ReflectionActivity)) {
                             ((ReflectionActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         } else if (GetType() == typeof(ListingActivity)) {
                             ((ListingActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         }
                         break;
-                    case "_messagesTimesUsed":
+                    case "messagesTimesUsed":
                         ((ReflectionActivity)this).ParseMessagesTimesUsed(pair[1]);
                         break;
-                    case "_questionsLastUsed":
+                    case "questionsLastUsed":
                         if (GetType() == typeof(ReflectionActivity))
                         {
                             ((ReflectionActivity)this).ParseQuestionsLastUsed(pair[1]);
@@ -167,7 +180,7 @@
                             ((ListingActivity)this).ParseQuestionsLastUsed(pair[1]);
                         }
                         break;
-                    case "_messagesLastUsed":
+                    case "messagesLastUsed":
                         ((ReflectionActivity)this).ParseMessagesLastUsed(pair[1]);
                         break;
                     default:
@@ -182,13 +195,6 @@
         private void SaveActivityUsageData()
         {
             File.WriteAllText(Filename(), ToJSON());
-        }
-        private void LoadActivityUsageData()
-        {
-            if(File.Exists(Filename()))
-            {
-                ParseJSON(File.ReadAllText(Filename()));
-            }
         }
         protected static readonly String _FINISHING_MESSAGE = "\nGreat job.\n\n";
         protected String _startingMessage = "Uninitialized";
@@ -292,6 +298,13 @@
         {
             Init("Undefined", "Undefined", "Undefined", _defaultDuration, _pauseTime);
         }
+        protected void LoadActivityUsageData()
+        {
+            if(File.Exists(Filename()))
+            {
+                ParseJSON(File.ReadAllText(Filename()));
+            }
+        }
         protected void PromptForDuration()
         {
             Console.WriteLine("How long would you like to perform this activity in seconds?");
@@ -353,6 +366,9 @@
             });
             if (result.Count == 0) allActivities.ForEach((activity) => {
                 if (activity.Available(minCount, minTotalDuration, minLastUsed, false)) result.Add(activity);
+            });
+            if (result.Count == 0) allActivities.ForEach((activity) => {
+                if (activity.Available(minCount, minTotalDuration, minLastUsed, false, false)) result.Add(activity);
             });
             return result;
         }

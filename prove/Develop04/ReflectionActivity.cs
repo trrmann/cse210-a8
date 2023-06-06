@@ -53,9 +53,10 @@ namespace MindfullnessProgram
          */
         private void Init(int defaultDuration, Boolean callBaseInit = false)
         {
+            ResetQuestionUsageData();
             if (callBaseInit) Init(_ACTIVITY_NAME, _ACTIVITY_MENU_DESCRIPTION, _STARTING_MESSAGE, _DEFAULT_DURATION, _PAUSE_TIME);
             _defaultDuration = defaultDuration;
-            ResetQuestionUsageData();
+            base.LoadActivityUsageData();
         }
         private void Init(Boolean callBaseInit = false)
         {
@@ -111,8 +112,7 @@ namespace MindfullnessProgram
                     Boolean available = true;
                     int index = _QUESTIONS.IndexOf(question);
                     int timesUsedSpread = _questionsTimesUsed[index] - minCount;
-                    int lastUsedSpread = (_questionsLastUsed[index] - minLastUsed).Days;
-                    if (timesUsedSpread > _MAX_QUESTIONS_USE_SPREAD) available = false;
+                    if (timesUsedSpread >= _MAX_QUESTIONS_USE_SPREAD) available = false;
                     if (available) result.Add(index);
                 });
             }
@@ -151,12 +151,21 @@ namespace MindfullnessProgram
             }
             return result;
         }
-        private void ReportMessageUsage(String question, String message)
+        private void ReportMessageUsage(int duration, String question, String message, DateTime? dateTime = null)
         {
+            dateTime ??= DateTime.Now;
             int questionIndex = _QUESTIONS.IndexOf(question);
             int messageIndex = _MESSAGES.IndexOf(message);
             _messagesTimesUsed[questionIndex][messageIndex]++;
-            _messagesLastUsed[questionIndex][messageIndex] = DateTime.Now;
+            _messagesLastUsed[questionIndex][messageIndex] = (DateTime)dateTime;
+        }
+        private void ReportQuestionUsage(int duration, String question, DateTime? dateTime = null)
+        {
+            dateTime ??= DateTime.Now;
+            int questionIndex = _QUESTIONS.IndexOf(question);
+            _questionsTimesUsed[questionIndex]++;
+            _questionsLastUsed[questionIndex] = (DateTime)dateTime;
+            ReportUsage(duration, dateTime);
         }
         public ReflectionActivity() : base(_ACTIVITY_NAME, _ACTIVITY_MENU_DESCRIPTION, _STARTING_MESSAGE, _DEFAULT_DURATION, _PAUSE_TIME)
         {
@@ -190,52 +199,56 @@ namespace MindfullnessProgram
                     DISPLAY_COUNTER(messageTime, 1000);
                     timeRemain -= messageTime;
                 }
-                ReportMessageUsage(question, message);
+                ReportMessageUsage(_duration, question, message);
             }
             Console.WriteLine(_FINISHING_MESSAGE);
             DISPLAY_COUNTER(8, 100, false);
-            ReportUsage(_duration);
+            ReportQuestionUsage(_duration, question);
         }
         public String GetJSONInfo()
         {
             int counter = 0;
             int subCounter = 0;
-            String questionsTimesUsedString = "_questionsTimesUsed : [";
+            String questionsTimesUsedString = "\tquestionsTimesUsed : [";
             _questionsTimesUsed.ForEach((count) => {
-                if (counter < _questionsTimesUsed.Count-1) questionsTimesUsedString += count.ToString() + " , ";
-                else questionsTimesUsedString += count.ToString() + "] , ";
+                if (counter == 0) questionsTimesUsedString += count.ToString() + ",\n";
+                else if (counter < _questionsTimesUsed.Count-1) questionsTimesUsedString += "\t\t"+count.ToString() + ",\n";
+                else questionsTimesUsedString += "\t\t"+count.ToString() + "],\n";
                 counter++;
             });
             counter = 0;
-            String messagesTimesUsedString = "_messagesTimesUsed : [[";
+            String messagesTimesUsedString = "\tmessagesTimesUsed : [[";
             _messagesTimesUsed.ForEach((list) => {
                 subCounter = 0;
                 list.ForEach((count) => {
-                    if (subCounter < _messagesTimesUsed[counter].Count - 1) messagesTimesUsedString += count.ToString() + " , ";
-                    else messagesTimesUsedString += count.ToString() + "]";
+                    if (subCounter ==0 ) messagesTimesUsedString += count.ToString() + ",\n";
+                    else if (subCounter < _messagesTimesUsed[counter].Count - 1) messagesTimesUsedString += "\t\t"+count.ToString() + ",\n";
+                    else messagesTimesUsedString += "\t\t"+count.ToString() + "]";
                     subCounter++;
                 });
-                if (counter < _messagesTimesUsed.Count - 1) messagesTimesUsedString += " , [";
-                else messagesTimesUsedString += "] , ";
+                if (counter < _messagesTimesUsed.Count - 1) messagesTimesUsedString += ",[";
+                else messagesTimesUsedString += "],\n";
                 counter++;
             });
             counter = 0;
-            String questionsLastUsedString = "_questionsLastUsed : [";
+            String questionsLastUsedString = "\tquestionsLastUsed : [";
             _questionsLastUsed.ForEach((count) => {
-                if (counter < _questionsLastUsed.Count-1) questionsLastUsedString += count + " , ";
-                else questionsLastUsedString += count + "] , ";
+                if (counter ==0) questionsLastUsedString += count.ToString() + ",\n";
+                else if (counter < _questionsLastUsed.Count-1) questionsLastUsedString += "\t\t"+ count.ToString() + ",\n";
+                else questionsLastUsedString += "\t\t"+ count.ToString() + "],\n";
                 counter++;
             });
             counter = 0;
-            String messagesLastUsedString = "_messagesLastUsed : [[";
+            String messagesLastUsedString = "\tmessagesLastUsed : [[";
             _messagesLastUsed.ForEach((list) => {
                 subCounter = 0;
                 list.ForEach((count) => {
-                    if (subCounter < _messagesLastUsed[counter].Count - 1) messagesLastUsedString += count.ToString() + " , ";
-                    else messagesLastUsedString += count.ToString() + "]";
+                    if (subCounter ==0) messagesLastUsedString += count.ToString() + ",\n";
+                    else if (subCounter < _messagesLastUsed[counter].Count - 1) messagesLastUsedString += "\t\t"+count.ToString() + ",\n";
+                    else messagesLastUsedString += "\t\t"+count.ToString() + "]";
                     subCounter++;
                 });
-                if (counter < _messagesLastUsed.Count - 1) messagesLastUsedString += " , [";
+                if (counter < _messagesLastUsed.Count - 1) messagesLastUsedString += ",[";
                 else messagesLastUsedString += "]";
                 counter++;
             });
@@ -245,7 +258,7 @@ namespace MindfullnessProgram
         {
             if (questionsTimesUsedString.StartsWith("[")) questionsTimesUsedString = questionsTimesUsedString.Substring(1);
             if (questionsTimesUsedString.EndsWith("]")) questionsTimesUsedString = questionsTimesUsedString.Substring(0, questionsTimesUsedString.Length - 1);
-            string[] allParts = questionsTimesUsedString.Split(" , ");
+            string[] allParts = questionsTimesUsedString.Split(",\n\t");
             int counter = 0;
             _questionsTimesUsed ??= new();
             if (_questionsTimesUsed.Count == 0) foreach(String question in _QUESTIONS) _questionsTimesUsed.Add(0);
@@ -259,7 +272,7 @@ namespace MindfullnessProgram
         {
             if (questionsLastUsedString.StartsWith("[")) questionsLastUsedString = questionsLastUsedString.Substring(1);
             if (questionsLastUsedString.EndsWith("]")) questionsLastUsedString = questionsLastUsedString.Substring(0, questionsLastUsedString.Length - 1);
-            string[] allParts = questionsLastUsedString.Split(" , ");
+            string[] allParts = questionsLastUsedString.Split(",\n\t");
             int counter = 0;
             _questionsLastUsed ??= new();
             if (_questionsLastUsed.Count == 0) foreach (String question in _QUESTIONS) _questionsLastUsed.Add(DateTime.MinValue);
@@ -274,7 +287,7 @@ namespace MindfullnessProgram
             if (messagesTimesUsedString.StartsWith("[[")) messagesTimesUsedString = messagesTimesUsedString.Substring(2);
             if (messagesTimesUsedString.EndsWith("]]")) messagesTimesUsedString = messagesTimesUsedString.Substring(0, messagesTimesUsedString.Length - 2);
             string[] messagesString;
-            string[] questionsString = messagesTimesUsedString.Split("] , [");
+            string[] questionsString = messagesTimesUsedString.Split("],[");
             int counter, subCounter;
             _messagesTimesUsed ??= new();
             if (_messagesTimesUsed.Count == 0)
@@ -290,7 +303,7 @@ namespace MindfullnessProgram
             counter = 0;
             foreach (String message in questionsString)
             {
-                messagesString = message.Split(" , ");
+                messagesString = message.Split(",\n\t");
                 subCounter = 0;
                 foreach (String value in messagesString)
                 {
@@ -303,9 +316,10 @@ namespace MindfullnessProgram
         public void ParseMessagesLastUsed(String messagesTimesLastString)
         {
             if (messagesTimesLastString.StartsWith("[[")) messagesTimesLastString = messagesTimesLastString.Substring(2);
+            if (messagesTimesLastString.EndsWith("\n")) messagesTimesLastString = messagesTimesLastString.Substring(0, messagesTimesLastString.Length - 1);
             if (messagesTimesLastString.EndsWith("]]")) messagesTimesLastString = messagesTimesLastString.Substring(0, messagesTimesLastString.Length - 2);
             string[] messagesString;
-            string[] questionsString = messagesTimesLastString.Split("] , [");
+            string[] questionsString = messagesTimesLastString.Split("],[");
             int counter, subCounter;
             _messagesLastUsed ??= new();
             if (_messagesLastUsed.Count == 0)
@@ -321,7 +335,7 @@ namespace MindfullnessProgram
             counter = 0;
             foreach (String message in questionsString)
             {
-                messagesString = message.Split(" , ");
+                messagesString = message.Split(",\n\t");
                 subCounter = 0;
                 foreach (String value in messagesString)
                 {

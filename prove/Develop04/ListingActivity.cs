@@ -35,9 +35,10 @@
          */
         private void Init(int defaultDuration, Boolean callBaseInit = false)
         {
+            ResetQuestionUsageData();
             if (callBaseInit) Init(_ACTIVITY_NAME, _ACTIVITY_MENU_DESCRIPTION, _STARTING_MESSAGE, _DEFAULT_DURATION, _PAUSE_TIME);
             _defaultDuration = defaultDuration;
-            ResetQuestionUsageData();
+            base.LoadActivityUsageData();
         }
         private void Init(Boolean callBaseInit = false)
         {
@@ -82,8 +83,7 @@
                     Boolean available = true;
                     int index = _QUESTIONS.IndexOf(question);
                     int timesUsedSpread = questionsTimesUsed[index] - minCount;
-                    int lastUsedSpread = (questionsLastUsed[index] - minLastUsed).Days;
-                    if (timesUsedSpread > _MAX_QUESTIONS_USE_SPREAD) available = false;
+                    if (timesUsedSpread >= _MAX_QUESTIONS_USE_SPREAD) available = false;
                     if (available) result.Add(index);
                 });
             }
@@ -125,17 +125,19 @@
         public String GetJSONInfo()
         {
             int counter = 0;
-            String questionsTimesUsedString = "_questionsTimesUsed : [";
+            String questionsTimesUsedString = "\tquestionsTimesUsed : [";
             questionsTimesUsed.ForEach((count) => {
-                if(counter<questionsTimesUsed.Count-1) questionsTimesUsedString += count.ToString() + " , ";
-                else questionsTimesUsedString += count.ToString() + "] , ";
+                if(counter==0) questionsTimesUsedString += count.ToString() + ",\n";
+                else if(counter<questionsTimesUsed.Count-1) questionsTimesUsedString += "\t\t"+count.ToString() + ",\n";
+                else questionsTimesUsedString += "\t\t"+count.ToString() + "],\n";
                 counter++;
             });
             counter = 0;
-            String questionsLastUsedString = "_questionsLastUsed : [";
+            String questionsLastUsedString = "\tquestionsLastUsed : [";
             questionsLastUsed.ForEach((count) => {
-                if (counter < questionsTimesUsed.Count-1) questionsLastUsedString += count.ToString() + " , ";
-                else questionsLastUsedString += count.ToString() + "]";
+                if(counter==0) questionsLastUsedString += count.ToString() + ",\n";
+                else if (counter < questionsTimesUsed.Count-1) questionsLastUsedString += "\t\t"+count.ToString() + ",\n";
+                else questionsLastUsedString += "\t\t"+count.ToString() + "]";
                 counter++;
             });
             return $"{questionsTimesUsedString}{questionsLastUsedString}";
@@ -150,7 +152,7 @@
             {
                 questionsTimesUsedString = questionsTimesUsedString.Substring(0, questionsTimesUsedString.Length - 1);
             }
-            string[] allParts = questionsTimesUsedString.Split(" , ");
+            string[] allParts = questionsTimesUsedString.Split(",\n\t");
             int counter = 0;
             questionsTimesUsed ??= new();
             if (questionsTimesUsed.Count == 0)
@@ -172,11 +174,15 @@
             {
                 questionsLastUsedString = questionsLastUsedString.Substring(1);
             }
+            if (questionsLastUsedString.EndsWith("\n"))
+            {
+                questionsLastUsedString = questionsLastUsedString.Substring(0, questionsLastUsedString.Length - 1);
+            }
             if (questionsLastUsedString.EndsWith("]"))
             {
                 questionsLastUsedString = questionsLastUsedString.Substring(0, questionsLastUsedString.Length - 1);
             }
-            string[] allParts = questionsLastUsedString.Split(" , ");
+            string[] allParts = questionsLastUsedString.Split(",\n\t");
             int counter = 0;
             questionsLastUsed ??= new();
             if (questionsLastUsed.Count == 0)
