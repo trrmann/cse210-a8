@@ -125,7 +125,7 @@
         public String GetJSONInfo()
         {
             int counter = 0;
-            String questionsTimesUsedString = "\tquestionsTimesUsed : [";
+            String questionsTimesUsedString = "\t\"questionsTimesUsed\" : [";
             questionsTimesUsed.ForEach((count) => {
                 if(counter==0) questionsTimesUsedString += count.ToString() + ",\n";
                 else if(counter<questionsTimesUsed.Count-1) questionsTimesUsedString += "\t\t"+count.ToString() + ",\n";
@@ -133,11 +133,11 @@
                 counter++;
             });
             counter = 0;
-            String questionsLastUsedString = "\tquestionsLastUsed : [";
-            questionsLastUsed.ForEach((count) => {
-                if(counter==0) questionsLastUsedString += count.ToString() + ",\n";
-                else if (counter < questionsTimesUsed.Count-1) questionsLastUsedString += "\t\t"+count.ToString() + ",\n";
-                else questionsLastUsedString += "\t\t"+count.ToString() + "]";
+            String questionsLastUsedString = "\t\"questionsLastUsed\" : [";
+            questionsLastUsed.ForEach((dateTime) => {
+                if(counter==0) questionsLastUsedString += "\""+dateTime.ToString() + "\",\n";
+                else if (counter < questionsTimesUsed.Count-1) questionsLastUsedString += "\t\t\""+dateTime.ToString() + "\",\n";
+                else questionsLastUsedString += "\t\t\""+dateTime.ToString() + "\"]";
                 counter++;
             });
             return $"{questionsTimesUsedString}{questionsLastUsedString}";
@@ -192,9 +192,19 @@
                     questionsLastUsed.Add(DateTime.MinValue);
                 }
             }
+            String datePart;
             foreach (String part in allParts)
             {
-                questionsLastUsed[counter] = DateTime.Parse(part);
+                datePart = part;
+                if (datePart.StartsWith("\""))
+                {
+                    datePart = datePart.Substring(1);
+                }
+                if (datePart.EndsWith("\""))
+                {
+                    datePart = datePart.Substring(0, datePart.Length - 1);
+                }
+                questionsLastUsed[counter] = DateTime.Parse(datePart);
                 counter++;
             }
         }

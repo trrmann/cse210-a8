@@ -55,37 +55,37 @@
         private String ToJSON()
         {
             if (GetType() == typeof(Activity)) return "{\n" +
-                $"\tactivityName : \"{_activityName}\",\n" +
-                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
-                $"\tlastUsed : {_lastUsed},\n" +
-                $"\ttotalDuration : {_totalDuration},\n" +
-                $"\ttimesUsed : {_timesUsed},\n" +
-                $"\tpauseTime : {_pauseTime}\n" +
+                $"\t\"activityName\" : \"{_activityName}\",\n" +
+                $"\t\"activityMenuDescription\" : \"{_activityMenuDescription}\",\n" +
+                $"\t\"lastUsed\" : \"{_lastUsed}\",\n" +
+                $"\t\"totalDuration\" : {_totalDuration},\n" +
+                $"\t\"timesUsed\" : {_timesUsed},\n" +
+                $"\t\"pauseTime\" : {_pauseTime}\n" +
                 "}";
             else if (GetType() == typeof(BreathingActivity)) return "{\n" +
-                $"\tactivityName : \"{_activityName}\",\n" +
-                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
-                $"\tlastUsed : {_lastUsed},\n" +
-                $"\ttotalDuration : {_totalDuration},\n" +
-                $"\ttimesUsed : {_timesUsed},\n" +
-                $"\tpauseTime : {_pauseTime}\n" +
+                $"\t\"activityName\" : \"{_activityName}\",\n" +
+                $"\t\"activityMenuDescription\" : \"{_activityMenuDescription}\",\n" +
+                $"\t\"lastUsed\" : \"{_lastUsed}\",\n" +
+                $"\t\"totalDuration\" : {_totalDuration},\n" +
+                $"\t\"timesUsed\" : {_timesUsed},\n" +
+                $"\t\"pauseTime\" : {_pauseTime}\n" +
                 "}";
             else if (GetType() == typeof(ReflectionActivity)) return "{\n" +
-                $"\tactivityName : \"{_activityName}\",\n" +
-                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
-                $"\tlastUsed : {_lastUsed},\n" +
-                $"\ttotalDuration : {_totalDuration},\n" +
-                $"\ttimesUsed : {_timesUsed},\n" +
-                $"\tpauseTime : {_pauseTime},\n" +
+                $"\t\"activityName\" : \"{_activityName}\",\n" +
+                $"\t\"activityMenuDescription\" : \"{_activityMenuDescription}\",\n" +
+                $"\t\"lastUsed\" : \"{_lastUsed}\",\n" +
+                $"\t\"totalDuration\" : {_totalDuration},\n" +
+                $"\t\"timesUsed\" : {_timesUsed},\n" +
+                $"\t\"pauseTime\" : {_pauseTime},\n" +
                 $"{((ReflectionActivity)this).GetJSONInfo()}\n" +
                 "}";
             else if (GetType() == typeof(ListingActivity)) return "{\n" +
-                $"\tactivityName : \"{_activityName}\",\n" +
-                $"\tactivityMenuDescription : \"{_activityMenuDescription}\",\n" +
-                $"\tlastUsed : {_lastUsed},\n" +
-                $"\ttotalDuration : {_totalDuration},\n" +
-                $"\ttimesUsed : {_timesUsed},\n" +
-                $"\tpauseTime : {_pauseTime},\n" +
+                $"\t\"activityName\" : \"{_activityName}\",\n" +
+                $"\t\"activityMenuDescription\" : \"{_activityMenuDescription}\",\n" +
+                $"\t\"lastUsed\" : \"{_lastUsed}\",\n" +
+                $"\t\"totalDuration\" : {_totalDuration},\n" +
+                $"\t\"timesUsed\" : {_timesUsed},\n" +
+                $"\t\"pauseTime\" : {_pauseTime},\n" +
                 $"{((ListingActivity)this).GetJSONInfo()}\n" +
                 "}";
             else return "{\n}";
@@ -134,43 +134,47 @@
                 pair.Add(String.Join(" : ", subPartsList));
             switch(pair[0])
                 {
-                    case "activityName":
+                    case "\"activityName\"":
                         subParts = pair[1].Split("\"");
                         subPartsList = new(subParts);
                         subPartsList.RemoveAt(0);
                         subPartsList.RemoveAt(subPartsList.Count-1);
                         _activityName = String.Join("\"", subPartsList);
                         break;
-                    case "activityMenuDescription":
+                    case "\"activityMenuDescription\"":
                         subParts = pair[1].Split("\"");
                         subPartsList = new(subParts);
                         subPartsList.RemoveAt(0);
                         subPartsList.RemoveAt(subPartsList.Count - 1);
                         _activityMenuDescription = String.Join("\"", subPartsList);
                         break;
-                    case "lastUsed":
-                        _lastUsed = DateTime.Parse(pair[1]);
+                    case "\"lastUsed\"":
+                        subParts = pair[1].Split("\"");
+                        subPartsList = new(subParts);
+                        subPartsList.RemoveAt(0);
+                        subPartsList.RemoveAt(subPartsList.Count - 1);
+                        _lastUsed = DateTime.Parse(String.Join("\"", subPartsList));
                         break;
-                    case "totalDuration":
+                    case "\"totalDuration\"":
                         _totalDuration = long.Parse(pair[1]);
                         break;
-                    case "timesUsed":
+                    case "\"timesUsed\"":
                         _timesUsed = int.Parse(pair[1]);
                         break;
-                    case "pauseTime":
+                    case "\"pauseTime\"":
                         _pauseTime = int.Parse(pair[1]);
                         break;
-                    case "questionsTimesUsed":
+                    case "\"questionsTimesUsed\"":
                         if (GetType() == typeof(ReflectionActivity)) {
                             ((ReflectionActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         } else if (GetType() == typeof(ListingActivity)) {
                             ((ListingActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         }
                         break;
-                    case "messagesTimesUsed":
+                    case "\"messagesTimesUsed\"":
                         ((ReflectionActivity)this).ParseMessagesTimesUsed(pair[1]);
                         break;
-                    case "questionsLastUsed":
+                    case "\"questionsLastUsed\"":
                         if (GetType() == typeof(ReflectionActivity))
                         {
                             ((ReflectionActivity)this).ParseQuestionsLastUsed(pair[1]);
@@ -180,7 +184,7 @@
                             ((ListingActivity)this).ParseQuestionsLastUsed(pair[1]);
                         }
                         break;
-                    case "messagesLastUsed":
+                    case "\"messagesLastUsed\"":
                         ((ReflectionActivity)this).ParseMessagesLastUsed(pair[1]);
                         break;
                     default:

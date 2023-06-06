@@ -209,7 +209,7 @@ namespace MindfullnessProgram
         {
             int counter = 0;
             int subCounter = 0;
-            String questionsTimesUsedString = "\tquestionsTimesUsed : [";
+            String questionsTimesUsedString = "\t\"questionsTimesUsed\" : [";
             _questionsTimesUsed.ForEach((count) => {
                 if (counter == 0) questionsTimesUsedString += count.ToString() + ",\n";
                 else if (counter < _questionsTimesUsed.Count-1) questionsTimesUsedString += "\t\t"+count.ToString() + ",\n";
@@ -217,7 +217,7 @@ namespace MindfullnessProgram
                 counter++;
             });
             counter = 0;
-            String messagesTimesUsedString = "\tmessagesTimesUsed : [[";
+            String messagesTimesUsedString = "\t\"messagesTimesUsed\" : [[";
             _messagesTimesUsed.ForEach((list) => {
                 subCounter = 0;
                 list.ForEach((count) => {
@@ -231,21 +231,21 @@ namespace MindfullnessProgram
                 counter++;
             });
             counter = 0;
-            String questionsLastUsedString = "\tquestionsLastUsed : [";
+            String questionsLastUsedString = "\t\"questionsLastUsed\" : [";
             _questionsLastUsed.ForEach((count) => {
-                if (counter ==0) questionsLastUsedString += count.ToString() + ",\n";
-                else if (counter < _questionsLastUsed.Count-1) questionsLastUsedString += "\t\t"+ count.ToString() + ",\n";
-                else questionsLastUsedString += "\t\t"+ count.ToString() + "],\n";
+                if (counter ==0) questionsLastUsedString += "\""+count.ToString() + "\",\n";
+                else if (counter < _questionsLastUsed.Count-1) questionsLastUsedString += "\t\t\""+ count.ToString() + "\",\n";
+                else questionsLastUsedString += "\t\t\""+ count.ToString() + "\"],\n";
                 counter++;
             });
             counter = 0;
-            String messagesLastUsedString = "\tmessagesLastUsed : [[";
+            String messagesLastUsedString = "\t\"messagesLastUsed\" : [[";
             _messagesLastUsed.ForEach((list) => {
                 subCounter = 0;
-                list.ForEach((count) => {
-                    if (subCounter ==0) messagesLastUsedString += count.ToString() + ",\n";
-                    else if (subCounter < _messagesLastUsed[counter].Count - 1) messagesLastUsedString += "\t\t"+count.ToString() + ",\n";
-                    else messagesLastUsedString += "\t\t"+count.ToString() + "]";
+                list.ForEach((dateTime) => {
+                    if (subCounter ==0) messagesLastUsedString += "\""+ dateTime.ToString() + "\",\n";
+                    else if (subCounter < _messagesLastUsed[counter].Count - 1) messagesLastUsedString += "\t\t\""+dateTime.ToString() + "\",\n";
+                    else messagesLastUsedString += "\t\t\""+dateTime.ToString() + "\"]";
                     subCounter++;
                 });
                 if (counter < _messagesLastUsed.Count - 1) messagesLastUsedString += ",[";
@@ -276,9 +276,13 @@ namespace MindfullnessProgram
             int counter = 0;
             _questionsLastUsed ??= new();
             if (_questionsLastUsed.Count == 0) foreach (String question in _QUESTIONS) _questionsLastUsed.Add(DateTime.MinValue);
+            String dateString;
             foreach (String part in allParts)
             {
-                _questionsLastUsed[counter] = DateTime.Parse(part);
+                dateString = part;
+                if (dateString.StartsWith("\"")) dateString = dateString.Substring(1);
+                if (dateString.EndsWith("\"")) dateString = dateString.Substring(0, dateString.Length - 1);
+                _questionsLastUsed[counter] = DateTime.Parse(dateString);
                 counter++;
             }
         }
@@ -337,9 +341,13 @@ namespace MindfullnessProgram
             {
                 messagesString = message.Split(",\n\t");
                 subCounter = 0;
+                String dateString;
                 foreach (String value in messagesString)
                 {
-                    _messagesLastUsed[counter][subCounter] = DateTime.Parse(value);
+                    dateString = value;
+                    if (dateString.StartsWith("\"")) dateString = dateString.Substring(1);
+                    if (dateString.EndsWith("\"")) dateString = dateString.Substring(0, dateString.Length - 1);
+                    _messagesLastUsed[counter][subCounter] = DateTime.Parse(dateString);
                     subCounter++;
                 }
                 counter++;
