@@ -1,4 +1,6 @@
-﻿namespace MindfullnessProgram
+﻿using System.ComponentModel;
+
+namespace MindfullnessProgram
 {
     public class ReflectionActivity : Activity
     {
@@ -190,6 +192,141 @@
             Console.WriteLine(_finishingMessage);
             DisplayCounter(8, 100, false);
             ReportUsage(_duration);
+        }
+        public String GetJSONInfo()
+        {
+            int counter = 0;
+            int subCounter = 0;
+            String questionsTimesUsedString = "questionsTimesUsed : [";
+            questionsTimesUsed.ForEach((count) => {
+                if (counter < questionsTimesUsed.Count-1) questionsTimesUsedString += count.ToString() + " , ";
+                else questionsTimesUsedString += count.ToString() + "] , ";
+                counter++;
+            });
+            counter = 0;
+            String messagesTimesUsedString = "messagesTimesUsed : [[";
+            messagesTimesUsed.ForEach((list) => {
+                subCounter = 0;
+                list.ForEach((count) => {
+                    if (subCounter < messagesTimesUsed[counter].Count - 1) messagesTimesUsedString += count.ToString() + " , ";
+                    else messagesTimesUsedString += count.ToString() + "]";
+                    subCounter++;
+                });
+                if (counter < messagesTimesUsed.Count - 1) messagesTimesUsedString += " , [";
+                else messagesTimesUsedString += "] , ";
+                counter++;
+            });
+            counter = 0;
+            String questionsLastUsedString = "questionsLastUsed : [";
+            questionsLastUsed.ForEach((count) => {
+                if (counter < questionsLastUsed.Count-1) questionsLastUsedString += count + " , ";
+                else questionsLastUsedString += count + "] , ";
+                counter++;
+            });
+            counter = 0;
+            String messagesLastUsedString = "messagesLastUsed : [[";
+            messagesLastUsed.ForEach((list) => {
+                subCounter = 0;
+                list.ForEach((count) => {
+                    if (subCounter < messagesLastUsed[counter].Count - 1) messagesLastUsedString += count.ToString() + " , ";
+                    else messagesLastUsedString += count.ToString() + "]";
+                    subCounter++;
+                });
+                if (counter < messagesLastUsed.Count - 1) messagesLastUsedString += " , [";
+                else messagesLastUsedString += "]";
+                counter++;
+            });
+            return $"{questionsTimesUsedString}{messagesTimesUsedString}{questionsLastUsedString}{messagesLastUsedString}";
+        }
+        public void ParseQuestionsTimesUsed(String questionsTimesUsedString)
+        {
+            if (questionsTimesUsedString.StartsWith("[")) questionsTimesUsedString = questionsTimesUsedString.Substring(1);
+            if (questionsTimesUsedString.EndsWith("]")) questionsTimesUsedString = questionsTimesUsedString.Substring(0, questionsTimesUsedString.Length - 1);
+            string[] allParts = questionsTimesUsedString.Split(" , ");
+            int counter = 0;
+            questionsTimesUsed ??= new();
+            if (questionsTimesUsed.Count == 0) foreach(String question in questions) questionsTimesUsed.Add(0);
+            foreach (String part in allParts)
+            {
+                questionsTimesUsed[counter] = int.Parse(part);
+                counter++;
+            }
+        }
+        public void ParseQuestionsLastUsed(String questionsLastUsedString)
+        {
+            if (questionsLastUsedString.StartsWith("[")) questionsLastUsedString = questionsLastUsedString.Substring(1);
+            if (questionsLastUsedString.EndsWith("]")) questionsLastUsedString = questionsLastUsedString.Substring(0, questionsLastUsedString.Length - 1);
+            string[] allParts = questionsLastUsedString.Split(" , ");
+            int counter = 0;
+            questionsLastUsed ??= new();
+            if (questionsLastUsed.Count == 0) foreach (String question in questions) questionsLastUsed.Add(DateTime.MinValue);
+            foreach (String part in allParts)
+            {
+                questionsLastUsed[counter] = DateTime.Parse(part);
+                counter++;
+            }
+        }
+        public void ParseMessagesTimesUsed(String messagesTimesUsedString)
+        {
+            if (messagesTimesUsedString.StartsWith("[[")) messagesTimesUsedString = messagesTimesUsedString.Substring(2);
+            if (messagesTimesUsedString.EndsWith("]]")) messagesTimesUsedString = messagesTimesUsedString.Substring(0, messagesTimesUsedString.Length - 2);
+            string[] messagesString;
+            string[] questionsString = messagesTimesUsedString.Split("] , [");
+            int counter, subCounter;
+            messagesTimesUsed ??= new();
+            if (messagesTimesUsed.Count == 0)
+            {
+                counter = 0;
+                foreach (String question in questions)
+                {
+                    messagesTimesUsed.Insert(counter, new());
+                    if (messagesTimesUsed[counter].Count == 0) foreach(String message in messages) messagesTimesUsed[counter].Add(0);
+                    counter++;
+                }
+            }
+            counter = 0;
+            foreach (String message in questionsString)
+            {
+                messagesString = message.Split(" , ");
+                subCounter = 0;
+                foreach (String value in messagesString)
+                {
+                    messagesTimesUsed[counter][subCounter] = int.Parse(value);
+                    subCounter++;
+                }
+                counter++;
+            }
+        }
+        public void ParseMessagesLastUsed(String messagesTimesLastString)
+        {
+            if (messagesTimesLastString.StartsWith("[[")) messagesTimesLastString = messagesTimesLastString.Substring(2);
+            if (messagesTimesLastString.EndsWith("]]")) messagesTimesLastString = messagesTimesLastString.Substring(0, messagesTimesLastString.Length - 2);
+            string[] messagesString;
+            string[] questionsString = messagesTimesLastString.Split("] , [");
+            int counter, subCounter;
+            messagesLastUsed ??= new();
+            if (messagesLastUsed.Count == 0)
+            {
+                counter = 0;
+                foreach (String question in questions)
+                {
+                    messagesLastUsed.Insert(counter, new());
+                    if (messagesLastUsed[counter].Count == 0) foreach (String message in messages) messagesLastUsed[counter].Add(DateTime.MinValue);
+                    counter++;
+                }
+            }
+            counter = 0;
+            foreach (String message in questionsString)
+            {
+                messagesString = message.Split(" , ");
+                subCounter = 0;
+                foreach (String value in messagesString)
+                {
+                    messagesLastUsed[counter][subCounter] = DateTime.Parse(value);
+                    subCounter++;
+                }
+                counter++;
+            }
         }
     }
 }

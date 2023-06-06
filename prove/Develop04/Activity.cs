@@ -1,4 +1,6 @@
-﻿namespace MindfullnessProgram
+﻿using System.Runtime.CompilerServices;
+
+namespace MindfullnessProgram
 {
     public class Activity
     {
@@ -44,13 +46,146 @@
             if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days <= _minDaysSpread) available = false;
             return available;
         }
+        private String toJSON()
+        {
+            if (GetType() == typeof(Activity)) return "{" +
+                $"activityName : \"{_activityName}\" , " +
+                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
+                $"lastUsed : {_lastUsed} , " +
+                $"totalDuration : {_totalDuration} , " +
+                $"timesUsed : {_timesUsed} , " +
+                $"pauseTime : {_pauseTime}" +
+                "}";
+            else if (GetType() == typeof(BreathingActivity)) return "{" +
+                $"activityName : \"{_activityName}\" , " +
+                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
+                $"lastUsed : {_lastUsed} , " +
+                $"totalDuration : {_totalDuration} , " +
+                $"timesUsed : {_timesUsed} , " +
+                $"pauseTime : {_pauseTime}" +
+                "}";
+            else if (GetType() == typeof(ReflectionActivity)) return "{" +
+                $"activityName : \"{_activityName}\" , " +
+                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
+                $"lastUsed : {_lastUsed} , " +
+                $"totalDuration : {_totalDuration} , " +
+                $"timesUsed : {_timesUsed} , " +
+                $"pauseTime : {_pauseTime} , " +
+                $"{((ReflectionActivity)this).GetJSONInfo()}" +
+                "}";
+            else if (GetType() == typeof(ListingActivity)) return "{" +
+                $"activityName : \"{_activityName}\" , " +
+                $"activityMenuDescription : \"{_activityMenuDescription}\" , " +
+                $"lastUsed : {_lastUsed} , " +
+                $"totalDuration : {_totalDuration} , " +
+                $"timesUsed : {_timesUsed} , " +
+                $"pauseTime : {_pauseTime} , " +
+                $"{((ListingActivity)this).GetJSONInfo()}" +
+                "}";
+            else return "{}";
+        }
+        private void parseJSON(String json)
+        {
+            string[] allParts = json.Split(" , ");
+            List<String> allPartsList = new(allParts);
+            List<String> partsList = new();
+            int counter = 0;
+            allPartsList.ForEach((part) => {
+                if (part.StartsWith("{"))
+                {
+                    part= part.Substring(1);
+                }
+                if(part.EndsWith("}"))
+                {
+                    part = part.Substring(0,part.Length-1);
+                }
+                if (part.Contains(" : "))
+                {
+                    partsList.Insert(counter, part);
+                    counter++;
+                }
+                else partsList[counter - 1]= partsList[counter-1] + " , " + part;
+            });
+            partsList.ForEach((part) => {
+                List<String> pair = new();
+                List<String> subPair = new();
+                string[] subParts = part.Split(" : ");
+                List<String> subPartsList = new(subParts);
+                pair.Add(subPartsList[0]);
+                subPartsList.RemoveAt(0);
+                pair.Add(String.Join(" : ", subPartsList));
+            switch(pair[0])
+                {
+                    case "activityName":
+                        subParts = pair[1].Split("\"");
+                        subPartsList = new(subParts);
+                        subPartsList.RemoveAt(0);
+                        subPartsList.RemoveAt(subPartsList.Count-1);
+                        _activityName = String.Join("\"", subPartsList);
+                        break;
+                    case "activityMenuDescription":
+                        subParts = pair[1].Split("\"");
+                        subPartsList = new(subParts);
+                        subPartsList.RemoveAt(0);
+                        subPartsList.RemoveAt(subPartsList.Count - 1);
+                        _activityMenuDescription = String.Join("\"", subPartsList);
+                        break;
+                    case "lastUsed":
+                        _lastUsed = DateTime.Parse(pair[1]);
+                        break;
+                    case "totalDuration":
+                        _totalDuration = long.Parse(pair[1]);
+                        break;
+                    case "timesUsed":
+                        _timesUsed = int.Parse(pair[1]);
+                        break;
+                    case "pauseTime":
+                        _pauseTime = int.Parse(pair[1]);
+                        break;
+                    case "questionsTimesUsed":
+                        if (GetType() == typeof(ReflectionActivity)) {
+                            ((ReflectionActivity)this).ParseQuestionsTimesUsed(pair[1]);
+                        } else if (GetType() == typeof(ListingActivity)) {
+                            ((ListingActivity)this).ParseQuestionsTimesUsed(pair[1]);
+                        }
+                        break;
+                    case "messagesTimesUsed":
+                        ((ReflectionActivity)this).ParseMessagesTimesUsed(pair[1]);
+                        break;
+                    case "questionsLastUsed":
+                        if (GetType() == typeof(ReflectionActivity))
+                        {
+                            ((ReflectionActivity)this).ParseQuestionsLastUsed(pair[1]);
+                        }
+                        else if (GetType() == typeof(ListingActivity))
+                        {
+                            ((ListingActivity)this).ParseQuestionsLastUsed(pair[1]);
+                        }
+                        break;
+                    case "messagesLastUsed":
+                        ((ReflectionActivity)this).ParseMessagesLastUsed(pair[1]);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+        private String fileName()
+        {
+            return $"{_activityName}.json";
+        }
         private void SaveActivityUsageData()
         {
+            File.WriteAllText(fileName(), toJSON());
         }
         private void LoadActivityUsageData()
         {
+            if(File.Exists(fileName()))
+            {
+                parseJSON(File.ReadAllText(fileName()));
+            }
         }
-        protected static readonly String _finishingMessage = "to do.";
+        protected static readonly String _finishingMessage = "\nGreat job.\n\n";
         protected String _startingMessage = "Uninitialized";
         protected int _defaultDuration = 30;
         protected int _duration = 0;

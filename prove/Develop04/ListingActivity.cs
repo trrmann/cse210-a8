@@ -119,5 +119,75 @@
             Console.WriteLine(_finishingMessage);
             ReportUsage(_duration, question);
         }
+        public String GetJSONInfo()
+        {
+            int counter = 0;
+            String questionsTimesUsedString = "questionsTimesUsed : [";
+            questionsTimesUsed.ForEach((count) => {
+                if(counter<questionsTimesUsed.Count-1) questionsTimesUsedString += count.ToString() + " , ";
+                else questionsTimesUsedString += count.ToString() + "] , ";
+                counter++;
+            });
+            counter = 0;
+            String questionsLastUsedString = "questionsLastUsed : [";
+            questionsLastUsed.ForEach((count) => {
+                if (counter < questionsTimesUsed.Count-1) questionsLastUsedString += count.ToString() + " , ";
+                else questionsLastUsedString += count.ToString() + "]";
+                counter++;
+            });
+            return $"{questionsTimesUsedString}{questionsLastUsedString}";
+        }
+        public void ParseQuestionsTimesUsed(String questionsTimesUsedString)
+        {
+            if (questionsTimesUsedString.StartsWith("["))
+            {
+                questionsTimesUsedString = questionsTimesUsedString.Substring(1);
+            }
+            if (questionsTimesUsedString.EndsWith("]"))
+            {
+                questionsTimesUsedString = questionsTimesUsedString.Substring(0, questionsTimesUsedString.Length - 1);
+            }
+            string[] allParts = questionsTimesUsedString.Split(" , ");
+            int counter = 0;
+            questionsTimesUsed ??= new();
+            if (questionsTimesUsed.Count == 0)
+            {
+                foreach (String question in questions)
+                {
+                    questionsTimesUsed.Add(0);
+                }
+            }
+            foreach (String part in allParts)
+            {
+                questionsTimesUsed[counter] = int.Parse(part);
+                counter++;
+            }
+        }
+        public void ParseQuestionsLastUsed(String questionsLastUsedString)
+        {
+            if (questionsLastUsedString.StartsWith("["))
+            {
+                questionsLastUsedString = questionsLastUsedString.Substring(1);
+            }
+            if (questionsLastUsedString.EndsWith("]"))
+            {
+                questionsLastUsedString = questionsLastUsedString.Substring(0, questionsLastUsedString.Length - 1);
+            }
+            string[] allParts = questionsLastUsedString.Split(" , ");
+            int counter = 0;
+            questionsLastUsed ??= new();
+            if (questionsLastUsed.Count == 0)
+            {
+                foreach (String question in questions)
+                {
+                    questionsLastUsed.Add(DateTime.MinValue);
+                }
+            }
+            foreach (String part in allParts)
+            {
+                questionsLastUsed[counter] = DateTime.Parse(part);
+                counter++;
+            }
+        }
     }
 }
