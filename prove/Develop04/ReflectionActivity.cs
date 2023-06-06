@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace MindfullnessProgram
+﻿namespace MindfullnessProgram
 {
     public class ReflectionActivity : Activity
     {

@@ -1,0 +1,139 @@
+﻿@startuml
+
+class Application
+{
+    - List<Activity> _activities
+    - Activity? _current
+    - Boolean _isRunning
+    - {static} String READ_RESPONSE()
+    - Boolean IsRunning()
+    - Boolean EvaluateResponse(List<Activity> activities, String response)
+    - void Exit()
+    + Application()
+    + void Run()
+}
+Application *-- Activity
+
+class Activity
+{
+    - {static} List<List<String>> _SPINNER_STRINGS
+    - {static} int _SPINNER_MS_DELAY
+    - {static} int _MAX_ACTIVITY_USE_SPREAD
+    - {static} long _MAX_ACTIVITY_DURATION_SECONDS_SPREAD
+    - {static} int _MIN_DAYS_SPREAD
+    - String _activityName
+    - String _activityMenuDescription
+    - DateTime _lastUsed
+    - long _totalDuration
+    - int _timesUsed
+    - int _pauseTime
+    - int MinTimes(int minCount)
+    - long MinTotalDuration(long minTotalDuration)
+    - DateTime MinLastUsed(DateTime minLastUsed)
+    - Boolean Available(int minCount, long minTotalDuration, DateTime minLastUsed, Boolean useLastUsed = true, Boolean useTimesUsed = true)
+    - String ToJSON()
+    - void ParseJSON(String json)
+    - String Filename()
+    - void SaveActivityUsageData()
+    # {static} String _FINISHING_MESSAGE
+    # String _startingMessage
+    # int _defaultDuration
+    # int _duration
+    # {static} void PREPARE_FOR_START(int spinnerIndex, int spinnerTime)
+    # {static} void DISPLAY_SPINNER(int spinnerIndex, int duration)
+    # {static} void DISPLAY_COUNTER(int durationInSeconds, int incrementalPauseMS, Boolean showNumeric = true, Boolean numericForward = false, Boolean cleanNumeric = true, int maxNonNumeric = 10)
+    # void Init(String activityName, String activityMenuDescription, String startingMessage, int defaultDuration, int pauseTime)
+    # void Init()
+    # void LoadActivityUsageData()
+    # void PromptForDuration()
+    # void ReportUsage(int duration, DateTime? dateTime = null)
+    # void ResetActivityUsageData()
+    + Activity(String activityName, String activityMenuDescription, String startingMessage, int defaultDuration, int pauseTime)
+    + {static} List<Activity> DEFINE_ACTIVITIES()
+    + {static} List<Activity> AVAILABLE_ACTIVITIES(List<Activity> allActivities)
+    + void DisplayMenuLine(int menuOptionNumber, String separator)
+}
+Activity <|-- BreathingActivity
+Activity <|-- ReflectionActivity
+Activity <|-- ListingActivity
+
+class BreathingActivity
+{
+    - {static} String _ACTIVITY_NAME
+    - {static} String _ACTIVITY_MENU_DESCRIPTION
+    - {static} String _STARTING_MESSAGE
+    - {static} List<String> _MESSAGES
+    - {static} int _SPINNER_TIME
+    - {static} int _DEFAULT_DURATION
+    - {static} int _PAUSE_TIME
+    - void Init(int defaultDuration, Boolean callBaseInit = false)
+    - void Init(Boolean callBaseInit = false)
+    + BreathingActivity()
+    + void RunBreathingActivity()
+}
+
+class ReflectionActivity
+{
+    - {static} String _ACTIVITY_NAME
+    - {static} String _ACTIVITY_MENU_DESCRIPTION
+    - {static} String _STARTING_MESSAGE
+    - {static} List<String> _QUESTIONS
+    - {static} List<String> _MESSAGES
+    - {static} int _SPINNER_TIME
+    - {static} int _DEFAULT_DURATION
+    - {static} int _PAUSE_TIME
+    - {static} int _MAX_QUESTIONS_USE_SPREAD
+    - {static} int _MIN_DAYS_QUESTIONS_USE_SPREAD
+    - {static} int _MAX_MESSAGES_USE_SPREAD
+    - {static} int _MIN_DAYS_MESSAGE_USE_SPREAD
+    - {static} Random _RANDOM
+    - List<int> _questionsTimesUsed;
+    - List<List<int>> _messagesTimesUsed;
+    - List<DateTime> _questionsLastUsed;
+    - List<List<DateTime>> _messagesLastUsed;
+    - {static} String SELECT_REFLECTION_ACTIVITY_QUESTION(List<int> availableIndexes)
+    - {static} String SELECT_REFLECTION_ACTIVITY_MESSAGE(List<int> availableIndexes)
+    - void Init(int defaultDuration, Boolean callBaseInit = false)
+    - void Init(Boolean callBaseInit = false)
+    - void ResetQuestionUsageData()
+    - List<int> AvailableQuestionIndexes()
+    - List<int> AvailableMessageIndexesPerQuestionIndexes(String question)
+    - void ReportMessageUsage(int duration, String question, String message, DateTime? dateTime = null)
+    - void ReportQuestionUsage(int duration, String question, DateTime? dateTime = null)
+    + ReflectionActivity()
+    + void RunReflectionActivity()
+    + String GetJSONInfo()
+    + void ParseQuestionsTimesUsed(String questionsTimesUsedString)
+    + void ParseQuestionsLastUsed(String questionsLastUsedString)
+    + void ParseMessagesTimesUsed(String messagesTimesUsedString)
+    + void ParseMessagesLastUsed(String messagesTimesLastString)
+}
+
+class ListingActivity
+{
+    - {static} String _ACTIVITY_NAME
+    - {static} String _ACTIVITY_MENU_DESCRIPTION
+    - {static} String _STARTING_MESSAGE
+    - {static} List<String> _QUESTIONS
+    - {static} int _SPINNER_TIME
+    - {static} int _DEFAULT_DURATION
+    - {static} int _PAUSE_TIME
+    - {static} int _MAX_QUESTIONS_USE_SPREAD
+    - {static} int _MIN_DAYS_QUESTIONS_USE_SPREAD
+    - {static} Random _RANDOM
+    - List<int> questionsTimesUsed
+    - List<DateTime> questionsLastUsed
+    - static String SELECT_LISTING_ACTIVITY_QUESTION(List<int> availableIndexes)
+    - void Init(int defaultDuration, Boolean callBaseInit = false)
+    - void Init(Boolean callBaseInit = false)
+    - void ResetQuestionUsageData()
+    - List<int> AvailableQuestionIndexes()
+    - void ReportUsage(int duration, String question, DateTime? dateTime = null)
+    + ListingActivity()
+    + void RunListingActivity()
+    + String GetJSONInfo()
+    + void ParseQuestionsTimesUsed(String questionsTimesUsedString)
+    + void ParseQuestionsLastUsed(String questionsLastUsedString)
+}
+
+@enduml
