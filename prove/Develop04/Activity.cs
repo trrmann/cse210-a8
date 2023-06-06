@@ -1,25 +1,30 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace MindfullnessProgram
+﻿namespace MindfullnessProgram
 {
     public class Activity
     {
-        private static readonly List<List<String>> _spinnerStrings = new() {
+        private static readonly List<List<String>> _SPINNER_STRINGS = new() {
             new() {"-","\\","|","/"},
             new() {"^",">","v","<"},
             new() {".","o","O","o"},
             new() {".","x","X","x"}
         };
-        private static readonly int _spinner_delay = 250;
-        private static readonly int _maxActivityUseSpread = 5;
-        private static readonly int _maxActivityDurationSpread = 60 * 60 * 12;
-        private static readonly int _minDaysSpread = 1;
+        private static readonly int _SPINNER_MS_DELAY = 250;
+        private static readonly int _MAX_ACTIVITY_USE_SPREAD = 5;
+        private static readonly long _MAX_ACTIVITY_DURATION_SECONDS_SPREAD = 60 * 60 * 12; // 12 hours
+        private static readonly int _MIN_DAYS_SPREAD = 1;
         private String _activityName = "Uninitialized";
         private String _activityMenuDescription = "Uninitialized";
         private DateTime _lastUsed;
         private long _totalDuration;
         private int _timesUsed;
         private int _pauseTime = 500;
+        /**
+         *  made private and commented out because not used.
+        private Activity()
+        {
+            Init();
+        }
+         */
         private int MinTimes(int minCount)
         {
             if (_timesUsed < minCount) return _timesUsed;
@@ -41,12 +46,12 @@ namespace MindfullnessProgram
             int timesSpread = _timesUsed - minCount;
             long durationSpread = _totalDuration - minTotalDuration;
             TimeSpan dateSpread = _lastUsed - minLastUsed;
-            if (timesSpread >= _maxActivityUseSpread) available = false;
-            if (durationSpread >= _maxActivityDurationSpread) available = false;
-            if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days <= _minDaysSpread) available = false;
+            if (timesSpread >= _MAX_ACTIVITY_USE_SPREAD) available = false;
+            if (durationSpread >= _MAX_ACTIVITY_DURATION_SECONDS_SPREAD) available = false;
+            if (useLastUsed && _lastUsed > DateTime.MinValue && dateSpread.Days <= _MIN_DAYS_SPREAD) available = false;
             return available;
         }
-        private String toJSON()
+        private String ToJSON()
         {
             if (GetType() == typeof(Activity)) return "{" +
                 $"activityName : \"{_activityName}\" , " +
@@ -84,7 +89,7 @@ namespace MindfullnessProgram
                 "}";
             else return "{}";
         }
-        private void parseJSON(String json)
+        private void ParseJSON(String json)
         {
             string[] allParts = json.Split(" , ");
             List<String> allPartsList = new(allParts);
@@ -142,17 +147,17 @@ namespace MindfullnessProgram
                     case "pauseTime":
                         _pauseTime = int.Parse(pair[1]);
                         break;
-                    case "questionsTimesUsed":
+                    case "_questionsTimesUsed":
                         if (GetType() == typeof(ReflectionActivity)) {
                             ((ReflectionActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         } else if (GetType() == typeof(ListingActivity)) {
                             ((ListingActivity)this).ParseQuestionsTimesUsed(pair[1]);
                         }
                         break;
-                    case "messagesTimesUsed":
+                    case "_messagesTimesUsed":
                         ((ReflectionActivity)this).ParseMessagesTimesUsed(pair[1]);
                         break;
-                    case "questionsLastUsed":
+                    case "_questionsLastUsed":
                         if (GetType() == typeof(ReflectionActivity))
                         {
                             ((ReflectionActivity)this).ParseQuestionsLastUsed(pair[1]);
@@ -162,7 +167,7 @@ namespace MindfullnessProgram
                             ((ListingActivity)this).ParseQuestionsLastUsed(pair[1]);
                         }
                         break;
-                    case "messagesLastUsed":
+                    case "_messagesLastUsed":
                         ((ReflectionActivity)this).ParseMessagesLastUsed(pair[1]);
                         break;
                     default:
@@ -170,36 +175,36 @@ namespace MindfullnessProgram
                 }
             });
         }
-        private String fileName()
+        private String Filename()
         {
             return $"{_activityName}.json";
         }
         private void SaveActivityUsageData()
         {
-            File.WriteAllText(fileName(), toJSON());
+            File.WriteAllText(Filename(), ToJSON());
         }
         private void LoadActivityUsageData()
         {
-            if(File.Exists(fileName()))
+            if(File.Exists(Filename()))
             {
-                parseJSON(File.ReadAllText(fileName()));
+                ParseJSON(File.ReadAllText(Filename()));
             }
         }
-        protected static readonly String _finishingMessage = "\nGreat job.\n\n";
+        protected static readonly String _FINISHING_MESSAGE = "\nGreat job.\n\n";
         protected String _startingMessage = "Uninitialized";
         protected int _defaultDuration = 30;
         protected int _duration = 0;
-        protected static void PrepareForStart(int spinnerIndex, int spinnerTime)
+        protected static void PREPARE_FOR_START(int spinnerIndex, int spinnerTime)
         {
             Console.WriteLine("Prepare to begin... ");
-            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Activity.DISPLAY_SPINNER(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
             Console.WriteLine("On your mark... ");
-            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Activity.DISPLAY_SPINNER(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
             Console.WriteLine("Get set... ");
-            Activity.DisplaySpinner(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
+            Activity.DISPLAY_SPINNER(spinnerIndex, ((spinnerTime * 1000 / 12) * 4) / 1000);
             Console.WriteLine("Go!");
         }
-        protected static void DisplaySpinner(int spinnerIndex, int duration)
+        protected static void DISPLAY_SPINNER(int spinnerIndex, int duration)
         {
             DateTime dateTime = DateTime.Now;
             DateTime done = dateTime.AddSeconds(duration);
@@ -209,14 +214,14 @@ namespace MindfullnessProgram
             {
                 if (init) Console.Write("\b \b");
                 init = true;
-                Console.Write(_spinnerStrings[spinnerIndex][index]);
-                Thread.Sleep(_spinner_delay);
+                Console.Write(_SPINNER_STRINGS[spinnerIndex][index]);
+                Thread.Sleep(_SPINNER_MS_DELAY);
                 index++;
-                if (index >= _spinnerStrings[spinnerIndex].Count) index = 0;
+                if (index >= _SPINNER_STRINGS[spinnerIndex].Count) index = 0;
             }
             Console.Write("\b \b");
         }
-        protected static void DisplayCounter(int durationInSeconds, int incrementalPauseMS, Boolean showNumeric = true, Boolean numericForward = false, Boolean cleanNumeric = true, int maxNonNumeric = 10)
+        protected static void DISPLAY_COUNTER(int durationInSeconds, int incrementalPauseMS, Boolean showNumeric = true, Boolean numericForward = false, Boolean cleanNumeric = true, int maxNonNumeric = 10)
         {
             DateTime dateTime = DateTime.Now;
             DateTime done = dateTime.AddSeconds(durationInSeconds);
@@ -322,11 +327,7 @@ namespace MindfullnessProgram
         {
             Init(activityName, activityMenuDescription, startingMessage, defaultDuration, pauseTime);
         }
-        public Activity()
-        {
-            Init();
-        }
-        public static List<Activity> DefineActivities()
+        public static List<Activity> DEFINE_ACTIVITIES()
         {
             List<Activity> result = new()
             {
@@ -336,7 +337,7 @@ namespace MindfullnessProgram
             };
             return result;
         }
-        public static List<Activity> AvailableActivities(List<Activity> allActivities)
+        public static List<Activity> AVAILABLE_ACTIVITIES(List<Activity> allActivities)
         {
             int minCount = int.MaxValue;
             long minTotalDuration = long.MaxValue;

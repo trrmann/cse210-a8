@@ -2,10 +2,10 @@
 {
     public class Application
     {
-        private List<Activity> _activities;
+        private readonly List<Activity> _activities;
         private Activity? _current;
         private Boolean _isRunning;
-        private static String ReadResponse() { return Console.ReadLine(); }
+        private static String READ_RESPONSE() { return Console.ReadLine(); }
         private Boolean IsRunning() { return _isRunning; }
         private Boolean EvaluateResponse(List<Activity> activities, String response)
         {
@@ -37,14 +37,14 @@
         {
             _isRunning = false;
             _current = null;
-            _activities = Activity.DefineActivities();
+            _activities = Activity.DEFINE_ACTIVITIES();
         }
         public void Run()
         {
             _isRunning = true;
             while (IsRunning())
             {
-                List<Activity> activities = Activity.AvailableActivities(_activities);
+                List<Activity> activities = Activity.AVAILABLE_ACTIVITIES(_activities);
                 List<Activity> menuListIndex = new();
                 int menuIndex = 0;
                 foreach (Activity activity in activities)
@@ -55,7 +55,7 @@
                 }
                 Console.WriteLine($"{menuIndex + 1})  Exit.");
                 Console.Write(">  ");
-                _isRunning = EvaluateResponse(menuListIndex, ReadResponse());
+                _isRunning = EvaluateResponse(menuListIndex, READ_RESPONSE());
             }
             Exit();
         }
