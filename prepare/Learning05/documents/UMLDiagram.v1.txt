@@ -1,0 +1,96 @@
+﻿@startuml
+
+class Application
+{
+    - Boolean _isRunning
+    - List<Activity> _activities
+    - Activity _current
+
+    + Application()
+
+    - Boolean IsRunning()
+
+    + void Run()
+    - string ReadResponse()
+    - Boolean EvaluateResponse(Activity activity, string response)
+    - void Exit()
+}
+Application *-- Activity
+
+class Activity
+{
+    - {static} int _maxActivityUseSpread
+    - {static} int _maxActivityDurationSpread
+    - {static} List<String> _spinnerStrings
+    - {static} int _spinner_delay
+    - String _activityName
+    - String _activityMenuDescription
+    - String _startingMessage
+    - String _activityDescription
+    - String _finishingMessage
+    - int _defaultDuration
+    - int _duration
+    - long _totalDuration
+    - int _timesUsed
+    - DateTime _lastUsed
+    - int _pauseTime
+
+    + Activity()
+    + Activity(String activityName, String activityMenuDescription, String startingMessage, String activityDescription, String finishingMessage, int defaultDuration, int pauseTime)
+    - {static} List<Activity> DefineActivities()
+    # {static} void DisplaySpinner(int duration)
+    + void ResetActivityUsageData()
+    # void SaveActivityUsageData()
+    # void LoadActivityUsageData()
+}
+Activity <|-- BreathingActivity
+Activity <|-- ReflectionActivity
+Activity <|-- ListingActivity
+
+class BreathingActivity
+{
+    - {static} List<String> messages
+
+    + BreathingActivity(int defaultDuration)
+
+    + void RunBreathingActivity(int? duration=null)
+    + void ResetQuestionUsageData()
+}
+
+class ReflectionActivity
+{
+    - {static} int _maxQuestionUseSpread
+    - {static} int _maxMessageUseSpread
+    - {static} List<String> questions
+    - {static} List<String> messages
+    - List<int> questionsTimesUsed
+    - List<List<int>> messagesTimesUsed
+    - List<DateTime> questionsLastUsed
+    - List<List<DateTime>> messagesLastUsed
+
+    + ReflectionActivity(int defaultDuration)
+
+    + void RunReflectionActivity(int? duration=null)
+
+    # {static} String SelectReflectionActivityQuestion() 
+    + void ResetQuestionUsageData()
+    # List<int> AvailableQuestionIndexes()
+    # List<List<int>> AvailableMessageIndexesPerQuestionIndexes(List<int> QuestionIndexes)
+}
+
+class ListingActivity
+{
+    - {static} int _maxQuestionUseSpread
+    - {static} List<String> questions
+    - List<int> questionsTimesUsed
+    - List<DateTime> questionsLastUsed
+
+    + ListingActivity(int defaultDuration)
+
+    + void RunListingActivity(int? duration=null)
+
+    # {static} String SelectListingActivityQuestion() 
+    # List<int> AvailableQuestionIndexi()
+}
+
+@enduml
