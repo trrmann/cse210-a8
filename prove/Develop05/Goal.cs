@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.Json.Serialization;
 
 namespace Learning05
 {
@@ -13,7 +14,7 @@ namespace Learning05
         void RequestPointValue();
         String ReadResponse();
         Boolean IsCompleted();
-        BigInteger Report();
+        int Report();
     }
     public abstract class Goal : IGoal
     {
@@ -65,6 +66,49 @@ namespace Learning05
             DisplayRequestPointValue();
             PointValue = int.Parse(ReadResponse());
         }
-        public abstract BigInteger Report();
+        public abstract int Report();
+    }
+    public abstract class JSONGoal : Goal, IGoal
+    {
+        [JsonInclude]
+        [JsonPropertyName("Name")]
+        [JsonPropertyOrder(0)]
+        public new String Name
+        {
+            get
+            {
+                return base.Name;
+            }
+            set
+            {
+                base.Name = value;
+            }
+        }
+        [JsonInclude]
+        [JsonPropertyName("Description")]
+        [JsonPropertyOrder(1)]
+        public new String Description {
+            get
+            {
+                return base.Description;
+            }
+            set
+            {
+                base.Description = value;
+            }
+        }
+        [JsonInclude]
+        [JsonPropertyName("PointValue")]
+        [JsonPropertyOrder(2)]
+        public new int PointValue {
+            get
+            {
+                return base.PointValue;
+            }
+            set
+            {
+                base.PointValue = value;
+            }
+        }
     }
 }

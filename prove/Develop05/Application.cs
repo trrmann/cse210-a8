@@ -6,7 +6,6 @@ namespace Learning05
     public interface IApplication
     {
         void Run();
-        void DisplayScore();
         void DisplayMainMenu();
         String ReadResponse();
         Boolean ProcessResponse(String response);
@@ -27,11 +26,9 @@ namespace Learning05
         protected void Init()
         {
             Running = false;
-            Score = 0;
             Goals = new Goals();
         }
         public Boolean Running { get; set; }
-        private BigInteger Score { get; set; }
         private Goals Goals { get; set; }
         public void Run()
         {
@@ -42,13 +39,9 @@ namespace Learning05
                 Running = ProcessResponse(ReadResponse());
             }
         }
-        public void DisplayScore()
-        {
-            Console.WriteLine($"\nYour score is {Score}.\n");
-        }
         public void DisplayMainMenu()
         {
-            DisplayScore();
+            Goals.DisplayScore();
             Console.WriteLine("1)  Add a simple goal.");
             Console.WriteLine("2)  Add an eternal goal.");
             Console.WriteLine("3)  Add a checklist goal.");
@@ -125,9 +118,13 @@ namespace Learning05
         }
         public void SaveGoals()
         {
+            String fileName = "Goals.json";
             Console.WriteLine("\nSave goals.");
-            //JSONGoals jsonGoals = new(Goals);
-            String jsonString = JsonSerializer.Serialize(Goals);
+            JSONGoals jsonGoals = new(Goals);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            String jsonString = JsonSerializer.Serialize(jsonGoals, options);
+            File.WriteAllText(fileName, jsonString);
+            Console.WriteLine(File.ReadAllText(fileName));
             //JSONGoals jsonObject = new(Goals);
             //String json = jsonObject.ToJSONString();
         }
@@ -149,7 +146,7 @@ namespace Learning05
         public void ReportEvent()
         {
             Console.WriteLine("\nReport an event.");
-            Score = Goals.Report(Score);
+            Goals.Report();
         }
     }
 }
