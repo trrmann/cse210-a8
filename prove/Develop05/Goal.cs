@@ -1,11 +1,9 @@
-﻿using System.Numerics;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Learning05
+namespace Develop05
 {
     public interface IGoal
     {
-        void DisplayGoal(int index = -1);
         void DisplayRequestName();
         void DisplayRequestDescription();
         void DisplayRequestPointValue();
@@ -13,15 +11,22 @@ namespace Learning05
         void RequestDescription();
         void RequestPointValue();
         String ReadResponse();
-        Boolean IsCompleted();
-        int Report();
     }
     public abstract class Goal : IGoal
     {
-        internal void Init() {
-            RequestName();
-            RequestDescription();
-            RequestPointValue();
+        internal void Init(Boolean empty = false) {
+            if (empty)
+            {
+                Name = "";
+                Description = "";
+                PointValue = 0;
+            }
+            else
+            {
+                RequestName();
+                RequestDescription();
+                RequestPointValue();
+            }
         }
         internal void Init(Goal goal)
         {
@@ -68,6 +73,10 @@ namespace Learning05
         }
         public abstract int Report();
     }
+    [Serializable]
+    [JsonDerivedType(typeof(JSONSimpleGoal), typeDiscriminator: "Simple")]
+    [JsonDerivedType(typeof(JSONEternalGoal), typeDiscriminator: "Eternal")]
+    [JsonDerivedType(typeof(JSONChecklistGoal), typeDiscriminator: "Checklist")]
     public abstract class JSONGoal : Goal, IGoal
     {
         [JsonInclude]
@@ -98,7 +107,7 @@ namespace Learning05
             }
         }
         [JsonInclude]
-        [JsonPropertyName("PointValue")]
+        [JsonPropertyName("Point Value")]
         [JsonPropertyOrder(2)]
         public new int PointValue {
             get

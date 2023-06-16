@@ -1,26 +1,25 @@
-﻿using System.Numerics;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Learning05
+namespace Develop05
 {
-    public interface IChecklistGoal : IGoal
+    public class ChecklistGoal : Goal
     {
-        void DisplayRequestNumberOfTimes();
-        void RequestNumberOfTimes();
-        void DisplayRequestBonusPoints();
-        void RequestBonusPoints();
-    }
-    public class ChecklistGoal : Goal, IChecklistGoal
-    {
-        public ChecklistGoal()
+        public ChecklistGoal(Boolean empty = false)
         {
-            Init();
+            Init(empty);
         }
-        protected new void Init()
+        protected new void Init(Boolean empty = false)
         {
-            base.Init();
-            RequestNumberOfTimes();
-            RequestBonusPoints();
+            base.Init(empty);
+            if(empty)
+            {
+                NumberOfTimes = 0;
+                BonusPointValue = 0;
+            } else
+            {
+                RequestNumberOfTimes();
+                RequestBonusPoints();
+            }
             NumberOfTimes = 0;
         }
         internal int TargetNumberOfTimes { get; set; }
@@ -48,30 +47,41 @@ namespace Learning05
             DisplayRequestBonusPoints();
             BonusPointValue = int.Parse(ReadResponse());
         }
-        public override bool IsCompleted()
+        internal static Boolean IsCompleted(ChecklistGoal goal)
         {
-            return NumberOfTimes>=TargetNumberOfTimes;
+            return goal.NumberOfTimes >= goal.TargetNumberOfTimes;
+        }
+        public override Boolean IsCompleted()
+        {
+            return IsCompleted(this);
+        }
+        internal static void DisplayGoal(ChecklistGoal goal, int index = -1)
+        {
+            String check = " ";
+            if (goal.IsCompleted()) check = "X";
+            if (index >= 0) Console.WriteLine($"{index})  [{check}] {goal.Name}({goal.Description}) {goal.NumberOfTimes}/{goal.TargetNumberOfTimes}");
+            else Console.WriteLine($"[{check}] {goal.Name}({goal.Description}) {goal.NumberOfTimes}/{goal.TargetNumberOfTimes}");
         }
         public override void DisplayGoal(int index = -1)
         {
-            String check = " ";
-            if (IsCompleted()) check = "X";
-            if (index  >= 0) Console.WriteLine($"{index})  [{check}] {Name}({Description}) {NumberOfTimes}/{TargetNumberOfTimes}");
-            else Console.WriteLine($"[{check}] {Name}({Description}) {NumberOfTimes}/{TargetNumberOfTimes}");
+            DisplayGoal(this, index);
+        }
+        internal static int Report(ChecklistGoal goal)
+        {
+            goal.NumberOfTimes++;
+            if (goal.IsCompleted()) return goal.PointValue + goal.BonusPointValue;
+            else return goal.PointValue;
         }
         public override int Report()
         {
-            NumberOfTimes++;
-            if (IsCompleted()) return PointValue + BonusPointValue;
-            else return PointValue;
+            return Report(this);
         }
-
         public static explicit operator ChecklistGoal(JSONGoal goal)
         {
             ChecklistGoal result = null;
             if (goal.GetType() == typeof(JSONChecklistGoal))
             {
-                result = new();
+                result = new(true);
                 result.Init((JSONChecklistGoal)goal);
                 result.TargetNumberOfTimes = ((JSONChecklistGoal)goal).TargetNumberOfTimes;
                 result.NumberOfTimes = ((JSONChecklistGoal)goal).NumberOfTimes;
@@ -81,18 +91,20 @@ namespace Learning05
         }
     }
     [Serializable]
-    internal class JSONChecklistGoal : JSONGoal, IChecklistGoal
+    internal class JSONChecklistGoal : JSONGoal
     {
+        [JsonConstructor]
+        public JSONChecklistGoal() { }
         [JsonInclude]
-        [JsonPropertyName("TargetNumberOfTimes")]
+        [JsonPropertyName("Target Number of Times")]
         [JsonPropertyOrder(5)]
         public int TargetNumberOfTimes { get; set; }
         [JsonInclude]
-        [JsonPropertyName("NumberOfTimes")]
+        [JsonPropertyName("Number of Times")]
         [JsonPropertyOrder(4)]
         public int NumberOfTimes { get; set; }
         [JsonInclude]
-        [JsonPropertyName("BonusPointValue")]
+        [JsonPropertyName("Bonus Point Value")]
         [JsonPropertyOrder(3)]
         public int BonusPointValue { get; set; }
         public JSONChecklistGoal(Goal goal)
@@ -105,40 +117,17 @@ namespace Learning05
                 BonusPointValue = ((ChecklistGoal)goal).BonusPointValue;
             }
         }
-
         public override void DisplayGoal(int index = -1)
         {
-            throw new NotImplementedException();
+            ChecklistGoal.DisplayGoal((ChecklistGoal)(Goal)(JSONGoal)this, index);
         }
-
         public override bool IsCompleted()
         {
-            throw new NotImplementedException();
+            return ChecklistGoal.IsCompleted((ChecklistGoal)(Goal)(JSONGoal)this);
         }
-
         public override int Report()
         {
-            throw new NotImplementedException();
-        }
-
-        void IChecklistGoal.DisplayRequestBonusPoints()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IChecklistGoal.DisplayRequestNumberOfTimes()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IChecklistGoal.RequestBonusPoints()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IChecklistGoal.RequestNumberOfTimes()
-        {
-            throw new NotImplementedException();
+            return ChecklistGoal.Report((ChecklistGoal)(Goal)(JSONGoal)this);
         }
     }
 }

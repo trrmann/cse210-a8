@@ -1,21 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Xml.Linq;
-using static System.Formats.Asn1.AsnWriter;
+﻿using System.Text.Json.Serialization;
 
-namespace Learning05
+namespace Develop05
 {
-    public interface IGoals
-    {
-        void DisplayScore();
-        void List();
-        void Report();
-        void DisplayRequestSelectGoal();
-        int RequestSelectGoal();
-    }
-    public class Goals : List<Goal>, IGoals
+    public class Goals : List<Goal>
     {
         internal int Score { get; set; }
         public Goals()
@@ -25,6 +12,14 @@ namespace Learning05
         public Goals(Goals goals) : base(goals)
         {
             Init(goals);
+        }
+        internal Goals(JSONGoals jsonGoals)
+        {
+            Init(jsonGoals);
+        }
+        internal void Init(JSONGoals jsonGoals)
+        {
+            JSONGoals.Convert(this, jsonGoals);
         }
         protected void Init(Goals goals)
         {
@@ -74,8 +69,10 @@ namespace Learning05
         }
     }
     [Serializable]
-    internal class JSONGoals : /*Goals,*/ IGoals
+    internal class JSONGoals
     {
+        [JsonConstructor]
+        public JSONGoals() { }
         [JsonInclude]
         [JsonPropertyName("Score")]
         [JsonPropertyOrder(-1)]
@@ -104,7 +101,7 @@ namespace Learning05
             });
             return jSONGoals;
         }
-        protected void Convert(Goals goals, List<JSONGoal> jsonGoals)
+        protected static void Convert(Goals goals, List<JSONGoal> jsonGoals, int score)
         {
             goals.Clear();
             jsonGoals.ForEach((jsonGoal) => {
@@ -114,46 +111,13 @@ namespace Learning05
                 else if (jsonGoal.GetType() == typeof(JSONChecklistGoal)) goal = (ChecklistGoal)jsonGoal;
                 if (goal is not null) goals.Add(goal);
             });
+            goals.Score = score;
         }
-        /**
-        protected void Init()
+        internal static void Convert(Goals goals, JSONGoals jsonGoals)
         {
-            Init(new Goals());
-        }
-        /**/
-        /**
-        internal Goals Goals()
-        {
-            Goals goals = new Goals();
-            ForEach((jsonGoal) => {
-                goals.Add(jsonGoal);
-            });
-            return goals;
-        }
-        /**/
-        void IGoals.DisplayRequestSelectGoal()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IGoals.DisplayScore()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IGoals.List()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IGoals.Report()
-        {
-            throw new NotImplementedException();
-        }
-
-        int IGoals.RequestSelectGoal()
-        {
-            throw new NotImplementedException();
+            List<JSONGoal> list = new();
+            foreach (JSONGoal goal in jsonGoals.Goals) { list.Add(goal); }
+            Convert(goals, list, jsonGoals.Score);
         }
     }
 }

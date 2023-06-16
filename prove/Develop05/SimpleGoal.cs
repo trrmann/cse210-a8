@@ -1,44 +1,52 @@
-﻿using System.Numerics;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Learning05
+namespace Develop05
 {
-    public interface ISimpleGoal : IGoal
-    {
-    }
-    public class SimpleGoal : Goal, ISimpleGoal
+    public class SimpleGoal : Goal
     {
         internal Boolean Completed { get; set; }
-        public SimpleGoal() {
-            Init();
+        public SimpleGoal(Boolean empty=false) {
+            Init(empty);
         }
-        protected new void Init()
+        protected new void Init(Boolean empty = false)
         {
-            base.Init();
+            base.Init(empty);
+            Completed = false;
         }
-        public override bool IsCompleted()
+        internal static Boolean IsCompleted(SimpleGoal goal)
         {
-            return Completed;
+            return goal.Completed;
+        }
+        public override Boolean IsCompleted()
+        {
+            return IsCompleted(this);
+        }
+        internal static void DisplayGoal(SimpleGoal goal, int index = -1)
+        {
+            String check = " ";
+            if (goal.IsCompleted()) check = "X";
+            if (index >= 0) Console.WriteLine($"{index})  [{check}] {goal.Name}({goal.Description})");
+            else Console.WriteLine($"[{check}] {goal.Name}({goal.Description})");
         }
         public override void DisplayGoal(int index = -1)
         {
-            String check = " ";
-            if (IsCompleted()) check = "X";
-            if (index >= 0) Console.WriteLine($"{index})  [{check}] {Name}({Description})");
-            else Console.WriteLine($"[{check}] {Name}({Description})");
+            DisplayGoal(this, index);
+        }
+        internal static int Report(SimpleGoal goal)
+        {
+            goal.Completed = true;
+            return goal.PointValue;
         }
         public override int Report()
         {
-            Completed = true;
-            return PointValue;
+            return Report(this);
         }
-
         public static explicit operator SimpleGoal(JSONGoal goal)
         {
             SimpleGoal result = null;
             if (goal.GetType() == typeof(JSONSimpleGoal))
             {
-                result = new();
+                result = new(true);
                 result.Init((JSONSimpleGoal)goal);
                 result.Completed = ((JSONSimpleGoal)goal).Completed;
             }
@@ -46,8 +54,10 @@ namespace Learning05
         }
     }
     [Serializable]
-    internal class JSONSimpleGoal : JSONGoal, ISimpleGoal
+    internal class JSONSimpleGoal : JSONGoal
     {
+        [JsonConstructor]
+        public JSONSimpleGoal() { }
         [JsonInclude]
         [JsonPropertyName("Complete")]
         [JsonPropertyOrder(3)]
@@ -60,20 +70,17 @@ namespace Learning05
                 Completed = ((SimpleGoal)goal).Completed;
             }
         }
-
         public override void DisplayGoal(int index = -1)
         {
-            throw new NotImplementedException();
+            SimpleGoal.DisplayGoal((SimpleGoal)(Goal)(JSONGoal)this, index);
         }
-
         public override bool IsCompleted()
         {
-            throw new NotImplementedException();
+            return SimpleGoal.IsCompleted((SimpleGoal)(Goal)(JSONGoal)this);
         }
-
         public override int Report()
         {
-            throw new NotImplementedException();
+            return SimpleGoal.Report((SimpleGoal)(Goal)(JSONGoal)this);
         }
     }
 }

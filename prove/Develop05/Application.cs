@@ -1,7 +1,6 @@
-﻿using System.Numerics;
-using System.Text.Json;
+﻿using System.Text.Json;
 
-namespace Learning05
+namespace Develop05
 {
     public interface IApplication
     {
@@ -125,24 +124,15 @@ namespace Learning05
             String jsonString = JsonSerializer.Serialize(jsonGoals, options);
             File.WriteAllText(fileName, jsonString);
             Console.WriteLine(File.ReadAllText(fileName));
-            //JSONGoals jsonObject = new(Goals);
-            //String json = jsonObject.ToJSONString();
         }
         public void LoadGoals()
         {
+            String fileName = "Goals.json";
             Console.WriteLine("\nLoad goals.");
-            String json = "[{},{},{}]";
-            Goals = JsonSerializer.Deserialize<Goals>(json);
-            //JSONGoals jsonObject = new(Goals);
-            //jsonObject.FromJSONString(json);
-            //Goals.Init(jsonObject);
+            String json = File.ReadAllText(fileName);
+            JSONGoals jsonGoals = JsonSerializer.Deserialize<JSONGoals>(json);
+            Goals = new(jsonGoals);
         }
-
-        private void FromJSONString(string json)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReportEvent()
         {
             Console.WriteLine("\nReport an event.");
