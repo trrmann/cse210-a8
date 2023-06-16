@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Develop05
 {
@@ -23,17 +24,17 @@ namespace Develop05
         }
         protected void Init(Goals goals)
         {
-            Init((List<Goal>)goals);
+            Init((List<Goal>)goals, goals.Score);
         }
-        protected void Init(List<Goal> goals)
+        protected void Init(List<Goal> goals, int score)
         {
             Clear();
             goals.ForEach(goal => Add(goal));
+            Score = score;
         }
         protected void Init()
         {
-            Init(new List<Goal>());
-            Score = 0;
+            Init(new List<Goal>(), 0);
         }
         public void DisplayScore()
         {
@@ -58,6 +59,18 @@ namespace Develop05
                 goal.DisplayGoal();
             });
         }
+        internal void AddSimpleGoal()
+        {
+            Add(new SimpleGoal());
+        }
+        internal void AddEternalGoal()
+        {
+            Add(new EternalGoal());
+        }
+        internal void AddChecklistGoal()
+        {
+            Add(new ChecklistGoal());
+        }
         public void Report()
         {
             ForEach((goal) => {
@@ -66,6 +79,25 @@ namespace Develop05
             DisplayRequestSelectGoal();
             int id = RequestSelectGoal();
             Score = (Score + this[id - 1].Report());
+        }
+        internal void SaveGoals()
+        {
+            String fileName = "Goals.json";
+            Console.WriteLine("\nSave goals.");
+            JSONGoals jsonGoals = new(this);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            String jsonString = JsonSerializer.Serialize(jsonGoals, options);
+            File.WriteAllText(fileName, jsonString);
+            Console.WriteLine(File.ReadAllText(fileName));
+        }
+
+        internal void LoadGoals()
+        {
+            String fileName = "Goals.json";
+            Console.WriteLine("\nLoad goals.");
+            String json = File.ReadAllText(fileName);
+            JSONGoals jsonGoals = JsonSerializer.Deserialize<JSONGoals>(json);
+            Init(new Goals(jsonGoals));
         }
     }
     [Serializable]

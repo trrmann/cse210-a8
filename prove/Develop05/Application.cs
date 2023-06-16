@@ -18,6 +18,8 @@ namespace Develop05
     }
     public class Application : IApplication
     {
+        public Boolean Running { get; private set; }
+        private Goals Goals { get; set; }
         public Application()
         {
             Init();
@@ -27,8 +29,6 @@ namespace Develop05
             Running = false;
             Goals = new Goals();
         }
-        public Boolean Running { get; set; }
-        private Goals Goals { get; set; }
         public void Run()
         {
             Running = true;
@@ -98,17 +98,17 @@ namespace Develop05
         public void AddSimpleGoal()
         {
             Console.WriteLine("\nAdd simple goal!");
-            Goals.Add(new SimpleGoal());
+            Goals.AddSimpleGoal();
         }
         public void AddEternalGoal()
         {
             Console.WriteLine("\nAdd eternal goal!");
-            Goals.Add(new EternalGoal());
+            Goals.AddEternalGoal();
         }
         public void AddChecklistGoal()
         {
             Console.WriteLine("\nAdd checklist goal!");
-            Goals.Add(new ChecklistGoal());
+            Goals.AddChecklistGoal();
         }
         public void ListGoals()
         {
@@ -117,21 +117,11 @@ namespace Develop05
         }
         public void SaveGoals()
         {
-            String fileName = "Goals.json";
-            Console.WriteLine("\nSave goals.");
-            JSONGoals jsonGoals = new(Goals);
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            String jsonString = JsonSerializer.Serialize(jsonGoals, options);
-            File.WriteAllText(fileName, jsonString);
-            Console.WriteLine(File.ReadAllText(fileName));
+            Goals.SaveGoals();
         }
         public void LoadGoals()
         {
-            String fileName = "Goals.json";
-            Console.WriteLine("\nLoad goals.");
-            String json = File.ReadAllText(fileName);
-            JSONGoals jsonGoals = JsonSerializer.Deserialize<JSONGoals>(json);
-            Goals = new(jsonGoals);
+            Goals.LoadGoals();
         }
         public void ReportEvent()
         {
