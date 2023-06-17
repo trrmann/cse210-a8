@@ -4,17 +4,21 @@ namespace Develop05
 {
     public class EternalGoal : Goal
     {
-        public EternalGoal(Boolean empty = false)
+        public EternalGoal(Configuration configuration, Boolean empty = false)
         {
-            Init(empty);
+            Init(configuration, empty);
         }
-        protected new void Init(Boolean empty = false)
+        public EternalGoal(Goal goal)
         {
-            base.Init(empty);
+            Init(goal);
+        }
+        protected new void Init(Configuration configuration, Boolean empty = false)
+        {
+            base.Init(configuration, empty);
         }
         public override void DisplayRequestPointValue()
         {
-            Console.WriteLine("Please enter the point value for each completion of your goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestRepeatPointValueMessage"]);
         }
         internal static Boolean IsCompleted(EternalGoal goal)
         {
@@ -24,14 +28,14 @@ namespace Develop05
         {
             return IsCompleted(this);
         }
-        internal static void DisplayGoal(EternalGoal goal, int index = -1)
+        internal static void DisplayGoal(EternalGoal goal, Configuration configuration, int index = -1)
         {
-            if (index >= 0) Console.WriteLine($"{index})  [ ] {goal.Name}({goal.Description})");
-            else Console.WriteLine($"[ ] {goal.Name}({goal.Description})");
+            if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalIndexedDisplayFormat"], index, (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
+            else Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalNonIndexedDisplayFormat"], (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, index);
+            DisplayGoal(this, Configuration, index);
         }
         internal static int Report(EternalGoal goal)
         {
@@ -46,7 +50,7 @@ namespace Develop05
             EternalGoal result = null;
             if (goal.GetType() == typeof(JSONEternalGoal))
             {
-                result = new(true);
+                result = new(goal.Configuration, true);
                 result.Init((JSONEternalGoal)goal);
             }
             return result;
@@ -66,7 +70,7 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            EternalGoal.DisplayGoal((EternalGoal)(Goal)(JSONGoal)this, index);
+            EternalGoal.DisplayGoal((EternalGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
         public override bool IsCompleted()
         {

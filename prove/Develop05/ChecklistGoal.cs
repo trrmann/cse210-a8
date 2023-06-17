@@ -4,13 +4,20 @@ namespace Develop05
 {
     public class ChecklistGoal : Goal
     {
-        public ChecklistGoal(Boolean empty = false)
+        public ChecklistGoal(Configuration configuration, Boolean empty = false)
         {
-            Init(empty);
+            Init(configuration, empty);
         }
-        protected new void Init(Boolean empty = false)
+        public ChecklistGoal(Goal goal)
         {
-            base.Init(empty);
+            Init(goal);
+            NumberOfTimes = ((ChecklistGoal)goal).NumberOfTimes;
+            BonusPointValue = ((ChecklistGoal)goal).BonusPointValue;
+            TargetNumberOfTimes = ((ChecklistGoal)goal).TargetNumberOfTimes;
+        }
+        protected new void Init(Configuration configuration, Boolean empty = false)
+        {
+            base.Init(configuration, empty);
             if(empty)
             {
                 NumberOfTimes = 0;
@@ -27,25 +34,25 @@ namespace Develop05
         internal int BonusPointValue { get; set; }
         public override void DisplayRequestPointValue()
         {
-            Console.WriteLine("Please enter the point value for each completion of your goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestRepeatPointValueMessage"]);
         }
         public virtual void DisplayRequestNumberOfTimes()
         {
-            Console.WriteLine("Please enter the number times required to complete your overall goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestChecklistCompleteCountMessage"]);
         }
         public virtual void DisplayRequestBonusPoints()
         {
-            Console.WriteLine("Please enter the bonus point value of your overall goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestChecklistBonusPointValueMessage"]);
         }
         public void RequestNumberOfTimes()
         {
             DisplayRequestNumberOfTimes();
-            TargetNumberOfTimes = int.Parse(ReadResponse());
+            TargetNumberOfTimes = int.Parse(IApplication.ReadResponse(Configuration));
         }
         public void RequestBonusPoints()
         {
             DisplayRequestBonusPoints();
-            BonusPointValue = int.Parse(ReadResponse());
+            BonusPointValue = int.Parse(IApplication.ReadResponse(Configuration));
         }
         internal static Boolean IsCompleted(ChecklistGoal goal)
         {
@@ -55,16 +62,16 @@ namespace Develop05
         {
             return IsCompleted(this);
         }
-        internal static void DisplayGoal(ChecklistGoal goal, int index = -1)
+        internal static void DisplayGoal(ChecklistGoal goal, Configuration configuration, int index = -1)
         {
-            String check = " ";
-            if (goal.IsCompleted()) check = "X";
-            if (index >= 0) Console.WriteLine($"{index})  [{check}] {goal.Name}({goal.Description}) {goal.NumberOfTimes}/{goal.TargetNumberOfTimes}");
-            else Console.WriteLine($"[{check}] {goal.Name}({goal.Description}) {goal.NumberOfTimes}/{goal.TargetNumberOfTimes}");
+            Char check = (Char)configuration.Dictionary["IncompleteSymbol"];
+            if (goal.IsCompleted()) check = (Char)configuration.Dictionary["CompleteSymbol"];
+            if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["ChecklistGoalIndexedDisplayFormat"], index, check, goal.Name, goal.Description, goal.NumberOfTimes, goal.TargetNumberOfTimes));
+            else Console.WriteLine(String.Format((String)configuration.Dictionary["ChecklistGoalNonIndexedDisplayFormat"], check, goal.Name, goal.Description, goal.NumberOfTimes, goal.TargetNumberOfTimes));
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, index);
+            DisplayGoal(this, Configuration, index);
         }
         internal static int Report(ChecklistGoal goal)
         {
@@ -81,7 +88,7 @@ namespace Develop05
             ChecklistGoal result = null;
             if (goal.GetType() == typeof(JSONChecklistGoal))
             {
-                result = new(true);
+                result = new(goal.Configuration, true);
                 result.Init((JSONChecklistGoal)goal);
                 result.TargetNumberOfTimes = ((JSONChecklistGoal)goal).TargetNumberOfTimes;
                 result.NumberOfTimes = ((JSONChecklistGoal)goal).NumberOfTimes;
@@ -119,7 +126,7 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            ChecklistGoal.DisplayGoal((ChecklistGoal)(Goal)(JSONGoal)this, index);
+            ChecklistGoal.DisplayGoal((ChecklistGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
         public override bool IsCompleted()
         {

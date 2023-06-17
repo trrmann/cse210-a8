@@ -6,98 +6,154 @@ namespace Develop05
     public class Goals : List<Goal>
     {
         internal int Score { get; set; }
-        public Goals()
+        internal Configuration Configuration { get; set; }
+        public Goals(Configuration configuration)
         {
-            Init();
+            Init(configuration);
         }
-        public Goals(Goals goals) : base(goals)
+        public Goals(Goals goals, Configuration configuration) : base(goals)
         {
-            Init(goals);
+            Init(goals, configuration);
         }
-        internal Goals(JSONGoals jsonGoals)
+        internal Goals(JSONGoals jsonGoals, Configuration configuration)
         {
-            Init(jsonGoals);
+            Init(jsonGoals, configuration);
         }
-        internal void Init(JSONGoals jsonGoals)
+        internal void Init(JSONGoals jsonGoals, Configuration configuration)
         {
-            JSONGoals.Convert(this, jsonGoals);
+            JSONGoals.Convert(this, jsonGoals, configuration);
         }
-        protected void Init(Goals goals)
+        protected void Init(Goals goals, Configuration configuration)
         {
-            Init((List<Goal>)goals, goals.Score);
+            Init((List<Goal>)goals, goals.Score, configuration);
         }
-        protected void Init(List<Goal> goals, int score)
+        protected void Init(List<Goal> goals, int score, Configuration configuration)
         {
             Clear();
             goals.ForEach(goal => Add(goal));
             Score = score;
+            Configuration = configuration;
         }
-        protected void Init()
+        protected void Init(Configuration configuration)
         {
-            Init(new List<Goal>(), 0);
+            Init(new List<Goal>(), 0, configuration);
         }
         public void DisplayScore()
         {
-            Console.WriteLine($"\nYour score is {Score}.\n");
+            Console.WriteLine(String.Format((String)Configuration.Dictionary["ScoreMessage"],Score));
         }
         public virtual void DisplayRequestSelectGoal()
         {
-            Console.WriteLine("Please enter the number of your jsonGoal.");
-        }
-        public String ReadResponse()
-        {
-            Console.Write(">  ");
-            return Console.ReadLine();
+            Console.WriteLine(Configuration.Dictionary["RequestGoalMessage"]);
         }
         public int RequestSelectGoal()
         {
-            return int.Parse(ReadResponse());
+            int result = -1;
+            while (result < 0)
+            {
+                try
+                {
+                    result = int.Parse(IApplication.ReadResponse(Configuration));
+                }
+                catch
+                {
+                    result = -1;
+                }
+            }
+            return result;
         }
-        public void List()
+        public void ListCurrent()
         {
             ForEach((goal) => {
-                goal.DisplayGoal();
+                if (!goal.IsCompleted()) goal.DisplayGoal();
+            });
+        }
+        public void ListAll()
+        {
+            ListCurrent();
+            ForEach((goal) => {
+                if (goal.IsCompleted()) goal.DisplayGoal();
             });
         }
         internal void AddSimpleGoal()
         {
-            Add(new SimpleGoal());
+            Add(new SimpleGoal(Configuration));
         }
         internal void AddEternalGoal()
         {
-            Add(new EternalGoal());
+            Add(new EternalGoal(Configuration));
         }
         internal void AddChecklistGoal()
         {
-            Add(new ChecklistGoal());
+            Add(new ChecklistGoal(Configuration));
+        }
+        internal void ReuseCompletedGoal()
+        {
+            Dictionary<int, int> optionMap = new();
+            int option = 1;
+            ForEach((goal) => {
+                if (goal.IsCompleted())
+                {
+                    optionMap.Add(option, IndexOf(goal));
+                    goal.DisplayGoal(option);
+                    option++;
+                }
+            });
+            if(optionMap.Count > 0) {
+                DisplayRequestSelectGoal();
+                option = RequestSelectGoal();
+                Goal goal = this[optionMap[option]];
+                if (goal.GetType() == typeof(SimpleGoal))
+                {
+                    ((SimpleGoal)goal).Completed = false;
+                    Add(new SimpleGoal(goal));
+                    ((SimpleGoal)goal).Completed = true;
+                }
+                else if (goal.GetType() == typeof(EternalGoal))
+                {
+                    Add(new EternalGoal(goal));
+                }
+                else if (goal.GetType() == typeof(ChecklistGoal))
+                {
+                    int count = ((ChecklistGoal)goal).NumberOfTimes;
+                    ((ChecklistGoal)goal).NumberOfTimes = 0;
+                    Add(new ChecklistGoal(goal));
+                    ((ChecklistGoal)goal).NumberOfTimes = count;
+                }
+            }
         }
         public void Report()
         {
+            Dictionary<int,int> optionMap = new();
+            int option = 1;
             ForEach((goal) => {
-                goal.DisplayGoal(IndexOf(goal)+1);
+                if(!goal.IsCompleted())
+                {
+                    optionMap.Add(option, IndexOf(goal));
+                    goal.DisplayGoal(option);
+                    option++;
+                }
             });
             DisplayRequestSelectGoal();
-            int id = RequestSelectGoal();
-            Score = (Score + this[id - 1].Report());
+            option = RequestSelectGoal();
+            int earned = this[optionMap[option]].Report();
+            Console.WriteLine(String.Format((String)Configuration.Dictionary["AwardMessage"], earned));
+            Score += earned;
         }
         internal void SaveGoals()
-        {
-            String fileName = "Goals.json";
-            Console.WriteLine("\nSave goals.");
+        {            
+            String fileName = (String)Configuration.Dictionary["DefaultFilename"];
             JSONGoals jsonGoals = new(this);
             var options = new JsonSerializerOptions { WriteIndented = true };
             String jsonString = JsonSerializer.Serialize(jsonGoals, options);
             File.WriteAllText(fileName, jsonString);
-            Console.WriteLine(File.ReadAllText(fileName));
         }
-
         internal void LoadGoals()
         {
-            String fileName = "Goals.json";
-            Console.WriteLine("\nLoad goals.");
+            String fileName = (String)Configuration.Dictionary["DefaultFilename"];
             String json = File.ReadAllText(fileName);
             JSONGoals jsonGoals = JsonSerializer.Deserialize<JSONGoals>(json);
-            Init(new Goals(jsonGoals));
+            Init(new Goals(jsonGoals, Configuration), Configuration);
         }
     }
     [Serializable]
@@ -133,23 +189,25 @@ namespace Develop05
             });
             return jSONGoals;
         }
-        protected static void Convert(Goals goals, List<JSONGoal> jsonGoals, int score)
+        protected static void Convert(Goals goals, List<JSONGoal> jsonGoals, int score, Configuration configuration)
         {
             goals.Clear();
             jsonGoals.ForEach((jsonGoal) => {
                 Goal goal = null;
+                jsonGoal.Configuration = configuration;
                 if (jsonGoal.GetType() == typeof(JSONSimpleGoal)) goal = (SimpleGoal)jsonGoal;
                 else if (jsonGoal.GetType() == typeof(JSONEternalGoal)) goal = (EternalGoal)jsonGoal;
                 else if (jsonGoal.GetType() == typeof(JSONChecklistGoal)) goal = (ChecklistGoal)jsonGoal;
                 if (goal is not null) goals.Add(goal);
             });
             goals.Score = score;
+            goals.Configuration = configuration;
         }
-        internal static void Convert(Goals goals, JSONGoals jsonGoals)
+        internal static void Convert(Goals goals, JSONGoals jsonGoals, Configuration configuration)
         {
             List<JSONGoal> list = new();
             foreach (JSONGoal goal in jsonGoals.Goals) { list.Add(goal); }
-            Convert(goals, list, jsonGoals.Score);
+            Convert(goals, list, jsonGoals.Score, configuration);
         }
     }
 }

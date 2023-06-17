@@ -10,11 +10,11 @@ namespace Develop05
         void RequestName();
         void RequestDescription();
         void RequestPointValue();
-        String ReadResponse();
     }
     public abstract class Goal : IGoal
     {
-        internal void Init(Boolean empty = false) {
+        internal void Init(Configuration configuration, Boolean empty = false) {
+            Configuration = configuration;
             if (empty)
             {
                 Name = "";
@@ -33,43 +33,40 @@ namespace Develop05
             Name = goal.Name;
             Description = goal.Description;
             PointValue = goal.PointValue;
+            Configuration = goal.Configuration;
         }
         protected String Name { get; set; }
         protected String Description { get; set; }
         protected int PointValue { get; set; }
+        internal Configuration Configuration { get; set; }
         public abstract void DisplayGoal(int index = -1);
         public abstract Boolean IsCompleted();
         public virtual void DisplayRequestName()
         {
-            Console.WriteLine("Please enter the name of your goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestNameMessage"]);
         }
         public virtual void DisplayRequestDescription()
         {
-            Console.WriteLine("Please enter the description of your goal.");
+            Console.WriteLine(Configuration.Dictionary["RequestDescriptionMessage"]);
         }
         public virtual void DisplayRequestPointValue()
         {
-            Console.WriteLine("Please enter the point value of your goal.");
-        }
-        public String ReadResponse()
-        {
-            Console.Write(">  ");
-            return Console.ReadLine();
+            Console.WriteLine(Configuration.Dictionary["RequestPointValueMessage"]);
         }
         public void RequestName()
         {
             DisplayRequestName();
-            Name = ReadResponse();
+            Name = IApplication.ReadResponse(Configuration);
         }
         public void RequestDescription()
         {
             DisplayRequestDescription();
-            Description = ReadResponse();
+            Description = IApplication.ReadResponse(Configuration);
         }
         public void RequestPointValue()
         {
             DisplayRequestPointValue();
-            PointValue = int.Parse(ReadResponse());
+            PointValue = int.Parse(IApplication.ReadResponse(Configuration));
         }
         public abstract int Report();
     }

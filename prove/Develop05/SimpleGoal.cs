@@ -5,12 +5,17 @@ namespace Develop05
     public class SimpleGoal : Goal
     {
         internal Boolean Completed { get; set; }
-        public SimpleGoal(Boolean empty=false) {
-            Init(empty);
+        public SimpleGoal(Configuration configuration, Boolean empty =false) {
+            Init(configuration, empty);
         }
-        protected new void Init(Boolean empty = false)
+        public SimpleGoal(Goal goal)
         {
-            base.Init(empty);
+            Init(goal);
+            Completed = ((SimpleGoal)goal).Completed;
+        }
+        protected new void Init(Configuration configuration, Boolean empty = false)
+        {
+            base.Init(configuration, empty);
             Completed = false;
         }
         internal static Boolean IsCompleted(SimpleGoal goal)
@@ -21,16 +26,16 @@ namespace Develop05
         {
             return IsCompleted(this);
         }
-        internal static void DisplayGoal(SimpleGoal goal, int index = -1)
+        internal static void DisplayGoal(SimpleGoal goal, Configuration configuration, int index = -1)
         {
-            String check = " ";
-            if (goal.IsCompleted()) check = "X";
-            if (index >= 0) Console.WriteLine($"{index})  [{check}] {goal.Name}({goal.Description})");
-            else Console.WriteLine($"[{check}] {goal.Name}({goal.Description})");
+            Char check = (Char)configuration.Dictionary["IncompleteSymbol"];
+            if (goal.IsCompleted()) check = (Char)configuration.Dictionary["CompleteSymbol"];
+            if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalIndexedDisplayFormat"], index, check, goal.Name, goal.Description));
+            else Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalNonIndexedDisplayFormat"], check, goal.Name, goal.Description));
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, index);
+            DisplayGoal(this, Configuration, index);
         }
         internal static int Report(SimpleGoal goal)
         {
@@ -46,7 +51,7 @@ namespace Develop05
             SimpleGoal result = null;
             if (goal.GetType() == typeof(JSONSimpleGoal))
             {
-                result = new(true);
+                result = new(goal.Configuration, true);
                 result.Init((JSONSimpleGoal)goal);
                 result.Completed = ((JSONSimpleGoal)goal).Completed;
             }
@@ -72,7 +77,7 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            SimpleGoal.DisplayGoal((SimpleGoal)(Goal)(JSONGoal)this, index);
+            SimpleGoal.DisplayGoal((SimpleGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
         public override bool IsCompleted()
         {
