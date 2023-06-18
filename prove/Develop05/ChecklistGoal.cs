@@ -47,22 +47,22 @@ namespace Develop05
         public void RequestNumberOfTimes()
         {
             DisplayRequestNumberOfTimes();
-            TargetNumberOfTimes = int.Parse(IApplication.ReadResponse(Configuration));
+            TargetNumberOfTimes = int.Parse(IApplication.READ_RESPONSE(Configuration));
         }
         public void RequestBonusPoints()
         {
             DisplayRequestBonusPoints();
-            BonusPointValue = int.Parse(IApplication.ReadResponse(Configuration));
+            BonusPointValue = int.Parse(IApplication.READ_RESPONSE(Configuration));
         }
-        internal static Boolean IsCompleted(ChecklistGoal goal)
+        internal static Boolean IS_COMPLETED(ChecklistGoal goal)
         {
             return goal.NumberOfTimes >= goal.TargetNumberOfTimes;
         }
         public override Boolean IsCompleted()
         {
-            return IsCompleted(this);
+            return IS_COMPLETED(this);
         }
-        internal static void DisplayGoal(ChecklistGoal goal, Configuration configuration, int index = -1)
+        internal static void DISPLAY_GOAL(ChecklistGoal goal, Configuration configuration, int index = -1)
         {
             Char check = (Char)configuration.Dictionary["IncompleteSymbol"];
             if (goal.IsCompleted()) check = (Char)configuration.Dictionary["CompleteSymbol"];
@@ -71,9 +71,9 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, Configuration, index);
+            DISPLAY_GOAL(this, Configuration, index);
         }
-        internal static int Report(ChecklistGoal goal)
+        internal static int REPORT(ChecklistGoal goal)
         {
             goal.NumberOfTimes++;
             if (goal.IsCompleted()) return goal.PointValue + goal.BonusPointValue;
@@ -81,7 +81,7 @@ namespace Develop05
         }
         public override int Report()
         {
-            return Report(this);
+            return REPORT(this);
         }
         public static explicit operator ChecklistGoal(JSONGoal goal)
         {
@@ -126,15 +126,15 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            ChecklistGoal.DisplayGoal((ChecklistGoal)(Goal)(JSONGoal)this, Configuration, index);
+            ChecklistGoal.DISPLAY_GOAL((ChecklistGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override bool IsCompleted()
+        public override Boolean IsCompleted()
         {
-            return ChecklistGoal.IsCompleted((ChecklistGoal)(Goal)(JSONGoal)this);
+            return ChecklistGoal.IS_COMPLETED((ChecklistGoal)(Goal)(JSONGoal)this);
         }
         public override int Report()
         {
-            return ChecklistGoal.Report((ChecklistGoal)(Goal)(JSONGoal)this);
+            return ChecklistGoal.REPORT((ChecklistGoal)(Goal)(JSONGoal)this);
         }
     }
 }

@@ -56,17 +56,17 @@ namespace Develop05
         public void RequestName()
         {
             DisplayRequestName();
-            Name = IApplication.ReadResponse(Configuration);
+            Name = IApplication.READ_RESPONSE(Configuration);
         }
         public void RequestDescription()
         {
             DisplayRequestDescription();
-            Description = IApplication.ReadResponse(Configuration);
+            Description = IApplication.READ_RESPONSE(Configuration);
         }
         public void RequestPointValue()
         {
             DisplayRequestPointValue();
-            PointValue = int.Parse(IApplication.ReadResponse(Configuration));
+            PointValue = int.Parse(IApplication.READ_RESPONSE(Configuration));
         }
         public abstract int Report();
     }

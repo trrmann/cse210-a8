@@ -7,7 +7,7 @@ namespace Develop05
 {
     public interface IApplication
     {
-        static String ReadResponse(Configuration configuration)
+        static String READ_RESPONSE(Configuration configuration)
         {
             Console.Write(configuration.Dictionary["Prompt"]);
             return Console.ReadLine();
@@ -50,7 +50,7 @@ namespace Develop05
             while (Running)
             {
                 DisplayMainMenu();
-                Running = ProcessResponse(IApplication.ReadResponse(Configuration));
+                Running = ProcessResponse(IApplication.READ_RESPONSE(Configuration));
             }
         }
         public void BuildDefaultConfiguration()
@@ -81,6 +81,7 @@ namespace Develop05
             configure.Dictionary.Add("RequestGoalMessage", "Please enter the number of your goal.");
             configure.Dictionary.Add("AwardMessage", "\nCongratulations, you earned {0} points.");
             configure.Dictionary.Add("DefaultFilename", "Goals.json");
+            configure.Dictionary.Add("RequestFilenameMessage", "Please enter the file name.");
             configure.Dictionary.Add("RequestNameMessage", "Please enter the name of your goal.");
             configure.Dictionary.Add("RequestDescriptionMessage", "Please enter the description of your goal.");
             configure.Dictionary.Add("RequestPointValueMessage", "Please enter the point value of your goal.");

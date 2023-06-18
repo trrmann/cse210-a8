@@ -20,30 +20,30 @@ namespace Develop05
         {
             Console.WriteLine(Configuration.Dictionary["RequestRepeatPointValueMessage"]);
         }
-        internal static Boolean IsCompleted(EternalGoal goal)
+        internal static Boolean IS_COMPLETED(EternalGoal goal)
         {
             return false;
         }
-        public override bool IsCompleted()
+        public override Boolean IsCompleted()
         {
-            return IsCompleted(this);
+            return IS_COMPLETED(this);
         }
-        internal static void DisplayGoal(EternalGoal goal, Configuration configuration, int index = -1)
+        internal static void DISPLAY_GOAL(EternalGoal goal, Configuration configuration, int index = -1)
         {
             if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalIndexedDisplayFormat"], index, (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
             else Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalNonIndexedDisplayFormat"], (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, Configuration, index);
+            DISPLAY_GOAL(this, Configuration, index);
         }
-        internal static int Report(EternalGoal goal)
+        internal static int REPORT(EternalGoal goal)
         {
             return goal.PointValue;
         }
         public override int Report()
         {
-            return Report(this);
+            return REPORT(this);
         }
         public static explicit operator EternalGoal(JSONGoal goal)
         {
@@ -70,15 +70,15 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            EternalGoal.DisplayGoal((EternalGoal)(Goal)(JSONGoal)this, Configuration, index);
+            EternalGoal.DISPLAY_GOAL((EternalGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override bool IsCompleted()
+        public override Boolean IsCompleted()
         {
-            return EternalGoal.IsCompleted((EternalGoal)(Goal)(JSONGoal)this);
+            return EternalGoal.IS_COMPLETED((EternalGoal)(Goal)(JSONGoal)this);
         }
         public override int Report()
         {
-            return EternalGoal.Report((EternalGoal)(Goal)(JSONGoal)this);
+            return EternalGoal.REPORT((EternalGoal)(Goal)(JSONGoal)this);
         }
     }
 }

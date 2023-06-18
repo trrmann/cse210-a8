@@ -18,15 +18,15 @@ namespace Develop05
             base.Init(configuration, empty);
             Completed = false;
         }
-        internal static Boolean IsCompleted(SimpleGoal goal)
+        internal static Boolean IS_COMPLETED(SimpleGoal goal)
         {
             return goal.Completed;
         }
         public override Boolean IsCompleted()
         {
-            return IsCompleted(this);
+            return IS_COMPLETED(this);
         }
-        internal static void DisplayGoal(SimpleGoal goal, Configuration configuration, int index = -1)
+        internal static void DISPLAY_GOAL(SimpleGoal goal, Configuration configuration, int index = -1)
         {
             Char check = (Char)configuration.Dictionary["IncompleteSymbol"];
             if (goal.IsCompleted()) check = (Char)configuration.Dictionary["CompleteSymbol"];
@@ -35,16 +35,16 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            DisplayGoal(this, Configuration, index);
+            DISPLAY_GOAL(this, Configuration, index);
         }
-        internal static int Report(SimpleGoal goal)
+        internal static int REPORT(SimpleGoal goal)
         {
             goal.Completed = true;
             return goal.PointValue;
         }
         public override int Report()
         {
-            return Report(this);
+            return REPORT(this);
         }
         public static explicit operator SimpleGoal(JSONGoal goal)
         {
@@ -77,15 +77,15 @@ namespace Develop05
         }
         public override void DisplayGoal(int index = -1)
         {
-            SimpleGoal.DisplayGoal((SimpleGoal)(Goal)(JSONGoal)this, Configuration, index);
+            SimpleGoal.DISPLAY_GOAL((SimpleGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override bool IsCompleted()
+        public override Boolean IsCompleted()
         {
-            return SimpleGoal.IsCompleted((SimpleGoal)(Goal)(JSONGoal)this);
+            return SimpleGoal.IS_COMPLETED((SimpleGoal)(Goal)(JSONGoal)this);
         }
         public override int Report()
         {
-            return SimpleGoal.Report((SimpleGoal)(Goal)(JSONGoal)this);
+            return SimpleGoal.REPORT((SimpleGoal)(Goal)(JSONGoal)this);
         }
     }
 }

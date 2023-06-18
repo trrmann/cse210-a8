@@ -11,9 +11,9 @@ namespace Develop05
         public TKey Key { get; set; }
         public TValue Value { get; set; }
     }
-    public static class SerializableKeyValuePairExtensions
+    public static class SERIALIZABLE_KEY_VALUE_PAIR_EXTENSIONS
     {
-        public static SerializableKeyValuePair<TKey, TValue> ToSerializablePair<TKey, TValue>(this KeyValuePair<TKey, TValue> pair)
+        public static SerializableKeyValuePair<TKey, TValue> TO_SERIALIZABLE_PAIR<TKey, TValue>(this KeyValuePair<TKey, TValue> pair)
         {
             return new SerializableKeyValuePair<TKey, TValue> { Key = pair.Key, Value = pair.Value };
         }
@@ -31,7 +31,7 @@ namespace Develop05
         {
             get
             {
-                return Dictionary == null ? null : Dictionary.Select(p => p.ToSerializablePair()).ToArray();
+                return Dictionary == null ? null : Dictionary.Select(p => p.TO_SERIALIZABLE_PAIR()).ToArray();
             }
             set
             {

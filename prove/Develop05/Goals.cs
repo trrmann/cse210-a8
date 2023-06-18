@@ -21,7 +21,7 @@ namespace Develop05
         }
         internal void Init(JSONGoals jsonGoals, Configuration configuration)
         {
-            JSONGoals.Convert(this, jsonGoals, configuration);
+            JSONGoals.CONVERT(this, jsonGoals, configuration);
         }
         protected void Init(Goals goals, Configuration configuration)
         {
@@ -53,7 +53,7 @@ namespace Develop05
             {
                 try
                 {
-                    result = int.Parse(IApplication.ReadResponse(Configuration));
+                    result = int.Parse(IApplication.READ_RESPONSE(Configuration));
                 }
                 catch
                 {
@@ -141,8 +141,10 @@ namespace Develop05
             Score += earned;
         }
         internal void SaveGoals()
-        {            
-            String fileName = (String)Configuration.Dictionary["DefaultFilename"];
+        {
+            Console.WriteLine(Configuration.Dictionary["RequestFilenameMessage"]);
+            String fileName = IApplication.READ_RESPONSE(Configuration);
+            if(fileName=="") fileName = (String)Configuration.Dictionary["DefaultFilename"];
             JSONGoals jsonGoals = new(this);
             var options = new JsonSerializerOptions { WriteIndented = true };
             String jsonString = JsonSerializer.Serialize(jsonGoals, options);
@@ -150,7 +152,9 @@ namespace Develop05
         }
         internal void LoadGoals()
         {
-            String fileName = (String)Configuration.Dictionary["DefaultFilename"];
+            Console.WriteLine(Configuration.Dictionary["RequestFilenameMessage"]);
+            String fileName = IApplication.READ_RESPONSE(Configuration);
+            if (fileName == "") fileName = (String)Configuration.Dictionary["DefaultFilename"];
             String json = File.ReadAllText(fileName);
             JSONGoals jsonGoals = JsonSerializer.Deserialize<JSONGoals>(json);
             Init(new Goals(jsonGoals, Configuration), Configuration);
@@ -189,7 +193,7 @@ namespace Develop05
             });
             return jSONGoals;
         }
-        protected static void Convert(Goals goals, List<JSONGoal> jsonGoals, int score, Configuration configuration)
+        protected static void CONVERT(Goals goals, List<JSONGoal> jsonGoals, int score, Configuration configuration)
         {
             goals.Clear();
             jsonGoals.ForEach((jsonGoal) => {
@@ -203,11 +207,11 @@ namespace Develop05
             goals.Score = score;
             goals.Configuration = configuration;
         }
-        internal static void Convert(Goals goals, JSONGoals jsonGoals, Configuration configuration)
+        internal static void CONVERT(Goals goals, JSONGoals jsonGoals, Configuration configuration)
         {
             List<JSONGoal> list = new();
             foreach (JSONGoal goal in jsonGoals.Goals) { list.Add(goal); }
-            Convert(goals, list, jsonGoals.Score, configuration);
+            CONVERT(goals, list, jsonGoals.Score, configuration);
         }
     }
 }
