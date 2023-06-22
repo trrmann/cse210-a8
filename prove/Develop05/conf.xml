@@ -1,0 +1,256 @@
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Dictionary>
+    <KeyValue>
+      <Key>MainMenuOption1</Key>
+      <Value
+        xsi:type="xsd:string">1)  Add a simple goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption2</Key>
+      <Value
+        xsi:type="xsd:string">2)  Add an eternal goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption3</Key>
+      <Value
+        xsi:type="xsd:string">3)  Add a checklist goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption4</Key>
+      <Value
+        xsi:type="xsd:string">4)  Reuse completed goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption5</Key>
+      <Value
+        xsi:type="xsd:string">5)  List current goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption6</Key>
+      <Value
+        xsi:type="xsd:string">6)  List all goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption7</Key>
+      <Value
+        xsi:type="xsd:string">7)  Save goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption8</Key>
+      <Value
+        xsi:type="xsd:string">8)  Load goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOption9</Key>
+      <Value
+        xsi:type="xsd:string">9)  Report Event.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>MainMenuOptionQ</Key>
+      <Value
+        xsi:type="xsd:string">Press Enter to quit!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>Prompt</Key>
+      <Value
+        xsi:type="xsd:string">&gt;  </Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>AddSimpleGoalMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Add simple goal!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>AddEternalGoalMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Add eternal goal!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>AddChecklistGoalMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Add checklist goal!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestIsSMARTGoalMessage</Key>
+      <Value
+        xsi:type="xsd:string">Is this a SMART Base?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestIsSpecificMessage</Key>
+      <Value
+        xsi:type="xsd:string">Is the goal description specific?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestIsMeasurableMessage</Key>
+      <Value
+        xsi:type="xsd:string">Is the goal description measurable?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestIsAttainableMessage</Key>
+      <Value
+        xsi:type="xsd:string">Is the goal description attainable?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestIsRealisticMessage</Key>
+      <Value
+        xsi:type="xsd:string">Is the goal description realistic?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestTimelyMessage</Key>
+      <Value
+        xsi:type="xsd:string">How many days before this goal is due?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestTimelyPointPentaltyMessage</Key>
+      <Value
+        xsi:type="xsd:string">What is the overdue point penalty?</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ReuseCompletedMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Reuse Completed Base!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ListCurrentGoalsMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+List current goals!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ListAllGoalsMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+List all goals!</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>SaveGoalsMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Save goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>LoadGoalsMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Load goals.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ReportEventMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Report an event.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ScoreMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Your score is {0}.
+</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestGoalMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the number of your goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>AwardMessage</Key>
+      <Value
+        xsi:type="xsd:string">
+Congratulations, you earned {0} points.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>DefaultFilename</Key>
+      <Value
+        xsi:type="xsd:string">Goals.json</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestFilenameMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the file name.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestNameMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the name of your goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestDescriptionMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the description of your goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestPointValueMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the point value of your goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestRepeatPointValueMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the point value for each completion of your goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestChecklistCompleteCountMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the number times required to complete your overall goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>RequestChecklistBonusPointValueMessage</Key>
+      <Value
+        xsi:type="xsd:string">Please enter the bonus point value of your overall goal.</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>IncompleteSymbol</Key>
+      <Value xmlns:q1="http://microsoft.com/wsdl/types/"
+        xsi:type="q1:char">32</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>CompleteSymbol</Key>
+      <Value xmlns:q2="http://microsoft.com/wsdl/types/"
+        xsi:type="q2:char">88</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>SimpleGoalIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">{0})  [{1}] {2}({3})</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>SimpleGoalNonIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">[{0}] {1}({2})</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ChecklistGoalIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">{0})  [{1}] {2}({3}) {4}/{5}</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ChecklistGoalNonIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">[{0}] {1}({2}) {3}/{4}</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>SimpleSMARTGoalIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">{0})  [{1}] {2}({3}) - due {4}</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>SimpleSMARTGoalNonIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">[{0}] {1}({2}) - due {3}</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ChecklistSMARTGoalIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">{0})  [{1}] {2}({3}) {4}/{5} - due {6}</Value>
+    </KeyValue>
+    <KeyValue>
+      <Key>ChecklistSMARTGoalNonIndexedDisplayFormat</Key>
+      <Value
+        xsi:type="xsd:string">[{0}] {1}({2}) {3}/{4} - due {5}</Value>
+    </KeyValue>
+  </Dictionary>
+</Configuration>

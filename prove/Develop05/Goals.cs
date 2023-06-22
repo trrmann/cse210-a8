@@ -139,46 +139,48 @@ namespace Develop05
             if(optionMap.Count > 0) {
                 DisplayRequestSelectGoal();
                 option = RequestSelectGoal();
-                Goal goal = this[optionMap[option]];
-                if (goal.GetType() == typeof(SimpleGoal))
-                {
-                    ((SimpleGoal)goal).Completed = false;
-                    Add(new SimpleGoal(goal));
-                    ((SimpleGoal)goal).Completed = true;
-                }
-                else if (goal.GetType() == typeof(SimpleSMARTGoal))
-                {
-                    ((SimpleSMARTGoal)goal).Completed = false;
-                    SimpleSMARTGoal simpleSMARTGoal = new SimpleSMARTGoal(goal);
-                    ((SimpleSMARTGoal)goal).Completed = true;
-                    simpleSMARTGoal.Created=DateTime.Now;
-                    Add(simpleSMARTGoal);
-                }
-                else if (goal.GetType() == typeof(EternalGoal))
-                {
-                    Add(new EternalGoal(goal));
-                }
-                else if (goal.GetType() == typeof(EternalSMARTGoal))
-                {
-                    EternalSMARTGoal eternalSMARTGoal = new EternalSMARTGoal(goal);
-                    eternalSMARTGoal.Created = DateTime.Now;
-                    Add(eternalSMARTGoal);
-                }
-                else if (goal.GetType() == typeof(ChecklistGoal))
-                {
-                    int count = ((ChecklistGoal)goal).NumberOfTimes;
-                    ((ChecklistGoal)goal).NumberOfTimes = 0;
-                    Add(new ChecklistGoal(goal));
-                    ((ChecklistGoal)goal).NumberOfTimes = count;
-                }
-                else if (goal.GetType() == typeof(ChecklistSMARTGoal))
-                {
-                    int count = ((ChecklistSMARTGoal)goal).NumberOfTimes;
-                    ((ChecklistSMARTGoal)goal).NumberOfTimes = 0;
-                    ChecklistSMARTGoal checklistSMARTGoal = new ChecklistSMARTGoal(goal);
-                    checklistSMARTGoal.Created = DateTime.Now;
-                    Add(checklistSMARTGoal);
-                    ((ChecklistSMARTGoal)goal).NumberOfTimes = count;
+                if(optionMap.Keys.Contains(option)){
+                    Goal goal = this[optionMap[option]];
+                    if (goal.GetType() == typeof(SimpleGoal))
+                    {
+                        ((SimpleGoal)goal).Completed = false;
+                        Add(new SimpleGoal(goal));
+                        ((SimpleGoal)goal).Completed = true;
+                    }
+                    else if (goal.GetType() == typeof(SimpleSMARTGoal))
+                    {
+                        ((SimpleSMARTGoal)goal).Completed = false;
+                        SimpleSMARTGoal simpleSMARTGoal = new SimpleSMARTGoal(goal);
+                        ((SimpleSMARTGoal)goal).Completed = true;
+                        simpleSMARTGoal.Created=DateTime.Now;
+                        Add(simpleSMARTGoal);
+                    }
+                    else if (goal.GetType() == typeof(EternalGoal))
+                    {
+                        Add(new EternalGoal(goal));
+                    }
+                    else if (goal.GetType() == typeof(EternalSMARTGoal))
+                    {
+                        EternalSMARTGoal eternalSMARTGoal = new EternalSMARTGoal(goal);
+                        eternalSMARTGoal.Created = DateTime.Now;
+                        Add(eternalSMARTGoal);
+                    }
+                    else if (goal.GetType() == typeof(ChecklistGoal))
+                    {
+                        int count = ((ChecklistGoal)goal).NumberOfTimes;
+                        ((ChecklistGoal)goal).NumberOfTimes = 0;
+                        Add(new ChecklistGoal(goal));
+                        ((ChecklistGoal)goal).NumberOfTimes = count;
+                    }
+                    else if (goal.GetType() == typeof(ChecklistSMARTGoal))
+                    {
+                        int count = ((ChecklistSMARTGoal)goal).NumberOfTimes;
+                        ((ChecklistSMARTGoal)goal).NumberOfTimes = 0;
+                        ChecklistSMARTGoal checklistSMARTGoal = new ChecklistSMARTGoal(goal);
+                        checklistSMARTGoal.Created = DateTime.Now;
+                        Add(checklistSMARTGoal);
+                        ((ChecklistSMARTGoal)goal).NumberOfTimes = count;
+                    }
                 }
             }
         }

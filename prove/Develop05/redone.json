@@ -1,0 +1,99 @@
+{
+  "Score": 31660,
+  "Goals": [
+    {
+      "$type": "SimpleSmartGoal",
+      "Name": "Sacred Grove",
+      "Description": "Go visit the Sacred Grove this year.",
+      "Point Value": 1000,
+      "Created": "2023-06-22T14:47:04.6127075-04:00",
+      "Days Due": 365,
+      "Overdue Point Pentalty": 900,
+      "Complete": true
+    },
+    {
+      "$type": "Simple",
+      "Name": "Visit Rome",
+      "Description": "Visit Rome.",
+      "Point Value": 5000,
+      "Complete": true
+    },
+    {
+      "$type": "Eternal",
+      "Name": "Exercise",
+      "Description": "Exercise for at least 10 min.",
+      "Point Value": 10
+    },
+    {
+      "$type": "EternalSmartGoal",
+      "Name": "Read Scriptures",
+      "Description": "Read the scriptures for at least 10 min daily.",
+      "Point Value": 20,
+      "Created": "2023-06-22T14:54:56.6900333-04:00",
+      "Days Due": 1,
+      "Overdue Point Pentalty": 10,
+      "LastUpdate": "2023-06-22T15:14:50.8441633-04:00"
+    },
+    {
+      "$type": "Checklist",
+      "Name": "Visit States",
+      "Description": "Visit 25 different states.",
+      "Point Value": 100,
+      "Bonus Point Value": 2500,
+      "Number of Times": 25,
+      "Target Number of Times": 25
+    },
+    {
+      "$type": "ChecklistSmartGoal",
+      "Name": "Visit Temples",
+      "Description": "Visit the temple 1 time per month.",
+      "Point Value": 200,
+      "Created": "2023-06-22T14:59:13.9150335-04:00",
+      "Days Due": 31,
+      "Overdue Point Pentalty": 100,
+      "LastUpdate": "2023-06-22T15:06:56.7635449-04:00",
+      "TargetNumberOfTimes": 12,
+      "NumberOfTimes": 12,
+      "BonusPointValue": 2400
+    },
+    {
+      "$type": "SimpleSmartGoal",
+      "Name": "Sacred Grove",
+      "Description": "Go visit the Sacred Grove this year.",
+      "Point Value": 1000,
+      "Created": "2023-06-22T15:13:43.615011-04:00",
+      "Days Due": 365,
+      "Overdue Point Pentalty": 900,
+      "Complete": true
+    },
+    {
+      "$type": "Simple",
+      "Name": "Visit Rome",
+      "Description": "Visit Rome.",
+      "Point Value": 5000,
+      "Complete": true
+    },
+    {
+      "$type": "Checklist",
+      "Name": "Visit States",
+      "Description": "Visit 25 different states.",
+      "Point Value": 100,
+      "Bonus Point Value": 2500,
+      "Number of Times": 25,
+      "Target Number of Times": 25
+    },
+    {
+      "$type": "ChecklistSmartGoal",
+      "Name": "Visit Temples",
+      "Description": "Visit the temple 1 time per month.",
+      "Point Value": 200,
+      "Created": "2023-06-22T15:13:51.1567429-04:00",
+      "Days Due": 31,
+      "Overdue Point Pentalty": 100,
+      "LastUpdate": "2023-06-22T15:14:09.6206285-04:00",
+      "TargetNumberOfTimes": 12,
+      "NumberOfTimes": 12,
+      "BonusPointValue": 2400
+    }
+  ]
+}
