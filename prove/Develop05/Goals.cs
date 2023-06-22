@@ -1,17 +1,18 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Develop05External;
 
 namespace Develop05
 {
-    public class Goals : List<Goal>
+    internal class Goals : List<Goal>
     {
         internal int Score { get; set; }
         internal Configuration Configuration { get; set; }
-        public Goals(Configuration configuration)
+        internal Goals(Configuration configuration)
         {
             Init(configuration);
         }
-        public Goals(Goals goals, Configuration configuration) : base(goals)
+        private Goals(Goals goals, Configuration configuration) : base(goals)
         {
             Init(goals, configuration);
         }
@@ -23,30 +24,30 @@ namespace Develop05
         {
             JSONGoals.CONVERT(this, jsonGoals, configuration);
         }
-        protected void Init(Goals goals, Configuration configuration)
+        private void Init(Goals goals, Configuration configuration)
         {
             Init((List<Goal>)goals, goals.Score, configuration);
         }
-        protected void Init(List<Goal> goals, int score, Configuration configuration)
+        private void Init(List<Goal> goals, int score, Configuration configuration)
         {
             Clear();
             goals.ForEach(goal => Add(goal));
             Score = score;
             Configuration = configuration;
         }
-        protected void Init(Configuration configuration)
+        private void Init(Configuration configuration)
         {
             Init(new List<Goal>(), 0, configuration);
         }
-        public void DisplayScore()
+        internal void DisplayScore()
         {
             Console.WriteLine(String.Format((String)Configuration.Dictionary["ScoreMessage"],Score));
         }
-        public virtual void DisplayRequestSelectGoal()
+        protected virtual void DisplayRequestSelectGoal()
         {
             Console.WriteLine(Configuration.Dictionary["RequestGoalMessage"]);
         }
-        public int RequestSelectGoal()
+        private int RequestSelectGoal()
         {
             int result = -1;
             while (result < 0)
@@ -62,30 +63,66 @@ namespace Develop05
             }
             return result;
         }
-        public void ListCurrent()
+        internal void ListCurrent()
         {
             ForEach((goal) => {
                 if (!goal.IsCompleted()) goal.DisplayGoal();
             });
         }
-        public void ListAll()
+        internal void ListAll()
         {
             ListCurrent();
             ForEach((goal) => {
                 if (goal.IsCompleted()) goal.DisplayGoal();
             });
         }
+        private void DisplayRequestIsSMARTGoal()
+        {
+            Console.WriteLine(Configuration.Dictionary["RequestIsSMARTGoalMessage"]);
+        }
+        private Boolean RequestIsSMARTGoal()
+        {
+            String response = "undefined";
+            while (response != "y" && response != "yes" && response != "n" && response != "no" && response != "")
+            {
+                DisplayRequestIsSMARTGoal();
+                response = IApplication.READ_RESPONSE(Configuration);
+            }
+            if (response == "y" || response == "yes" || response == "") return true;
+            else return false;
+        }
         internal void AddSimpleGoal()
         {
-            Add(new SimpleGoal(Configuration));
+            if(RequestIsSMARTGoal())
+            {
+                Add(new SimpleSMARTGoal(Configuration));
+            }
+            else
+            {
+                Add(new SimpleGoal(Configuration));
+            }
         }
         internal void AddEternalGoal()
         {
-            Add(new EternalGoal(Configuration));
+            if (RequestIsSMARTGoal())
+            {
+                Add(new EternalSMARTGoal(Configuration));
+            }
+            else
+            {
+                Add(new EternalGoal(Configuration));
+            }
         }
         internal void AddChecklistGoal()
         {
-            Add(new ChecklistGoal(Configuration));
+            if (RequestIsSMARTGoal())
+            {
+                Add(new ChecklistSMARTGoal(Configuration));
+            }
+            else
+            {
+                Add(new ChecklistGoal(Configuration));
+            }
         }
         internal void ReuseCompletedGoal()
         {
@@ -109,9 +146,23 @@ namespace Develop05
                     Add(new SimpleGoal(goal));
                     ((SimpleGoal)goal).Completed = true;
                 }
+                else if (goal.GetType() == typeof(SimpleSMARTGoal))
+                {
+                    ((SimpleSMARTGoal)goal).Completed = false;
+                    SimpleSMARTGoal simpleSMARTGoal = new SimpleSMARTGoal(goal);
+                    ((SimpleSMARTGoal)goal).Completed = true;
+                    simpleSMARTGoal.Created=DateTime.Now;
+                    Add(simpleSMARTGoal);
+                }
                 else if (goal.GetType() == typeof(EternalGoal))
                 {
                     Add(new EternalGoal(goal));
+                }
+                else if (goal.GetType() == typeof(EternalSMARTGoal))
+                {
+                    EternalSMARTGoal eternalSMARTGoal = new EternalSMARTGoal(goal);
+                    eternalSMARTGoal.Created = DateTime.Now;
+                    Add(eternalSMARTGoal);
                 }
                 else if (goal.GetType() == typeof(ChecklistGoal))
                 {
@@ -120,9 +171,18 @@ namespace Develop05
                     Add(new ChecklistGoal(goal));
                     ((ChecklistGoal)goal).NumberOfTimes = count;
                 }
+                else if (goal.GetType() == typeof(ChecklistSMARTGoal))
+                {
+                    int count = ((ChecklistSMARTGoal)goal).NumberOfTimes;
+                    ((ChecklistSMARTGoal)goal).NumberOfTimes = 0;
+                    ChecklistSMARTGoal checklistSMARTGoal = new ChecklistSMARTGoal(goal);
+                    checklistSMARTGoal.Created = DateTime.Now;
+                    Add(checklistSMARTGoal);
+                    ((ChecklistSMARTGoal)goal).NumberOfTimes = count;
+                }
             }
         }
-        public void Report()
+        internal void Report()
         {
             Dictionary<int,int> optionMap = new();
             int option = 1;
@@ -136,9 +196,11 @@ namespace Develop05
             });
             DisplayRequestSelectGoal();
             option = RequestSelectGoal();
-            int earned = this[optionMap[option]].Report();
-            Console.WriteLine(String.Format((String)Configuration.Dictionary["AwardMessage"], earned));
-            Score += earned;
+            if (optionMap.Keys.Contains(option)) {
+                int earned = this[optionMap[option]].Report();
+                Console.WriteLine(String.Format((String)Configuration.Dictionary["AwardMessage"], earned));
+                Score += earned;
+            }
         }
         internal void SaveGoals()
         {
@@ -181,27 +243,33 @@ namespace Develop05
             }
             else Goals = new();
         }
-        protected List<JSONGoal> Convert(Goals goals)
+        private List<JSONGoal> Convert(Goals goals)
         {
             List<JSONGoal> jSONGoals = new();
             goals.ForEach((goal) => {
                 JSONGoal jsonGoal = null;
                 if (goal.GetType() == typeof(SimpleGoal)) jsonGoal = new JSONSimpleGoal(goal);
-                else if(goal.GetType() == typeof(EternalGoal)) jsonGoal = new JSONEternalGoal(goal);
-                else if(goal.GetType() == typeof(ChecklistGoal)) jsonGoal = new JSONChecklistGoal(goal);
-                if(jsonGoal is not null) jSONGoals.Add(jsonGoal);
+                else if (goal.GetType() == typeof(SimpleSMARTGoal)) jsonGoal = new JSONSimpleSMARTGoal(goal);
+                else if (goal.GetType() == typeof(EternalGoal)) jsonGoal = new JSONEternalGoal(goal);
+                else if (goal.GetType() == typeof(EternalSMARTGoal)) jsonGoal = new JSONEternalSMARTGoal(goal);
+                else if (goal.GetType() == typeof(ChecklistGoal)) jsonGoal = new JSONChecklistGoal(goal);
+                else if (goal.GetType() == typeof(ChecklistSMARTGoal)) jsonGoal = new JSONChecklistSMARTGoal(goal);
+                if (jsonGoal is not null) jSONGoals.Add(jsonGoal);
             });
             return jSONGoals;
         }
-        protected static void CONVERT(Goals goals, List<JSONGoal> jsonGoals, int score, Configuration configuration)
+        private static void CONVERT(Goals goals, List<JSONGoal> jsonGoals, int score, Configuration configuration)
         {
             goals.Clear();
             jsonGoals.ForEach((jsonGoal) => {
                 Goal goal = null;
                 jsonGoal.Configuration = configuration;
                 if (jsonGoal.GetType() == typeof(JSONSimpleGoal)) goal = (SimpleGoal)jsonGoal;
+                else if (jsonGoal.GetType() == typeof(JSONSimpleSMARTGoal)) goal = new SimpleSMARTGoal(jsonGoal);
                 else if (jsonGoal.GetType() == typeof(JSONEternalGoal)) goal = (EternalGoal)jsonGoal;
+                else if (jsonGoal.GetType() == typeof(JSONEternalSMARTGoal)) goal = new EternalSMARTGoal(jsonGoal);
                 else if (jsonGoal.GetType() == typeof(JSONChecklistGoal)) goal = (ChecklistGoal)jsonGoal;
+                else if (jsonGoal.GetType() == typeof(JSONChecklistSMARTGoal)) goal = new ChecklistSMARTGoal(jsonGoal);
                 if (goal is not null) goals.Add(goal);
             });
             goals.Score = score;

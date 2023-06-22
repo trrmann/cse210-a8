@@ -1,19 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using Develop05External;
+using System.Text.Json.Serialization;
 
 namespace Develop05
 {
-    public interface IGoal
+    public abstract class Goal
     {
-        void DisplayRequestName();
-        void DisplayRequestDescription();
-        void DisplayRequestPointValue();
-        void RequestName();
-        void RequestDescription();
-        void RequestPointValue();
-    }
-    public abstract class Goal : IGoal
-    {
-        internal void Init(Configuration configuration, Boolean empty = false) {
+        protected virtual void Init(Configuration configuration, Boolean empty = false) {
             Configuration = configuration;
             if (empty)
             {
@@ -28,7 +20,7 @@ namespace Develop05
                 RequestPointValue();
             }
         }
-        internal void Init(Goal goal)
+        protected virtual void Init(Goal goal)
         {
             Name = goal.Name;
             Description = goal.Description;
@@ -39,42 +31,45 @@ namespace Develop05
         protected String Description { get; set; }
         protected int PointValue { get; set; }
         internal Configuration Configuration { get; set; }
-        public abstract void DisplayGoal(int index = -1);
-        public abstract Boolean IsCompleted();
-        public virtual void DisplayRequestName()
+        internal abstract void DisplayGoal(int index = -1);
+        internal abstract Boolean IsCompleted();
+        internal virtual void DisplayRequestName()
         {
             Console.WriteLine(Configuration.Dictionary["RequestNameMessage"]);
         }
-        public virtual void DisplayRequestDescription()
+        internal virtual void DisplayRequestDescription()
         {
             Console.WriteLine(Configuration.Dictionary["RequestDescriptionMessage"]);
         }
-        public virtual void DisplayRequestPointValue()
+        internal virtual void DisplayRequestPointValue()
         {
             Console.WriteLine(Configuration.Dictionary["RequestPointValueMessage"]);
         }
-        public void RequestName()
+        internal void RequestName()
         {
             DisplayRequestName();
             Name = IApplication.READ_RESPONSE(Configuration);
         }
-        public void RequestDescription()
+        internal void RequestDescription()
         {
             DisplayRequestDescription();
             Description = IApplication.READ_RESPONSE(Configuration);
         }
-        public void RequestPointValue()
+        internal void RequestPointValue()
         {
             DisplayRequestPointValue();
             PointValue = int.Parse(IApplication.READ_RESPONSE(Configuration));
         }
-        public abstract int Report();
+        internal abstract int Report();
     }
     [Serializable]
     [JsonDerivedType(typeof(JSONSimpleGoal), typeDiscriminator: "Simple")]
     [JsonDerivedType(typeof(JSONEternalGoal), typeDiscriminator: "Eternal")]
     [JsonDerivedType(typeof(JSONChecklistGoal), typeDiscriminator: "Checklist")]
-    public abstract class JSONGoal : Goal, IGoal
+    [JsonDerivedType(typeof(JSONSimpleSMARTGoal), typeDiscriminator: "SimpleSmartGoal")]
+    [JsonDerivedType(typeof(JSONEternalSMARTGoal), typeDiscriminator: "EternalSmartGoal")]
+    [JsonDerivedType(typeof(JSONChecklistSMARTGoal), typeDiscriminator: "ChecklistSmartGoal")]
+    public abstract class JSONGoal : Goal
     {
         [JsonInclude]
         [JsonPropertyName("Name")]

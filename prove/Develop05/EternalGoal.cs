@@ -16,7 +16,7 @@ namespace Develop05
         {
             base.Init(configuration, empty);
         }
-        public override void DisplayRequestPointValue()
+        internal override void DisplayRequestPointValue()
         {
             Console.WriteLine(Configuration.Dictionary["RequestRepeatPointValueMessage"]);
         }
@@ -24,7 +24,7 @@ namespace Develop05
         {
             return false;
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return IS_COMPLETED(this);
         }
@@ -33,7 +33,7 @@ namespace Develop05
             if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalIndexedDisplayFormat"], index, (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
             else Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalNonIndexedDisplayFormat"], (Char)configuration.Dictionary["IncompleteSymbol"], goal.Name, goal.Description));
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             DISPLAY_GOAL(this, Configuration, index);
         }
@@ -41,7 +41,7 @@ namespace Develop05
         {
             return goal.PointValue;
         }
-        public override int Report()
+        internal override int Report()
         {
             return REPORT(this);
         }
@@ -68,15 +68,15 @@ namespace Develop05
                 Init((EternalGoal)goal);
             }
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             EternalGoal.DISPLAY_GOAL((EternalGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return EternalGoal.IS_COMPLETED((EternalGoal)(Goal)(JSONGoal)this);
         }
-        public override int Report()
+        internal override int Report()
         {
             return EternalGoal.REPORT((EternalGoal)(Goal)(JSONGoal)this);
         }

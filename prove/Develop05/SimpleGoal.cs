@@ -11,9 +11,29 @@ namespace Develop05
         public SimpleGoal(Goal goal)
         {
             Init(goal);
-            Completed = ((SimpleGoal)goal).Completed;
         }
-        protected new void Init(Configuration configuration, Boolean empty = false)
+        protected override void Init(Goal goal)
+        {
+            base.Init(goal);
+            if(goal.GetType() == typeof(SimpleGoal)) {
+                Completed = ((SimpleGoal)goal).Completed;
+            } else if (goal.GetType() == typeof(SimpleSMARTGoal))
+            {
+                Completed = ((SimpleSMARTGoal)goal).Completed;
+            } else if (goal.GetType() == typeof(JSONSimpleGoal))
+            {
+                Completed = ((JSONSimpleGoal)goal).Completed;
+            }
+            else if (goal.GetType() == typeof(JSONSimpleSMARTGoal))
+            {
+                Completed = ((JSONSimpleSMARTGoal)goal).Completed;
+            }
+            else
+            {
+                Completed = ((SimpleGoal)goal).Completed;
+            }
+        }
+        protected override void Init(Configuration configuration, Boolean empty = false)
         {
             base.Init(configuration, empty);
             Completed = false;
@@ -22,7 +42,7 @@ namespace Develop05
         {
             return goal.Completed;
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return IS_COMPLETED(this);
         }
@@ -33,7 +53,7 @@ namespace Develop05
             if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalIndexedDisplayFormat"], index, check, goal.Name, goal.Description));
             else Console.WriteLine(String.Format((String)configuration.Dictionary["SimpleGoalNonIndexedDisplayFormat"], check, goal.Name, goal.Description));
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             DISPLAY_GOAL(this, Configuration, index);
         }
@@ -42,7 +62,7 @@ namespace Develop05
             goal.Completed = true;
             return goal.PointValue;
         }
-        public override int Report()
+        internal override int Report()
         {
             return REPORT(this);
         }
@@ -75,15 +95,15 @@ namespace Develop05
                 Completed = ((SimpleGoal)goal).Completed;
             }
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             SimpleGoal.DISPLAY_GOAL((SimpleGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return SimpleGoal.IS_COMPLETED((SimpleGoal)(Goal)(JSONGoal)this);
         }
-        public override int Report()
+        internal override int Report()
         {
             return SimpleGoal.REPORT((SimpleGoal)(Goal)(JSONGoal)this);
         }

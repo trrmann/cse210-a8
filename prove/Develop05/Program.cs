@@ -1,4 +1,4 @@
-using Develop05;
+using Develop05External;
 
 class Program
 {

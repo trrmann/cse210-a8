@@ -11,9 +11,9 @@ namespace Develop05
         public TKey Key { get; set; }
         public TValue Value { get; set; }
     }
-    public static class SERIALIZABLE_KEY_VALUE_PAIR_EXTENSIONS
+    internal static class SERIALIZABLE_KEY_VALUE_PAIR_EXTENSIONS
     {
-        public static SerializableKeyValuePair<TKey, TValue> TO_SERIALIZABLE_PAIR<TKey, TValue>(this KeyValuePair<TKey, TValue> pair)
+        internal static SerializableKeyValuePair<TKey, TValue> TO_SERIALIZABLE_PAIR<TKey, TValue>(this KeyValuePair<TKey, TValue> pair)
         {
             return new SerializableKeyValuePair<TKey, TValue> { Key = pair.Key, Value = pair.Value };
         }
@@ -23,7 +23,7 @@ namespace Develop05
     {
         [DataMember]
         [XmlIgnore]
-        public Dictionary<String, Object> Dictionary { get; set; } = new Dictionary<String, Object>();
+        internal Dictionary<String, Object> Dictionary { get; set; } = new Dictionary<String, Object>();
         [IgnoreDataMember]
         [XmlArray("Dictionary")]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)]

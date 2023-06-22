@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Develop05External;
+using System.Text.Json.Serialization;
 
 namespace Develop05
 {
@@ -11,11 +12,20 @@ namespace Develop05
         public ChecklistGoal(Goal goal)
         {
             Init(goal);
-            NumberOfTimes = ((ChecklistGoal)goal).NumberOfTimes;
-            BonusPointValue = ((ChecklistGoal)goal).BonusPointValue;
-            TargetNumberOfTimes = ((ChecklistGoal)goal).TargetNumberOfTimes;
+            if(goal.GetType() == typeof(ChecklistSMARTGoal))
+            {
+                NumberOfTimes = ((ChecklistSMARTGoal)goal).NumberOfTimes;
+                BonusPointValue = ((ChecklistSMARTGoal)goal).BonusPointValue;
+                TargetNumberOfTimes = ((ChecklistSMARTGoal)goal).TargetNumberOfTimes;
+            }
+            else if (goal.GetType() == typeof(ChecklistGoal))
+            {
+                NumberOfTimes = ((ChecklistGoal)goal).NumberOfTimes;
+                BonusPointValue = ((ChecklistGoal)goal).BonusPointValue;
+                TargetNumberOfTimes = ((ChecklistGoal)goal).TargetNumberOfTimes;
+            }
         }
-        protected new void Init(Configuration configuration, Boolean empty = false)
+        internal new void Init(Configuration configuration, Boolean empty = false)
         {
             base.Init(configuration, empty);
             if(empty)
@@ -32,24 +42,24 @@ namespace Develop05
         internal int TargetNumberOfTimes { get; set; }
         internal int NumberOfTimes { get; set; }
         internal int BonusPointValue { get; set; }
-        public override void DisplayRequestPointValue()
+        internal override void DisplayRequestPointValue()
         {
             Console.WriteLine(Configuration.Dictionary["RequestRepeatPointValueMessage"]);
         }
-        public virtual void DisplayRequestNumberOfTimes()
+        internal virtual void DisplayRequestNumberOfTimes()
         {
             Console.WriteLine(Configuration.Dictionary["RequestChecklistCompleteCountMessage"]);
         }
-        public virtual void DisplayRequestBonusPoints()
+        internal virtual void DisplayRequestBonusPoints()
         {
             Console.WriteLine(Configuration.Dictionary["RequestChecklistBonusPointValueMessage"]);
         }
-        public void RequestNumberOfTimes()
+        internal void RequestNumberOfTimes()
         {
             DisplayRequestNumberOfTimes();
             TargetNumberOfTimes = int.Parse(IApplication.READ_RESPONSE(Configuration));
         }
-        public void RequestBonusPoints()
+        internal void RequestBonusPoints()
         {
             DisplayRequestBonusPoints();
             BonusPointValue = int.Parse(IApplication.READ_RESPONSE(Configuration));
@@ -58,7 +68,7 @@ namespace Develop05
         {
             return goal.NumberOfTimes >= goal.TargetNumberOfTimes;
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return IS_COMPLETED(this);
         }
@@ -69,7 +79,7 @@ namespace Develop05
             if (index >= 0) Console.WriteLine(String.Format((String)configuration.Dictionary["ChecklistGoalIndexedDisplayFormat"], index, check, goal.Name, goal.Description, goal.NumberOfTimes, goal.TargetNumberOfTimes));
             else Console.WriteLine(String.Format((String)configuration.Dictionary["ChecklistGoalNonIndexedDisplayFormat"], check, goal.Name, goal.Description, goal.NumberOfTimes, goal.TargetNumberOfTimes));
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             DISPLAY_GOAL(this, Configuration, index);
         }
@@ -79,7 +89,7 @@ namespace Develop05
             if (goal.IsCompleted()) return goal.PointValue + goal.BonusPointValue;
             else return goal.PointValue;
         }
-        public override int Report()
+        internal override int Report()
         {
             return REPORT(this);
         }
@@ -124,15 +134,15 @@ namespace Develop05
                 BonusPointValue = ((ChecklistGoal)goal).BonusPointValue;
             }
         }
-        public override void DisplayGoal(int index = -1)
+        internal override void DisplayGoal(int index = -1)
         {
             ChecklistGoal.DISPLAY_GOAL((ChecklistGoal)(Goal)(JSONGoal)this, Configuration, index);
         }
-        public override Boolean IsCompleted()
+        internal override Boolean IsCompleted()
         {
             return ChecklistGoal.IS_COMPLETED((ChecklistGoal)(Goal)(JSONGoal)this);
         }
-        public override int Report()
+        internal override int Report()
         {
             return ChecklistGoal.REPORT((ChecklistGoal)(Goal)(JSONGoal)this);
         }

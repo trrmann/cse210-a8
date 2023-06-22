@@ -2,8 +2,9 @@
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Develop05;
 
-namespace Develop05
+namespace Develop05External
 {
     public interface IApplication
     {
@@ -12,24 +13,10 @@ namespace Develop05
             Console.Write(configuration.Dictionary["Prompt"]);
             return Console.ReadLine();
         }
-        void BuildDefaultConfiguration();
-        Configuration ReadConfiguration();
-        void Run();
-        void DisplayMainMenu();
-        Boolean ProcessResponse(String response);
-        void AddSimpleGoal();
-        void AddEternalGoal();
-        void AddChecklistGoal();
-        void ReuseCompletedGoal();
-        void ListCurrentGoals();
-        void ListAllGoals();
-        void SaveGoals();
-        void LoadGoals();
-        void ReportEvent();
     }
     public class Application : IApplication
     {
-        public Boolean Running { get; private set; }
+        private Boolean Running { get; set; }
         private Goals Goals { get; set; }
         private String ConfigurationFilename { get; set; }
         private Configuration Configuration { get; set; }
@@ -37,7 +24,7 @@ namespace Develop05
         {
             Init();
         }
-        protected void Init()
+        private void Init()
         {
             ConfigurationFilename = "conf.xml";
             Running = false;
@@ -53,7 +40,7 @@ namespace Develop05
                 Running = ProcessResponse(IApplication.READ_RESPONSE(Configuration));
             }
         }
-        public void BuildDefaultConfiguration()
+        private void BuildDefaultConfiguration()
         {
             Dictionary<String, String> config = new();
             Configuration configure = new();
@@ -71,7 +58,14 @@ namespace Develop05
             configure.Dictionary.Add("AddSimpleGoalMessage", "\nAdd simple goal!");
             configure.Dictionary.Add("AddEternalGoalMessage", "\nAdd eternal goal!");
             configure.Dictionary.Add("AddChecklistGoalMessage", "\nAdd checklist goal!");
-            configure.Dictionary.Add("ReusecompletedMessage", "\nReuse Completed Goal!");
+            configure.Dictionary.Add("RequestIsSMARTGoalMessage", "Is this a SMART Base?");
+            configure.Dictionary.Add("RequestIsSpecificMessage", "Is the goal description specific?");
+            configure.Dictionary.Add("RequestIsMeasurableMessage", "Is the goal description measurable?");
+            configure.Dictionary.Add("RequestIsAttainableMessage", "Is the goal description attainable?");
+            configure.Dictionary.Add("RequestIsRealisticMessage", "Is the goal description realistic?");
+            configure.Dictionary.Add("RequestTimelyMessage", "How many days before this goal is due?");
+            configure.Dictionary.Add("RequestTimelyPointPentaltyMessage", "What is the overdue point penalty?");
+            configure.Dictionary.Add("ReuseCompletedMessage", "\nReuse Completed Base!");
             configure.Dictionary.Add("ListCurrentGoalsMessage", "\nList current goals!");
             configure.Dictionary.Add("ListAllGoalsMessage", "\nList all goals!");
             configure.Dictionary.Add("SaveGoalsMessage", "\nSave goals.");
@@ -94,6 +88,10 @@ namespace Develop05
             configure.Dictionary.Add("SimpleGoalNonIndexedDisplayFormat", "[{0}] {1}({2})");
             configure.Dictionary.Add("ChecklistGoalIndexedDisplayFormat", "{0})  [{1}] {2}({3}) {4}/{5}");
             configure.Dictionary.Add("ChecklistGoalNonIndexedDisplayFormat", "[{0}] {1}({2}) {3}/{4}");
+            configure.Dictionary.Add("SimpleSMARTGoalIndexedDisplayFormat", "{0})  [{1}] {2}({3}) - due {4}");
+            configure.Dictionary.Add("SimpleSMARTGoalNonIndexedDisplayFormat", "[{0}] {1}({2}) - due {3}");
+            configure.Dictionary.Add("ChecklistSMARTGoalIndexedDisplayFormat", "{0})  [{1}] {2}({3}) {4}/{5} - due {6}");
+            configure.Dictionary.Add("ChecklistSMARTGoalNonIndexedDisplayFormat", "[{0}] {1}({2}) {3}/{4} - due {5}");
             XmlSerializer serializer = new(typeof(Configuration));
             Stream fs = new FileStream(ConfigurationFilename, FileMode.Create);
             XmlWriter writer = new XmlTextWriter(fs, Encoding.Unicode);
@@ -113,7 +111,7 @@ namespace Develop05
             String newXml = stringBuilder.ToString();
             File.WriteAllText(ConfigurationFilename, newXml);
         }
-        public Configuration ReadConfiguration()
+        private Configuration ReadConfiguration()
         {
             //File.Delete(ConfigurationFilename);
             if(!Path.Exists(ConfigurationFilename)) BuildDefaultConfiguration();
@@ -127,7 +125,7 @@ namespace Develop05
 
             return configureIn;
         }
-        public void DisplayMainMenu()
+        private void DisplayMainMenu()
         {
             Goals.DisplayScore();
             String[] menuKeys = new String[] { "MainMenuOption1", "MainMenuOption2", "MainMenuOption3", "MainMenuOption4", "MainMenuOption5", "MainMenuOption6", "MainMenuOption7", "MainMenuOption8", "MainMenuOption9", "MainMenuOptionQ" };
@@ -136,7 +134,7 @@ namespace Develop05
                 Console.WriteLine(Configuration.Dictionary[key]);
             }
         }
-        public Boolean ProcessResponse(String response)
+        private Boolean ProcessResponse(String response)
         {
             if (response == "") return false;
             int option;
@@ -182,47 +180,47 @@ namespace Develop05
             }
             return true;
         }
-        public void AddSimpleGoal()
+        private void AddSimpleGoal()
         {
             Console.WriteLine(Configuration.Dictionary["AddSimpleGoalMessage"]);
             Goals.AddSimpleGoal();
         }
-        public void AddEternalGoal()
+        private void AddEternalGoal()
         {
             Console.WriteLine(Configuration.Dictionary["AddEternalGoalMessage"]);
             Goals.AddEternalGoal();
         }
-        public void AddChecklistGoal()
+        private void AddChecklistGoal()
         {
             Console.WriteLine(Configuration.Dictionary["AddChecklistGoalMessage"]);
             Goals.AddChecklistGoal();
         }
-        public void ReuseCompletedGoal()
+        private void ReuseCompletedGoal()
         {
-            Console.WriteLine(Configuration.Dictionary["ReusecompletedMessage"]);
+            Console.WriteLine(Configuration.Dictionary["ReuseCompletedMessage"]);
             Goals.ReuseCompletedGoal();
         }
-        public void ListCurrentGoals()
+        private void ListCurrentGoals()
         {
             Console.WriteLine(Configuration.Dictionary["ListCurrentGoalsMessage"]);
             Goals.ListCurrent();
         }
-        public void ListAllGoals()
+        private void ListAllGoals()
         {
             Console.WriteLine(Configuration.Dictionary["ListAllGoalsMessage"]);
             Goals.ListAll();
         }
-        public void SaveGoals()
+        private void SaveGoals()
         {
             Console.WriteLine(Configuration.Dictionary["SaveGoalsMessage"]);
             Goals.SaveGoals();
         }
-        public void LoadGoals()
+        private void LoadGoals()
         {
             Console.WriteLine(Configuration.Dictionary["LoadGoalsMessage"]);
             Goals.LoadGoals();
         }
-        public void ReportEvent()
+        private void ReportEvent()
         {
             Console.WriteLine(Configuration.Dictionary["ReportEventMessage"]);
             Goals.Report();
