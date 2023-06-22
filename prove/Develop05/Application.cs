@@ -58,7 +58,7 @@ namespace Develop05External
             configure.Dictionary.Add("AddSimpleGoalMessage", "\nAdd simple goal!");
             configure.Dictionary.Add("AddEternalGoalMessage", "\nAdd eternal goal!");
             configure.Dictionary.Add("AddChecklistGoalMessage", "\nAdd checklist goal!");
-            configure.Dictionary.Add("RequestIsSMARTGoalMessage", "Is this a SMART Base?");
+            configure.Dictionary.Add("RequestIsSMARTGoalMessage", "Is this a SMART Goal?");
             configure.Dictionary.Add("RequestIsSpecificMessage", "Is the goal description specific?");
             configure.Dictionary.Add("RequestIsMeasurableMessage", "Is the goal description measurable?");
             configure.Dictionary.Add("RequestIsAttainableMessage", "Is the goal description attainable?");
