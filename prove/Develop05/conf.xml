@@ -76,7 +76,7 @@ Add checklist goal!</Value>
     <KeyValue>
       <Key>RequestIsSMARTGoalMessage</Key>
       <Value
-        xsi:type="xsd:string">Is this a SMART Base?</Value>
+        xsi:type="xsd:string">Is this a SMART Goal?</Value>
     </KeyValue>
     <KeyValue>
       <Key>RequestIsSpecificMessage</Key>
