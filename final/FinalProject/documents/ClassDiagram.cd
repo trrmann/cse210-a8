@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Develop05.Application" Collapsed="true">
+    <Position X="4.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAEAACAAACIAAAAFAAAAAAAAAAAIoAACIgAAJBY=</HashCode>
+      <FileName>Application.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="Develop05.SerializableKeyValuePair&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="10.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Configuration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.SERIALIZABLE_KEY_VALUE_PAIR_EXTENSIONS" Collapsed="true">
+    <Position X="9" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.Configuration" Collapsed="true">
+    <Position X="6.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.Goals" Collapsed="true">
+    <Position X="4.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAACAAACoAAEAAAAAIAAAAAAACgAACAABABBA=</HashCode>
+      <FileName>Goals.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.JSONGoals" Collapsed="true">
+    <Position X="6.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAIAAAAAAAgAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Goals.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.SimpleGoal" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAQAAEAAAAAABAACAAGCAAABAA=</HashCode>
+      <FileName>SimpleGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.JSONSimpleGoal" Collapsed="true">
+    <Position X="6.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAAABAAAAAAAAAABAA=</HashCode>
+      <FileName>SimpleGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.EternalGoal" Collapsed="true">
+    <Position X="2.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAABAEAAAAAABAACAAGCAAABAA=</HashCode>
+      <FileName>EternalGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.JSONEternalGoal" Collapsed="true">
+    <Position X="8.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAABAAAAAAAAAABAA=</HashCode>
+      <FileName>EternalGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.ChecklistGoal" Collapsed="true">
+    <Position X="4.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAQAAAAAAAAAAAAAFAGAAIAAABAACGAGCCAABAA=</HashCode>
+      <FileName>ChecklistGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.JSONChecklistGoal" Collapsed="true">
+    <Position X="11" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAGAAAAAABAAAEAAAAAABAA=</HashCode>
+      <FileName>ChecklistGoal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Develop05.Goal" Collapsed="true">
+    <Position X="4.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACgAgAAAAAAhgUAAAAAABAAggACAAAARAA=</HashCode>
+      <FileName>Goal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Develop05.JSONGoal" Collapsed="true">
+    <Position X="6.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Goal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Develop05.IApplication" Collapsed="true">
+    <Position X="2.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAABAEAACAAACIAAAAEAAAAAAAAAAAAIAAAIgAABBY=</HashCode>
+      <FileName>Application.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Develop05.IGoal" Collapsed="true">
+    <Position X="2.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAgAAAAAAhAAAAAAAAAAAAgAAAAAAQAA=</HashCode>
+      <FileName>Goal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

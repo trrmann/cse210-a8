@@ -1,0 +1,37 @@
+﻿        /**
+        https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf
+        /**/
+        protected virtual PersonNameType PersonNameType { get; }
+        protected virtual List<String> Givens { get; set; } = new List<String>(new String[] { "" });
+        protected virtual String Given { get { return String.Join(' ', Givens); } set { Givens = new(value.Split(' ')); } }
+        protected List<String> ProperGivens
+        {
+            get
+            {
+                List<String> result = new();
+                Givens.ForEach(given => { result.Add(IStringUtilities.Proper(given)); });
+                return result;
+            }
+        }
+        protected String ProperGiven { get { return String.Join(' ', ProperGivens); } }
+        protected String GivenKey { get { return String.Join("", ProperGivens); } }
+        public virtual String Name { get { return ToString(); } set { Parse(value); } }
+        public virtual String ProperName { get { return ToProperString(); } }
+        public new virtual String ToString()
+        {
+            return Given;
+        }
+        public virtual String ToProperString()
+        {
+            return ProperGiven;
+        }
+        public virtual String ToKey()
+        {
+            return ProperName;
+        }
+        public override void Parse(String value)
+        {
+            Given = value;
+        }
+        public virtual Boolean Valid() { return true; }
+        public virtual Boolean Full() { return Given != ""; }

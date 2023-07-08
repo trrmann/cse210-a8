@@ -1,0 +1,372 @@
+﻿@startuml
+
+class IApplication
+{
+    + {static} READ_RESPONSE() String
+    + {static} YES_RESPONSE { get; } List<String>
+    + {static} DisplayInvalidMenuSelection() void
+}
+
+class Application
+{
+    - Running { set, get } Boolean
+    - Plan { set, get } Plan
+    - BackoutPlan { set, get } BackoutPlan
+    - CurrentMenuName { set, get } String
+    - MenuDictionary { get } Dictionary<String, Dictionary<int, Tuple<Boolean, Tuple<Tuple<String, Func<String>>, Tuple<String, Action>>>>>
+
+    # Run() void
+    - DisplayMenu() void 
+    - EvaluateMenuResponse(String response) Boolean 
+    - Exit() void 
+}
+Application <|-- IApplication
+Plan *-- Application
+BackoutPlan *-- Application
+
+class Plan
+{
+    + Plan()
+    # Init() void 
+    # Tasks { set, get } Tasks
+    # Risks { set, get } Risks 
+    # Units { set, get } Units 
+    # Description { set, get } String 
+    # Template { set, get } Boolean
+    # Environment { set, get } String
+    # People { set, get } People 
+    # Manager { set, get } String
+
+    # DisplayName(int option = -1) void 
+    # DisplayDescription() void 
+    # DisplayManager() void 
+    # GetNameForMenus() String 
+    # IsDescribed() Boolean 
+    # IsManaged() Boolean 
+    # DisplaySetName() void 
+    # DisplayRequestReSetName() void 
+    # DisplayRequestSetName() void 
+    # SetDescription() void 
+    # SetManager() void 
+    # AddManager() void
+    # DisplaySummary() void 
+    # AddTask() void 
+    # CopyTask() void 
+    # EditTask() void
+    # RemoveTask() void
+    # ListTasks() void
+    # ExportTasks() void 
+    # ImportTasks() void
+    # AddBenchmark() void 
+    # CopyBenchmark() void 
+    # EditBenchmark() void 
+    # RemoveBenchmark() void 
+    # ListBenchmarks() void 
+    # AddRisk() void 
+    # CopyRisk() void 
+    # EditRisk() void 
+    # RemoveRisk() void 
+    # ListRisks() void 
+    # ExportRisks() void 
+    # ImportRisks() void 
+    # Display() void 
+    # Load() void 
+    # Save() void 
+    # Copy() void 
+    # Rename() void 
+    # Delete() void 
+    # GetAllocateOrTemplatize() String 
+    # AllocateOrTemplatize() void 
+    # GetAssignManagerOrAddManager() String
+    # AssignManagerOrAddManager() void 
+    # Test() void 
+    # Implement() void 
+    # Estimate() void 
+    # AddPerson() void 
+    # CopyPerson() void 
+    # EditPerson() void 
+    # RemovePerson() void 
+    # ListPeople() void 
+    # ExportPeople() void 
+    # ImportPeople() void 
+    # AddUnit() void 
+    # CopyUnit() void 
+    # EditUnit() void 
+    # RemoveUnit() void 
+    # ListUnits() void 
+    # ExportUnits() void 
+    # ImportUnits() void 
+}
+Plan <|-- NamedObject
+Plan *-- Tasks
+Plan *-- Risks
+Plan *-- People
+Plan *-- Units 
+
+class BackoutPlan
+{
+    # Plan { get } Plan
+    + BackoutPlan()
+    # Init() void 
+    # PlanRollback() void 
+    # TestRollback() void 
+    # Rollback() void 
+}
+BackoutPlan <|-- Plan
+
+class NamedObject
+{
+    # Key { get } String 
+    # Name { set, get } Name 
+    # Init(Boolean empty = true) void 
+    # Init(NameType type, Boolean empty = true) void 
+    # Init(Name name) void 
+    # DisplayRequestname() void 
+    # RequestName(NameType type) void 
+    # IsNamed() Boolean 
+    # Display(int option = -1) void 
+    # DisplaySetName() void 
+    # DisplayRequestReSetName() void 
+    # DisplayRequestSetName() void 
+    # SetName() void 
+    # ToNameString() String 
+    # ToKeyString() String 
+}
+NamedObject *-- Name 
+
+
+class IStringUtilities
+{
+    + {static} Proper(String improper, char? delimiter = ' ') String 
+}
+
+class IBitwiseUtilities
+{
+    + {static} OptionCombination(List<Boolean> optionFlags) int
+    + {static} OptionCombination(int optionFlags, int padTo = -1) List<Boolean>
+}
+
+class IName
+{
+    + {static} CreateName(String name, NameType type=NameType.Thing) Name
+    - BitWiseCombinations { get } Dictionary<String, List<List<Boolean>>>
+    - OptionDisplay(NameType type) String
+}
+IName <|-- IStringUtilities
+IName <|-- IBitwiseUtilities
+
+class Name
+{
+    # Type { set, get } NameType
+    # Value { set, get} String
+    + Name()
+    + Name(NameType type)
+    # Init(NameType type = NameType.Thing) void
+    # Init() void
+    # Init(String name) void
+    # OptionCombinationFlags(NameType type)  List<Boolean>
+    # OptionCombination(NameType type)  List<String>
+    # KeyOptionCombination(NameType type)  List<String>
+    + Parse(String value)  void
+    + ToNameString()  String
+    # ToKeyString()  String
+    + {static} string(Name name) implicit operator
+    + {static} NameType(Name name) implicit operator
+}
+Name <|-- IName
+Name *-- NameType
+
+class NameType
+{
+    + value enum = {Person, Thing}
+}
+
+class People
+{
+    + Dictionary<String, Person>
+    # GetOptionMap() Dictionary<int, String>
+    # DisplayPersonOptions() void
+    # Add() void
+    # Copy() void
+    # Edit() void
+    # ExportPeople() void
+    # ImportPeople() void
+    # List() void
+    # Remove()
+}
+People *-- Person
+
+class Person
+{
+    + Person(Boolean empty=true)
+    # Init(Boolean empty = true) void
+    # DisplayRequestname() void
+    # DisplaySetName() void
+    # DisplayRequestReSetName() void
+    # DisplayRequestSetName() void
+    # Display(int option = -1) void
+}
+Person  <|-- NamedObject
+
+class PersonName
+{
+    # UseTitle { set, get } Boolean
+    # UseGivenName { set, get } Boolean
+    # UseFirstGivenName { set, get } Boolean
+    # UseSecondGivenName { set, get } Boolean
+    # UseMiddleName { set, get } Boolean
+    # UseSurName { set, get } Boolean
+    # UsePaternalSurName { set, get } Boolean
+    # UseMaternalSurName { set, get } Boolean
+    # UseSuffix { set, get } Boolean
+    # HasTitle { get } Boolean
+    # HasGivenName { get } Boolean
+    # HasFirstGivenName { get } Boolean
+    # HasSecondGivenName { get } Boolean
+    # HasMiddleName { get } Boolean
+    # HasSurName { get } Boolean
+    # HasPaternalSurName { get } Boolean
+    # HasMaternalSurName { get } Boolean
+    # HasSuffix { get } Boolean
+    - Title { set, get } String
+    - GivenName { set, get } String
+    - FirstGivenName { set, get } String
+    - SecondGivenName { set, get } String
+    - MiddleName { set, get } String
+    - SurName { set, get } String
+    - PaternalSurName { set, get } String
+    - MaternalSurName { set, get } String
+    - LocationName { set, get } String
+    - Suffix { set, get } String
+    + PersonName()
+    + PersonName(String name, Boolean useTitle=false, Boolean useSuffix=false, Boolean useMaternal=false)
+    # Init() void
+    # Init(String name, Boolean useTitle = false, Boolean useSuffix = false, Boolean useMaternal = false) void
+    # Init(String name) void
+    # OptionCombinationFlags(NameType type) List<Boolean>
+    # OptionCombination(NameType type) List<String>
+    # KeyOptionCombination(NameType type) List<String>
+    + Parse(String value) void
+    + ToNameString() String
+    # ToKeyString() String
+    + {static} PersonName(string name) implicit operator
+    + {static} string(PersonName name) implicit operator
+}
+PersonName  <|-- Name
+
+class IPersonName
+{
+    + {static} BaseAll { get } List<Boolean>
+    + {static} Groups { get } List<String>
+    + {static} BitWiseCombinations { get } Dictionary<String, List<List<Boolean>>>
+    + {static} GroupFormatStrings { get } Dictionary<String, String>
+    + {static} GroupKeyFormatStrings { get } Dictionary<String, String>
+    + {static} FormatStrings { get } Dictionary<int, String>
+    + {static} KeyFormatStrings { get } Dictionary<int, String>
+}
+IPersonName  *-- PersonName
+
+class ThingName
+{
+    - String Name { set, get }
+    - Boolean HasName { get { return Name is not null && Name != ""; } }
+    + ThingName()
+    + ThingName(String name)
+    # Init() void
+    # Init(String name) void
+    # OptionCombinationFlags(NameType type) List<Boolean>
+    # OptionCombination(NameType type) List<String>
+    # KeyOptionCombination(NameType type) List<String>
+    + Parse(String value) void
+    + ToNameString() String
+    # ToKeyString() String
+    + {static} ThingName(string name) implicit operator
+    + {static} string(ThingName name) implicit operator
+}
+ThingName  <|-- Name
+
+class Units
+{
+    + Dictionary<String, Unit>
+    # Add() void
+    # Copy() void
+    # Edit() void
+    # ExportUnits() void
+    # ImportUnits() void
+    # List() void
+    # Remove() void
+}
+Units *-- Unit
+
+class Unit
+{
+    + Unit(Boolean empty=true)
+    # Init(Boolean empty = true) void
+    # DisplayRequestname() void
+    # DisplaySetName() void
+    # DisplayRequestReSetName() void
+    # DisplayRequestSetName() void
+    # Display(int option = -1) void
+}
+Unit  <|-- NamedObject
+
+class Tasks
+{
+    + Dictionary<String, Task>
+}
+Tasks  *-- Task
+
+class Task
+{
+    # Id { set, get } String
+    # PreReqs { set, get } List<String>
+    # Priority { set, get } int
+    # AssignedTo { set, get } String
+    # EstimatedPreStartSecondsWaitTime { set, get } int
+    # EstimatedStartDateTime { set, get } DateTime
+    # EstimatedCompleteDateTime { set, get } DateTime
+    # EstimatedPostCompleteSecondsWaitTime { set, get } int
+    # ActualStartDateTime { set, get } DateTime
+    # ActualCompleteDateTime { set, get } DateTime
+    # Description { set, get } String
+    # Command { set, get } String
+}
+Task  <|-- NamedObject
+
+class Benchmark
+{
+    # ReportTo { set, get} List<String>
+}
+Benchmark  <|-- Task
+
+class GoOrNoGo
+{
+    # Result { set, get } Boolean
+    # BackoutStartTaskIdForNoGo { set, get} String
+}
+GoOrNoGo  <|-- Benchmark
+
+class Mitigation
+{
+    # Risk { set, get } Risk
+}
+Mitigation  <|-- Task
+Mitigation  *-- Risk
+
+class Risks
+{
+    + Dictionary<String, Risk>
+}
+Risks  *-- Risk
+
+class Risk
+{
+    # Severity { set, get} String
+    # Description { set, get} String
+    # Stakeholders { set, get } List<String>
+}
+Risk  <|-- NamedObject
+
+
+
+@enduml
