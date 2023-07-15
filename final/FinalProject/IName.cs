@@ -27,18 +27,18 @@
                 List<Boolean> combination;
                 List<List<Boolean>> groupList;
                 Dictionary<String, List<List<Boolean>>> result = new();
-                List<String> groups = new() { "5-Person", "4-Person", "3-Person", "2-Person", "1-Person" };
+                List<String> groups = new() { "5-_person", "4-_person", "3-_person", "2-_person", "1-_person" };
                 foreach (String group in groups)
                 {
                     groupList = new();
                     switch (group)
                     {
-                        case "5-Person":
+                        case "5-_person":
                             combination = new();
                             for (outerCounter = 0; outerCounter < 7; outerCounter++) combination.Add(true);
                             groupList.Add(combination);
                             break;
-                        case "4-Person":
+                        case "4-_person":
                             for (outerCounter = 0; outerCounter < 5; outerCounter++)
                             {
                                 if (outerCounter == 0 || outerCounter == 5)
@@ -123,11 +123,11 @@
                                 }
                             }
                             break;
-                        case "3-Person":
+                        case "3-_person":
                             break;
-                        case "2-Person":
+                        case "2-_person":
                             break;
-                        case "1-Person":
+                        case "1-_person":
                             break;
                         default:
                             break;

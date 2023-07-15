@@ -1,10 +1,43 @@
-﻿namespace FinalProject
+﻿using System.Text.Json.Serialization;
+
+namespace FinalProject
 {
-    public class Role : NamedObjectWithDetail
+    internal class JsonRole : JsonDescribedObject
     {
-        public Role(String roleKey)
+        protected Role _role { get { return (Role)base._describedObject; } set { base._describedObject = value; } }
+        public JsonRole() : base(new(), "") { }
+        [JsonConstructor]
+        public JsonRole(JsonName Name, String Description) : base(Name, Description) { }
+        public JsonRole(Role role) : base((DescribedObject)role) { }
+        public static implicit operator JsonRole(Role role)
         {
-            Init(roleKey);
+            return new(role);
+        }
+        public static implicit operator Role(JsonRole role)
+        {
+            return role._role;
+        }
+
+        /**
+        public static explicit operator JsonRole(JsonDescribedObject v)
+        {
+            throw new NotImplementedException();
+        }
+        /**/
+
+        internal override JsonDescribedObject Convert<JsonDescribedObject>()
+        {
+            JsonRole jsonRole = (JsonRole)this;
+            JsonDescribedObject json = new();
+            json.NameObject = jsonRole.NameObject;
+            return json;
+        }
+    }
+    public class Role : DescribedObject
+    {
+        public Role(String roleName, String roleDescription)
+        {
+            Init(roleName, roleDescription);
         }
         public Role(Boolean empty=true)
         {
@@ -14,6 +47,11 @@
         {
             Init(role);
         }
+        public Role(ThingName executiveRoleName)
+        {
+            Init(executiveRoleName);
+        }
+
         protected override void DisplayRequestname()
         {
             Console.WriteLine("\nPlease enter the role name.");
@@ -22,21 +60,16 @@
         {
             Console.WriteLine("\nPlease enter the role description.");
         }
-        protected void Init(String roleKey, Boolean empty = true)
+        protected void Init(String roleName, String roleDescription, Boolean empty = true)
         {
-            switch(roleKey)
+            switch(roleName)
             {
                 case "":
-                    Name = new ThingName(false);
-                    Description = "Description";
-                    break;
-                case "Manager":
-                    Name = new ThingName("Manager");
-                    Description = "Manager";
+                    Init(false);
                     break;
                 default:
-                    Name = new ThingName(roleKey);
-                    Description = roleKey;
+                    Name = new ThingName(roleName);
+                    Description = roleDescription;
                     break;
             }
         }
@@ -45,7 +78,11 @@
             Name = role.Name;
             Description = role.Description;
         }
-        internal Role CreateCopy(String newName)
+        internal override String ToKeyString()
+        {
+            return Name.ToKeyString();
+        }
+        internal override Role CreateCopy(String newName)
         {
             Role result = new(this);
             result.Name = new ThingName(newName);

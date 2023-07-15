@@ -1,92 +1,210 @@
-﻿namespace FinalProject
+﻿using System.Linq;
+using System.Numerics;
+using System.Text.Json.Serialization;
+
+namespace FinalProject
 {
-    public class Organization : NamedObjectWithDetail
+    internal class JsonOrganization : JsonDescribedObject
+    {
+        protected Organization _organization { get {
+                Organization organization = new Organization();
+                if (base._namedObject is null) base._namedObject = organization;
+                if (!base._namedObject.GetType().IsInstanceOfType(organization.GetType())) base._namedObject = organization;
+                return (Organization)_namedObject;
+            } set {
+                _describedObject = value;
+            } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("ChiefAdminstativeTeam")]
+        public JsonTeam ChiefAdminstativeTeam {
+            get {
+                Organization describedObject = new Organization();
+                if (_organization is null) _organization = describedObject;
+                if (!_organization.GetType().IsInstanceOfType(describedObject.GetType())) _organization = describedObject;
+                return _organization.ChiefAdminstativeTeam;
+            } set {
+                _organization.ChiefAdminstativeTeam = value;
+            } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("OrganizationTeams")]
+        public Dictionary<String, JsonTeam> Teams { get { return Convert(_organization.Teams); } set { _organization.Teams = Convert(value); } }
+        internal JsonOrganization() : base(new(), "")
+        {
+            ChiefAdminstativeTeam = new();
+            Teams = new();
+        }
+        [JsonConstructor]
+        internal JsonOrganization(JsonName Name, String Description, JsonTeam ChiefAdminTeam, Dictionary<String, JsonTeam> Teams) : base(Name, Description)
+        {
+            this.ChiefAdminstativeTeam= ChiefAdminTeam;
+            this.Teams= Teams;
+        }
+        public JsonOrganization(Organization organization) : base((DescribedObject)organization) { }
+        public static implicit operator JsonOrganization(Organization organization)
+        {
+            return new(organization);
+        }
+        public static implicit operator Organization(JsonOrganization organization)
+        {
+            return organization._organization;
+        }
+        public static Dictionary<String, JsonTeam> Convert(Dictionary<String, Team> team)
+        {
+            Dictionary<String, JsonTeam> result = new();
+            foreach (String key in team.Keys)
+            {
+                result.Add(key, team[key]);
+            }
+            return result;
+        }
+        public static Dictionary<String, Team> Convert(Dictionary<String, JsonTeam> team)
+        {
+            Dictionary<String, Team> result = new();
+            foreach (String key in team.Keys)
+            {
+                result.Add(key, team[key]);
+            }
+            return result;
+        }
+    }
+    public class Organization : DescribedObjectDictionaryDescribedObjects<Team>
     {
         private Roles RoleDefinitions { get; set; }
-        protected String ChiefAdminTeamName { get; set; }
-        internal Dictionary<String, Team> Teams { get; set; }
+        internal Team ChiefAdminstativeTeam { get; set; }
         internal People People
         {
             get
             {
                 People result = new();
-                foreach (String teamKey in Teams.Keys)
+                foreach (String teamKey in Keys)
                 {
-                    Team team = Teams[teamKey];
+                    Team team = this[teamKey];
                     People subGroup = team.People;
-                    foreach (String personName in subGroup.Keys)
+                    foreach (String personKey in subGroup.Keys)
                     {
-                        result.Add(personName+teamKey, subGroup[personName]);
+                        result.Add(personKey, subGroup[personKey]);
                     }
                 }
                 return result;
             }
         }
-
-        public string OrganizationKey { get { return base.Key; } }
-
+        internal Dictionary<String, Team> Teams { get { return Dictionary; } set { Dictionary = value; } }
+        public Organization(String organizationName, String organizationDescription, Roles organizationRoleDefinitions, Team organizationChiefAdminTeam)
+        {
+            Init(organizationName, organizationDescription, organizationRoleDefinitions, organizationChiefAdminTeam);
+        }
         public Organization(Roles roleDefinitions, Boolean empty = true)
         {
             Init(roleDefinitions, empty);
+        }
+        public Organization(Boolean empty = true)
+        {
+            Init(empty);
         }
         public Organization(Organization organization)
         {
             Init(organization);
         }
-        public Organization(Boolean empty=true)
+        private void Init(Organization organization)
         {
-            Init(empty);
+            Init((OrganizationName)organization.Name, organization.Description, organization.RoleDefinitions, organization.ChiefAdminstativeTeam);
         }
         protected override void Init(Boolean empty = true)
         {
-            if(empty)
-            {
-                Init(new(), "", "", "", new(), empty);
-            }
-            else
-            {
-                Init(new(), null, null, null, null, empty);
-                Team team = new Team(RoleDefinitions, false);
-                Init(RoleDefinitions, Name, Description, team.Key, new() { { team.Key, team } });
-            }
+            Init(new(), empty);
         }
         protected void Init(Roles roleDefinitions, Boolean empty = true)
         {
+            OrganizationName teamName;
+            Team team;
+            Person teamManager;
+            PersonName managerName;
+            RoleDefinitions = roleDefinitions;
+            ThingName executiveRoleName = new("Executive Officer");
+            ThingName managerRoleName = new("Manager");
+            ThingName projectManagerRoleName = new("Project Manager");
+            Role executiveRole = new Role(executiveRoleName, "Executive role.");
+            Role managerRole = new Role(managerRoleName, "Manager role.");
+            Role projectManagerRole = new Role(projectManagerRoleName, "Project Manager role.");
+            if (!RoleDefinitions.Keys.Contains(executiveRole.ToKeyString())) RoleDefinitions.Add(executiveRole);
+            if (!RoleDefinitions.Keys.Contains(managerRole.ToKeyString())) RoleDefinitions.Add(managerRole);
+            if (!RoleDefinitions.Keys.Contains(projectManagerRole.ToKeyString())) RoleDefinitions.Add(projectManagerRole);
+            OrganizationName executiveBoardName = new OrganizationName("Executive Board");
+            PersonName chiefExecutiveName = new PersonName("Chief Executive Officer");
             if (empty)
             {
-                Init(roleDefinitions, "", "", "", new(), empty);
+                Name = new OrganizationName("Organization");
+                Description = "Empty Organization";
             }
             else
             {
-                Init(roleDefinitions, null, null, null, null, empty);
-                Team team = new Team(RoleDefinitions, false);
-                Init(RoleDefinitions, Name, Description, team.Key, new() { { team.Key, team } });
+                RequestName(NameType.Organization);
+                RequestDescription();
             }
-        }
-        private void Init(Organization organization)
-        {
-            Init(organization.RoleDefinitions, organization.Name, organization.Description, organization.ChiefAdminTeamName, organization.Teams);
-        }
-        private void Init(Roles roleDefinitions, String name, String description, String chiefAdminTeamName, Dictionary<String, Team> teams, Boolean empty = true)
-        {
-            if(empty)
+            Person chiefExecutive = new Person(roleDefinitions, this, null, chiefExecutiveName, executiveRole);
+            chiefExecutive.RoleNames.Add(managerRole.ToKeyString());
+            Team executiveBoard = new Team(RoleDefinitions, this, executiveBoardName, "Executive team", chiefExecutive);
+            if (empty)
             {
-                base.Init(NameType.Organization, empty);
-                Name = (OrganizationName)name;
-                Description = description;
-                ChiefAdminTeamName = chiefAdminTeamName;
-                Teams = teams;
-                RoleDefinitions = roleDefinitions;
+                managerName = new PersonName("Team Manager");
+                teamName = new OrganizationName("Team");
+                teamManager = new Person(roleDefinitions, this, null, managerName, managerRole);
+                team = new Team(RoleDefinitions, this, teamName, "Team", teamManager);
             }
             else
             {
-                Name = (OrganizationName)name;
-                Description = description;
-                base.Init(NameType.Organization, empty);
-                ChiefAdminTeamName = chiefAdminTeamName;
-                Teams = teams;
-                RoleDefinitions = roleDefinitions;
+                team = new Team(RoleDefinitions, this, empty);
             }
+            Init((OrganizationName)Name, Description, RoleDefinitions, executiveBoard, team);
+        }
+
+        private void Init(OrganizationName name, String description, Roles roleDefinitions, Team executiveBoard, Team team)
+        {
+            Name = name;
+            Description= description;
+            RoleDefinitions = roleDefinitions;
+            ChiefAdminstativeTeam = executiveBoard;
+            if (!Dictionary.Keys.Contains(executiveBoard.ToKeyString()))
+            {
+                Dictionary.Add(executiveBoard.ToKeyString(), executiveBoard);
+            }
+            if (!Dictionary.Keys.Contains(team.ToKeyString())) {
+                Dictionary.Add(team.ToKeyString(), team);
+            }
+            foreach (String key in Dictionary.Keys)
+            {
+                if (key != Dictionary[key].Key)
+                {
+                    Dictionary.Remove(key);
+                }
+            }
+        }
+
+        protected void Init(String organizationName, String organizationDescription, Roles organizationRoleDefinitions, String organizationChiefAdminTeamName, String organizationChiefAdminTeamDescription, String organizationChiefAdminTeamManagerName, Boolean empty = true)
+        {
+            Init(new OrganizationName(organizationName), organizationDescription, organizationRoleDefinitions, new Team(organizationRoleDefinitions, this, organizationChiefAdminTeamName, organizationChiefAdminTeamDescription, organizationChiefAdminTeamManagerName, false), empty);
+        }
+        protected void Init(OrganizationName organizationName, String organizationDescription, Roles organizationRoleDefinitions, Team organizationChiefAdminTeam, Boolean empty = true)
+        {
+            switch (organizationName.ToNameString())
+            {
+                case "":
+                    Init(false);
+                    break;
+                default:
+                    Name = organizationName;
+                    Description = organizationDescription;
+                    RoleDefinitions = organizationRoleDefinitions;
+                    ChiefAdminstativeTeam = organizationChiefAdminTeam;
+                    Add(organizationChiefAdminTeam.ToKeyString(), organizationChiefAdminTeam);
+                    break;
+            }
+        }
+        internal override String ToKeyString()
+        {
+            return Name.ToKeyString();
         }
         protected override void DisplayRequestname()
         {
@@ -96,67 +214,36 @@
         {
             Console.WriteLine("\nPlease enter the organization description.");
         }
-        internal void AddPerson()
-        {
-            String teamKey = RequestPersonTeam();
-            if(!Teams.ContainsKey(teamKey))
-            {
-                Teams.Add(teamKey, new Team(RoleDefinitions, teamKey));
-            }
-            Teams[teamKey].AddPerson();
-        }
-        internal void CopyPerson()
-        {
-            String personKey = RequestPerson();
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].CopyPerson(personKey);
-        }
-        internal void EditPerson()
-        {
-            String personKey = RequestPerson();
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].EditPerson(personKey);
-        }
-        internal void RemovePerson()
-        {
-            String personKey = RequestPerson();
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].RemovePerson(personKey);
-        }
-        internal void ListPeople()
-        {
-            People.List();
-        }
-        internal void ExportPeople()
-        {
-            People.ExportPeople();
-        }
-        internal void ImportPeople()
-        {
-            People.ImportPeople(this);
-        }
+
+
+
+
+
+
+
         internal void DisplayPerson(String personKey)
         {
             People[personKey].Display();
         }
-        private String RequestPersonTeam()
+        private Team RequestPersonTeam()
         {
             int counter;
             int option;
-            Dictionary<int, String> optionMap;
-            String response, resultTeamKey = "";
-            while (resultTeamKey == "")
+            Dictionary<int, Team> optionMap;
+            String response;
+            Team resultTeam = null;
+            while (resultTeam == null)
             {
                 counter = 1;
                 optionMap = new();
-                foreach (String teamKey in Teams.Keys)
+                foreach (String teamKey in Keys)
                 {
-                    Teams[teamKey].DisplayTeamName(counter);
-                    optionMap.Add(counter, teamKey);
+                    this[teamKey].DisplayTeamName(counter);
+                    optionMap.Add(counter, this[teamKey]);
                     counter++;
                 }
                 Console.WriteLine($"{counter})  *Add new Team*");
-                Console.WriteLine("Select the team the person belongs to:  ");
+                Console.WriteLine("Select the potentialTeam the person belongs to:  ");
                 response = IApplication.READ_RESPONSE();
                 try
                 {
@@ -166,62 +253,33 @@
                 if (option == counter)
                 {
                     Team team = new Team(RoleDefinitions);
-                    Teams.Add(team.ToKeyString(), team);
-                    resultTeamKey = team.ToKeyString();
+                    Add(team.ToKeyString(), team);
+                    resultTeam = team;
                 }
                 else if (option > 0 && option < counter)
                 {
-                    resultTeamKey = optionMap[option];
+                    resultTeam = optionMap[option];
                 }
             }
-            return resultTeamKey;
+            return resultTeam;
         }
-        private String RequestPerson()
+        internal Team FindPersonTeam(Person person)
         {
-            throw new NotImplementedException();
-        }
-        internal String FindPersonTeamKey(String personKey)
-        {
-            String teamKey = null;
-            foreach(String potentialTeamKey in Teams.Keys)
+            Team team = null;
+            foreach(String potentialTeamKey in Keys)
             {
-                Team team = Teams[potentialTeamKey];
-                foreach(String key in team.People.Keys)
+                Team potentialTeam = this[potentialTeamKey];
+                foreach(String key in potentialTeam.People.Keys)
                 {
-                    if(key==personKey)
+                    if(potentialTeam[key] == person)
                     {
-                        teamKey = potentialTeamKey;
+                        team = potentialTeam;
                         break;
                     }
                 }
-                if (teamKey is not null) break;
+                if (team is not null) break;
             }
-            return teamKey;
-        }
-
-        internal Boolean ContainsKey(String teamKey)
-        {
-            return Teams.ContainsKey(teamKey);
-        }
-
-        internal void Add(String teamKey, Team team)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal String AddPerson(String teamsKey)
-        {
-            return Teams[teamsKey].AddPerson();
-        }
-
-        internal void DisplayOrganizationName(int orgCounter)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void Add(Organization organization)
-        {
-            throw new NotImplementedException();
+            return team;
         }
     }
 }

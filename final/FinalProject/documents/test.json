@@ -1,0 +1,113 @@
+{
+  "OrganizationalUnits": {
+    "Units": {
+      "DictionaryDescribedObject": {}
+    },
+    "DictionaryDescribedObject": {}
+  },
+  "OrganizationalRoles": {
+    "Roles": {
+      "DictionaryDescribedObject": {
+        "executive Officer": null,
+        "manager": null
+      }
+    },
+    "DictionaryDescribedObject": {}
+  },
+  "Organizations": {
+    "rbs": {
+      "ChiefAdminstativeTeam": {
+        "Manager": {
+          "PersonalRoleKeys": [
+            "Executive Officer",
+            "Manager"
+          ],
+          "NameObject": {
+            "NameType": 0,
+            "Name": "Chief Executive Officer"
+          }
+        },
+        "TeamMembers": {
+          "rbs-ExecutiveBoard-ChiefExecutiveOfficer": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          }
+        },
+        "Description": null,
+        "NameObject": {
+          "NameType": 1,
+          "Name": "Executive Board"
+        }
+      },
+      "OrganizationTeams": {
+        "rbs-ExecutiveBoard": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          },
+          "TeamMembers": {
+            "rbs-ExecutiveBoard-ChiefExecutiveOfficer": {
+              "PersonalRoleKeys": [
+                "Executive Officer",
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Chief Executive Officer"
+              }
+            }
+          },
+          "Description": null,
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Executive Board"
+          }
+        },
+        "rbs-Rbs": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "rbs"
+            }
+          },
+          "TeamMembers": {
+            "rbs-Rbs-Rbs": {
+              "PersonalRoleKeys": [
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "rbs"
+              }
+            }
+          },
+          "Description": "rbs",
+          "NameObject": {
+            "NameType": 1,
+            "Name": "rbs"
+          }
+        }
+      },
+      "Description": "rbs",
+      "NameObject": {
+        "NameType": 1,
+        "Name": "rbs"
+      }
+    }
+  }
+}

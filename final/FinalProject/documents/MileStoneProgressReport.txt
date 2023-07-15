@@ -1,0 +1,258 @@
+﻿https://github.com/trrmann/cse210-a8/commit/04fc1bcf7735011f6b786d53ee71475add591d7a
+
+I have completed the menu structure to drive the entire program through the operations on the objects.  This is also setup to trap errors for methods that are defined but are shells and throw a not implemented error.  I report what the function call was and the stack trace to allow discovery of what object needs to be completed.  My menu is dynamic and is based on a Dictionary data construction that allows me to adjust the menu display tied to object methods calls used to perform the Action (as the type of call object, having void paramters and returnign void).  I have created the shell objects and every interface method that the menu calls at this point.  I have also begun many of the supporting objects data management function implementations to allow the needeed supporting data to be used by the core objects.  My itemized status of menu/menu path optins with breadcrumb trail is a follows:
+Status:  Menu navigation completed
+	Main Menu > File Menu > Return to Main Menu
+	Main Menu > File Menu > Quit
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Quit
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Quit
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Quit
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Quit
+	Main Menu -> Manage Tasks -> Manage Template Tasks -> Return to Main Menu
+	Main Menu -> Manage Tasks -> Manage Template Tasks -> Quit
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Quit
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Quit
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Quit
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Quit
+	Main Menu -> Manage Tasks -> Manage Assigned Tasks -> Return to Main Menu
+	Main Menu -> Manage Tasks -> Manage Assigned Tasks -> Quit
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Quit
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Quit
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Quit
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Quit
+	Main Menu -> Manage Tasks -> Manage Scheduled Tasks -> Return to Main Menu
+	Main Menu -> Manage Tasks -> Manage Scheduled Tasks -> Quit
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Quit
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Quit
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Quit
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Quit
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Quit
+	Main Menu > Manage Tasks > Return to Main Menu
+	Main Menu > Manage Tasks > Quit
+	Main Menu > Manage Risks > Return to Main Menu
+	Main Menu > Manage Risks > Quit
+	Main Menu > Manage Plan > Return to Main Menu
+	Main Menu > Manage Plan > Quit
+	Main Menu > Plan Options > Manage Plan Summary > Return to Plan Options Menu
+	Main Menu > Plan Options > Manage Plan Summary > Return to Main Menu
+	Main Menu > Plan Options > Manage Plan Summary > Quit
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Return to Team Menu
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Quit
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Return to Organization Menu
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Quit
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Return to Organization Menu
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Quit
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Organization Options > Return to Organization Menu
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Organization Options > Quit
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Return to Organizations Menu
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Quit
+	Main Menu > Plan Options > Manage Organizations > Return to Plan Options Menu
+	Main Menu > Plan Options > Manage Organizations > Quit
+	Main Menu > Plan Options > Manage Units > Return to Main Menu
+	Main Menu > Plan Options > Manage Units > Quit
+	Main Menu > Plan Options > Manage Roles > Return to Plan Options Menu
+	Main Menu > Plan Options > Manage Roles > Quit
+	Main Menu > Plan Options > Return to Main Menu
+	Main Menu > Plan Options > Quit
+	Main Menu > Quit
+Status:  Method completed
+	Main Menu > Plan Options > Manage Plan Summary > Assign Name
+	Main Menu > Plan Options > Manage Plan Summary > Assign Description
+	Main Menu > Plan Options > Manage Plan Summary > Add Manager
+	Main Menu > Plan Options > Manage Plan Summary > Display Summary
+	Main Menu > Plan Options > Manage Organizations > Add Organization
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Add Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Add Member
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Reassign Name
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > List Members
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > List Teams
+	Main Menu > Plan Options > Manage Organizations > List Organizations
+	Main Menu > Plan Options > Manage Roles > Add Role
+	Main Menu > Plan Options > Manage Roles > Copy Role
+	Main Menu > Plan Options > Manage Roles > Remove Role
+	Main Menu > Plan Options > Manage Roles > List Roles
+Status:  work currently in progress
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Copy Member
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Remove Member
+Status:  shell method not implemented
+	Main Menu > File Menu > Open Plan																	
+	Main Menu > File Menu > Save Plan
+	Main Menu > File Menu > Copy Plan
+	Main Menu > File Menu > Rename Plan
+	Main Menu > File Menu > Delete Plan
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Add Template Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Copy Template Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Edit Template Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Remove Template Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > List Template Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Export Template Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Tasks > Import Template Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Add Template Benchmark Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Copy Template Benchmark Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Edit Template Benchmark Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Remove Template Benchmark Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > List Template Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Export Template Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Benchmark Tasks > Import Template Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Add Template GoNoGo Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Copy Template GoNoGo Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Edit Template GoNoGo Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Remove Template GoNoGo Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > List Template GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Export Template GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Go / No Go Tasks > Import Template GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Add Template Mitigation Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Copy Template Mitigation Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Edit Template Mitigation Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Remove Template Mitigation Task
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > List Template Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Export Template Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Template Tasks > Manage Template Mitigation Tasks > Import Template Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Add Assigned Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Copy Assigned Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Edit Assigned Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Remove Assigned Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > List Assigned Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Export Assigned Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Tasks > Import Assigned Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Add Assigned Benchmark Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Copy Assigned Benchmark Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Edit Assigned Benchmark Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Remove Assigned Benchmark Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > List Assigned Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Export Assigned Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Benchmark Tasks > Import Assigned Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Add Assigned GoNoGo Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Copy Assigned GoNoGo Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Edit Assigned GoNoGo Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Remove Assigned GoNoGo Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > List Assigned GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Export Assigned GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Go / No Go Tasks > Import Assigned GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Add Assigned Mitigation Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Copy Assigned Mitigation Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Edit Assigned Mitigation Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Remove Assigned Mitigation Task
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > List Assigned Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Export Assigned Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Assigned Tasks > Manage Assigned Mitigation Tasks > Import Assigned Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Add Scheduled Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Copy Scheduled Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Edit Scheduled Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Remove Scheduled Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > List Scheduled Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Export Scheduled Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Tasks > Import Scheduled Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Add Scheduled Benchmark Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Copy Scheduled Benchmark Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Edit Scheduled Benchmark Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Remove Scheduled Benchmark Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > List Scheduled Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Export Scheduled Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Benchmark Tasks > Import Scheduled Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Add Scheduled GoNoGo Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Copy Scheduled GoNoGo Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Edit Scheduled GoNoGo Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Remove Scheduled GoNoGo Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > List Scheduled GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Export Scheduled GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Go / No Go Tasks > Import Scheduled GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Add Scheduled Mitigation Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Copy Scheduled Mitigation Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Edit Scheduled Mitigation Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Remove Scheduled Mitigation Task
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > List Scheduled Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Export Scheduled Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Scheduled Tasks > Manage Scheduled Mitigation Tasks > Import Scheduled Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Add Implemented Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Copy Implemented Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Edit Implemented Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Remove Implemented Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > List Implemented Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Export Implemented Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Tasks > Import Implemented Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Add Implemented Benchmark Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Copy Implemented Benchmark Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Edit Implemented Benchmark Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Remove Implemented Benchmark Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > List Implemented Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Export Implemented Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Benchmark Tasks > Import Implemented Benchmark Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Add Implemented GoNoGo Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Copy Implemented GoNoGo Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Edit Implemented GoNoGo Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Remove Implemented GoNoGo Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > List Implemented GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Export Implemented GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Go / No Go Tasks > Import Implemented GoNoGo Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Add Implemented Mitigation Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Copy Implemented Mitigation Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Edit Implemented Mitigation Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Remove Implemented Mitigation Task
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > List Implemented Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Export Implemented Mitigation Tasks
+	Main Menu > Manage Tasks > Manage Implemented Tasks > Manage Implemented Mitigation Tasks > Import Implemented Mitigation Tasks
+	Main Menu > Manage Risks > Add Risk
+	Main Menu > Manage Risks > Copy Risk
+	Main Menu > Manage Risks > Edit Risk
+	Main Menu > Manage Risks > Remove Risk
+	Main Menu > Manage Risks > List Risks
+	Main Menu > Manage Risks > Export Risks
+	Main Menu > Manage Risks > Import Risks
+	Main Menu > Manage Plan > Allocate Plan
+	Main Menu > Manage Plan > Estimate Plan
+	Main Menu > Manage Plan > Test Plan
+	Main Menu > Manage Plan > Implement Plan
+	Main Menu > Manage Plan > Plan Rollback
+	Main Menu > Manage Plan > Test Rollback Plan
+	Main Menu > Manage Plan > Rollback Plan
+	Main Menu > Display Plan
+	Main Menu > Plan Options > Manage Organizations > Copy Organization
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Copy Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Assign Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Add Role Assignment
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Remove Role Assignment
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > List Assigned Roles
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Manage Members > Display Member
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Import/Export Members
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Assign Team Name
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Assign Manager
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Add Reporting Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Remove Reporting Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Add Staff Memebers
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Remove Staff Memebers
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Manage Team > Team Options > Display Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Remove Team
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Import/Export Teams
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Organization Options > Name Organization
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Organization Options > Describe Organization
+	Main Menu > Plan Options > Manage Organizations > Manage Organization > Organization Options > Display Organization
+	Main Menu > Plan Options > Manage Organizations > Remove Organization
+	Main Menu > Plan Options > Manage Organizations > Export Organizations
+	Main Menu > Plan Options > Manage Organizations > Import Organizations
+	Main Menu > Plan Options > Manage Units > Add Unit
+	Main Menu > Plan Options > Manage Units > Copy Unit
+	Main Menu > Plan Options > Manage Units > Edit Unit
+	Main Menu > Plan Options > Manage Units > Remove Unit
+	Main Menu > Plan Options > Manage Units > List Units
+	Main Menu > Plan Options > Manage Units > Export Units
+	Main Menu > Plan Options > Manage Units > Import Units
+	Main Menu > Plan Options > Manage Roles > Export Roles
+	Main Menu > Plan Options > Manage Roles > Import Roles

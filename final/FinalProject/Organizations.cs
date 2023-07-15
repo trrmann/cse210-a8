@@ -1,11 +1,92 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System.Collections.Immutable;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
-    public class Organizations : Dictionary<String, Organization>
+    internal class JsonOrganizations
     {
-        internal Units Units { get; set; }
-        internal Roles RoleDefinitions { get; set; }
+        private Organizations _organizations { get; set; } = new();
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("OrganizationalUnits")]
+        public JsonUnits OrganizationalUnits {
+            get
+            {
+                return _organizations.OrganizationalUnits;
+            }
+            set
+            {
+                _organizations.OrganizationalUnits = value;
+            }
+        }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("OrganizationalRoles")]
+        public JsonRoles OrganizationalRoles
+        {
+            get
+            {
+                return _organizations.OrganizationalRoles;
+            }
+            set
+            {
+                _organizations.OrganizationalRoles = value;
+            }
+        }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Organizations")]
+        public Dictionary<String, JsonOrganization> Organizations
+        {
+            get
+            {
+                Dictionary<String, JsonOrganization> organizations = new();
+                foreach(String key in _organizations.Keys)
+                {
+                    organizations.Add(key, _organizations[key]);
+                }
+                return organizations;
+            }
+            set
+            {
+                _organizations.Clear();
+                foreach(String key in value.Keys)
+                {
+                    _organizations.Add(key, value[key]);
+                }
+            }
+        }
+        public JsonOrganizations() : base()
+        {
+            OrganizationalRoles = new();
+            OrganizationalUnits = new();
+            Organizations = new();
+        }
+        [JsonConstructor]
+        public JsonOrganizations(JsonRoles OrganizationalRoles, JsonUnits OrganizationalUnits, Dictionary<String, JsonOrganization> Organizations)
+        {
+            this.OrganizationalRoles = OrganizationalRoles;
+            this.OrganizationalUnits = OrganizationalUnits;
+            this.Organizations = Organizations;
+        }
+        public JsonOrganizations(Organizations organizations)
+        {
+            _organizations = organizations;
+        }
+        public static implicit operator JsonOrganizations(Organizations organizations)
+        {
+            return new(organizations);
+        }
+        public static implicit operator Organizations(JsonOrganizations organizations)
+        {
+            return organizations._organizations;
+        }
+    }
+    public class Organizations : DictionaryDescribedObject<Organization>
+    {
+        internal Units OrganizationalUnits { get; set; }
+        internal Roles OrganizationalRoles { get; set; }
         internal List<String> Roles { get {
                 List<String> result = new();
                 foreach(String personKey in People.Keys)
@@ -30,7 +111,7 @@ namespace FinalProject
                     People subGroup = Teams[teamKey].People;
                     foreach (String personName in subGroup.Keys)
                     {
-                        result.Add(personName+teamKey, subGroup[personName]);
+                        result.Add(personName, subGroup[personName]);
                     }
                 }
                 return result;
@@ -46,7 +127,7 @@ namespace FinalProject
                     Dictionary<String, Team> subGroup = organization.Teams;
                     foreach (String teamKey in subGroup.Keys)
                     {
-                        result.Add(teamKey+organizationKey, subGroup[teamKey]);
+                        result.Add(teamKey, subGroup[teamKey]);
                     }
                 }
                 return result;
@@ -60,7 +141,7 @@ namespace FinalProject
         {
             Init(organizations);
         }
-        protected void Init(Boolean empty = true)
+        protected override void Init(Boolean empty = true)
         {
             if (empty)
             {
@@ -73,12 +154,12 @@ namespace FinalProject
         }
         protected void Init(Organizations organizations)
         {
-            Init(organizations.Units, organizations.RoleDefinitions, (Dictionary<String, Organization>)organizations);
+            Init(organizations.OrganizationalUnits, organizations.OrganizationalRoles, (Dictionary<String, Organization>)organizations);
         }
         protected void Init(Units units, Roles roleDefinitions, Dictionary<String, Organization> dictionary)
         {
-            Units = units;
-            RoleDefinitions = roleDefinitions;
+            OrganizationalUnits = units;
+            OrganizationalRoles = roleDefinitions;
             Clear();
             foreach(String organizationKey in dictionary.Keys)
             {
@@ -89,44 +170,50 @@ namespace FinalProject
         {
             return plan.Organizations;
         }
-        internal String AddPersonKey()
+        /**
+        public static implicit operator Units<String, JsonOrganization>(_organizations value)
         {
-            String personKey = RequestPersonTeam(RoleDefinitions);
-            String teamKey = FindPersonTeamKey(personKey);
-            String organizationKey = FindTeamOrganizationKey(teamKey);
-            Organization organization;
-            Team team;
-            Person person;
-            if (organizationKey is null)
+            Units<String, JsonOrganization> result = new();
+            foreach(String key in value.Keys)
             {
-                organization = new Organization(RoleDefinitions);
-                organizationKey = organization.OrganizationKey;
-                if (!ContainsKey(organizationKey))
+                result.Add(key, value[key] as JsonOrganization);
+            }
+            return result;
+        }
+        /**/
+
+        internal Person AddPerson()
+        {
+            Person person = RequestPersonTeam(OrganizationalRoles);
+            Team team = FindPersonTeam(person);
+            Organization organization = FindTeamOrganization(team);
+            if (organization is null)
+            {
+                organization = new Organization(OrganizationalRoles);
+                if (!ContainsKey(organization.Key))
                 {
-                    Add(organizationKey, organization);
+                    Add(organization.Key, organization);
                 }
                 if(organization.People.Count == 1) {
-                    return organization.People.First().Key;
+                    return organization.People.First().Value;
                 }
             }
-            organization = this[organizationKey];
-            if (teamKey is null)
+            if (team is null)
             {
-                team = new Team(RoleDefinitions);
-                teamKey = team.ToKeyString();
-                if (!organization.ContainsKey(teamKey))
+                team = new Team(OrganizationalRoles);
+                if (!organization.ContainsKey(team.Key))
                 {
-                    organization.Add(teamKey, team);
+                    organization.Add(team.Key, team);
                 }
             }
-            return personKey;// team.AddMember(personKey);
+            return person;// member.AddMember(member);
         }
         internal void AddOrganization()
         {
-            Organization organization = new(false);
+            Organization organization = new(OrganizationalRoles, false);
             if (Keys.Contains(organization.Key))
             {
-                Console.WriteLine($"Organization {organization.ToNameString()} already exists.");
+                Console.WriteLine($"Values {organization.ToNameString()} already exists.");
                 Console.Write("overwrite?");
                 String response = IApplication.READ_RESPONSE().ToLower();
                 if (IApplication.YES_RESPONSE.Contains(response))
@@ -139,15 +226,56 @@ namespace FinalProject
         }
         internal void CopyOrganization()
         {
+            /*TODO - CopyOrganization*/
             throw new NotImplementedException();
         }
-        internal void RemoveOrganization()
+        internal void RemoveOrganization(Plan plan)
         {
-            throw new NotImplementedException();
+            Organization organization = RequestOrganization();
+            if (organization.People.Keys.Contains(plan.Manager.Key))
+            {
+                plan.Manager = null;
+            }
+            Remove(organization.Key);
+        }
+        internal Organization RequestOrganization(Boolean all=false)
+        {
+            int option = -1;
+            String response;
+            Organization organization;
+            Dictionary<int, Organization> optionList = null;
+            while(option < 0)
+            {
+                optionList = new();
+                if(all)
+                {
+                    Console.WriteLine("0)  All Organzations.");
+                    optionList.Add(0, null);
+                }
+                int counter = 1;
+                foreach(String organizationKey in Keys)
+                {
+                    organization = this[organizationKey];
+                    optionList.Add(counter, organization);
+                    organization.Display(true, false, counter);
+                    counter++;
+                }
+                Console.WriteLine("\nPlease select the Values:  ");
+                response = IApplication.READ_RESPONSE();
+                try
+                {
+                    option = int.Parse(response);
+                } catch
+                {
+                    option = -1;
+                }
+                if (!optionList.Keys.Contains(option)) option = -1;
+            }
+            return optionList[option];
         }
         internal void ListOrganizations()
         {
-            Console.WriteLine("\nList Organizations");
+            Console.WriteLine("\nList Values");
             int counter = 1;
             foreach (String organizationKey in Keys)
             {
@@ -156,32 +284,170 @@ namespace FinalProject
                 counter++;
             }
         }
+        internal override void DisplayDescribedObjectExportMessage()
+        {
+            Console.WriteLine("\nExport Organizations");
+        }
+        internal override void DisplayDescribedObjectImportMessage()
+        {
+            Console.WriteLine("\nImport Organizations");
+        }
+        internal override void Export(Dictionary<String, Organization> namedObjectsWithDetail)
+        {
+            DisplayDescribedObjectExportMessage();
+            JsonOrganizations json = new(this);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                IncludeFields = true
+            };
+            String jsonString = JsonSerializer.Serialize<JsonOrganizations>(json, options);
+            Console.WriteLine("Enter the filename to export to.");
+            String response = IApplication.READ_RESPONSE();
+            File.WriteAllText(response, jsonString);
+            /*TODO - Export*/
+        }
+        internal override void Import(Dictionary<String, Organization> namedObjectsWithDetail)
+        {
+            DisplayDescribedObjectImportMessage();
+            Console.WriteLine("Enter the filename to import from.");
+            String response = IApplication.READ_RESPONSE();
+            Console.WriteLine($"{Path.GetFullPath(response)}");
+            String jsonString = File.ReadAllText(response);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true
+            };
+            JsonOrganizations json = JsonSerializer.Deserialize<JsonOrganizations>(jsonString, options);
+            //Init(json);
+            /*TODO - Import*/
+        }
         internal void ExportOrganizations()
         {
-            throw new NotImplementedException();
+            Export(this);
         }
         internal void ImportOrganizations()
         {
-            throw new NotImplementedException();
+            Import(this);
         }
         internal void AddTeam()
         {
             int counter;
+            Boolean done = false;
             String organizationName;
+            Organization organization;
             Dictionary<int, String> optionMap = new();
             int option = -1;
             while (option == -1)
             {
                 Console.WriteLine("\nAdd Team");
-                counter = 1;
-                foreach (String organizationKey in Keys)
+                if (Keys.Count > 1)
                 {
-                    this[organizationKey].Display(true, false, counter);
-                    optionMap.Add(counter, organizationKey);
+                    counter = 1;
+                    foreach (String organizationKey in Keys)
+                    {
+                        this[organizationKey].Display(true, false, counter);
+                        optionMap.Add(counter, organizationKey);
+                        counter++;
+                    }
+                    Console.WriteLine($"Select the member to add the members to.");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.ContainsKey(option)) option = -1;
+                }
+                else if(Keys.Count==1)
+                {
+                    optionMap.Add(1, Keys.First());
+                    option = 1;
+                }
+                else
+                {
+                    organization = new Organization(OrganizationalRoles, false);
+                    Add(organization.ToKeyString(),organization);
+                    optionMap.Add(1, Keys.First());
+                    option = 1;
+                    done = true;
+                }
+            }
+            organization = this[optionMap[option]];
+            organizationName = organization.ToNameString();
+            if(!done)
+            {
+                Team team = new(OrganizationalRoles, organization, false);
+                if (organization.Teams.Keys.Contains(team.Key))
+                {
+                    Console.WriteLine($"Team {team.ToNameString()} already exists in {organizationName}.");
+                    Console.Write("overwrite?");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        organization.Teams.Remove(team.Key);
+                        organization.Teams.Add(team.Key, team);
+                    }
+                }
+                else organization.Teams.Add(team.Key, team);
+            }
+        }
+        internal void CopyTeam()
+        {
+            /*TODO - CopyTeam*/
+            throw new NotImplementedException();
+        }
+        internal void RemoveTeam(Plan plan)
+        {
+            Team team = RequestTeam();
+            if (team.People.Keys.Contains(plan.Manager.Key))
+            {
+                plan.Manager = null;
+            }
+            team.Organization.Teams.Remove(team.Key);
+        }
+        internal Team RequestTeam(Boolean all = false, Boolean allOrganizations = false)
+        {
+            Organization organization = RequestOrganization(allOrganizations);
+            int option = -1;
+            String response;
+            Team team;
+            Dictionary<String, Team> teams;
+            if(organization is null)
+            {
+                teams = Teams;
+            } else
+            {
+                teams = organization.Teams;
+            }
+            Dictionary<int, Team> optionList = null;
+            while (option < 0)
+            {
+                optionList = new();
+                if (all && organization is null)
+                {
+                    Console.WriteLine("0)  All Members.");
+                    optionList.Add(0, null);
+                }
+                int counter = 1;
+                foreach (String teamKey in teams.Keys)
+                {
+                    team = teams[teamKey];
+                    optionList.Add(counter, team);
+                    organization.Display(true, false, counter);
                     counter++;
                 }
-                Console.WriteLine($"Select the organization to add the teams to.");
-                String response = IApplication.READ_RESPONSE().ToLower();
+                Console.WriteLine("\nPlease select the member:  ");
+                response = IApplication.READ_RESPONSE();
                 try
                 {
                     option = int.Parse(response);
@@ -190,70 +456,135 @@ namespace FinalProject
                 {
                     option = -1;
                 }
-                if (!optionMap.ContainsKey(option)) option = -1;
+                if (!optionList.Keys.Contains(option)) option = -1;
             }
-            Organization organization = this[optionMap[option]];
-            organizationName = organization.ToNameString();
-            Team team = new(RoleDefinitions, false);
-            if (organization.Teams.Keys.Contains(team.Key))
+            return optionList[option];
+        }
+        internal void RemovePerson(Plan plan)
+        {
+            Person person = RequestPerson();
+            Team team = person.Team;
+            if (person==plan.Manager)
             {
-                Console.WriteLine($"Team {team.ToNameString()} already exists in {organizationName}.");
-                Console.Write("overwrite?");
-                String response = IApplication.READ_RESPONSE().ToLower();
-                if (IApplication.YES_RESPONSE.Contains(response))
-                {
-                    organization.Teams.Remove(team.Key);
-                    organization.Teams.Add(team.Key, team);
-                }
+                plan.Manager = null;
             }
-            else organization.Teams.Add(team.Key, team);
+            if (person== team.Manager)
+            {
+                if (team.Count > 2)
+                {
+                    int option = -1;
+                    String response;
+                    Dictionary<int, Person> optionMap = null;
+                    while (option < 1)
+                    {
+                        int counter = 1;
+                        optionMap = new();
+                        foreach (String personKey in team.Keys)
+                        {
+                            if (team[personKey]!=person)
+                            {
+                                team[personKey].Display(counter);
+                                optionMap.Add(counter, person);
+                                counter++;
+                            }
+                        }
+                        Console.WriteLine($"\nSelect the new manager for team {team.ToNameString()}");
+                        response = IApplication.READ_RESPONSE();
+                        try
+                        {
+                            option = int.Parse(response);
+                        } catch { option = -1; }
+                        if(!optionMap.Keys.Contains(option)) { option = -1; }
+
+                    }
+                    team.Manager = optionMap[option];
+                    team.Manager.AddRole(plan.Organizations.OrganizationalRoles, "Manager");
+                }
+                else if (team.Count == 2)
+                {
+                    Person newManager = null;
+                    foreach(String personKey in team.Keys)
+                    {
+                        newManager = team[personKey];
+                        if (newManager != person) break;
+                    }
+                    team.Manager = newManager;
+                    newManager.AddRole(plan.Organizations.OrganizationalRoles, "Manager");
+                }
+                else team.Organization.Teams.Remove(team.Key);
+            }
+            person.Organization.Teams.Remove(person.Key);
         }
-        internal void CopyTeam()
+        internal void CopyPerson(Plan plan)
         {
+            /*TODO - CopyPerson*/
             throw new NotImplementedException();
         }
-        internal void RemoveTeam()
+        internal void EditPerson(Plan plan)
         {
+            /*TODO - EditPerson*/
             throw new NotImplementedException();
+        }
+        internal Person RequestPerson(Boolean all = false, Boolean allTeams = false, Boolean allOrganizations = false)
+        {
+            Team team = RequestTeam(allTeams, allOrganizations);
+            int option = -1;
+            String response;
+            Person member;
+            Dictionary<String, Person> members;
+            if (team is null)
+            {
+                members = People;
+            }
+            else
+            {
+                members = team.DescribedObjectDictionaryOfNamedObjects;
+            }
+            Dictionary<int, Person> optionList = null;
+            while (option < 0)
+            {
+                optionList = new();
+                if (all && team is null)
+                {
+                    Console.WriteLine("0)  All Members.");
+                    optionList.Add(0, null);
+                }
+                int counter = 1;
+                foreach (String teamKey in members.Keys)
+                {
+                    member = members[teamKey];
+                    optionList.Add(counter, member);
+                    team.Display(true, false, counter);
+                    counter++;
+                }
+                Console.WriteLine("\nPlease select the member:  ");
+                response = IApplication.READ_RESPONSE();
+                try
+                {
+                    option = int.Parse(response);
+                }
+                catch
+                {
+                    option = -1;
+                }
+                if (!optionList.Keys.Contains(option)) option = -1;
+            }
+            return optionList[option];
         }
         internal void ListTeams()
         {
             int counter;
             String organizationName;
             Dictionary<String, Team> teams;
-            Dictionary<int, String> optionMap = new();
-            int option = -1;
-            while (option == -1)
+            Organization organization = RequestOrganization(true);
+            if(organization is null)
             {
-                Console.WriteLine("\nList Teams");
-                counter = 1;
-                Console.WriteLine("0)  All Organzations.");
-                foreach (String organizationKey in Keys)
-                {
-                    this[organizationKey].Display(true, false, counter);
-                    optionMap.Add(counter, organizationKey);
-                    counter++;
-                }
-                Console.WriteLine($"Select the organization to list teams for.");
-                String response = IApplication.READ_RESPONSE().ToLower();
-                try
-                {
-                    option = int.Parse(response);
-                }
-                catch
-                {
-                    option = -1;
-                }
-                if (!optionMap.ContainsKey(option)) option = 0;
-            }
-            if (option==0)
-            {
-                organizationName = "All Organizations";
+                organizationName = "All Values";
                 teams = Teams;
             } else
             {
-                organizationName = this[optionMap[option]].ToNameString();
-                teams = this[optionMap[option]].Teams;
+                organizationName = organization.ToNameString();
+                teams = organization.Teams;
             }
             Console.WriteLine($"\n{organizationName}");
             counter = 1;
@@ -265,135 +596,66 @@ namespace FinalProject
         }
         internal void ImportExportTeams()
         {
+            /*TODO - ImportExportTeams*/
             throw new NotImplementedException();
         }
         internal void NameOrganization()
         {
+            /*TODO - NameOrganization*/
             throw new NotImplementedException();
         }
         internal void DescribeOrganization()
         {
+            /*TODO - DescribeOrganization*/
             throw new NotImplementedException();
         }
         internal void DisplayOrganization()
         {
+            /*TODO - DisplayOrganization*/
             throw new NotImplementedException();
         }
-        internal void ListTeamMembers()
+        internal void ListMembers()
         {
-            int organizationCounter;
-            int teamCounter;
-            String organizationName;
-            String teamName;
-            People people;
-            Dictionary<int, String> organizationOptionMap = new();
-            Dictionary<int, String> teamOptionMap = new();
-            int organizationOption = -1;
-            int teamOption = -1;
-            while (organizationOption == -1)
-            {
-                Console.WriteLine("\nList Members");
-                organizationCounter = 1;
-                Console.WriteLine("0)  All Organzations.");
-                foreach (String organizationKey in Keys)
-                {
-                    this[organizationKey].Display(true, false, organizationCounter);
-                    organizationOptionMap.Add(organizationCounter, organizationKey);
-                    organizationCounter++;
-                }
-                Console.WriteLine($"Select the organization to list members for.");
-                String response = IApplication.READ_RESPONSE().ToLower();
-                try
-                {
-                    organizationOption = int.Parse(response);
-                }
-                catch
-                {
-                    organizationOption = -1;
-                }
-                if (!organizationOptionMap.ContainsKey(organizationOption)) organizationOption = 0;
-            }
-            if (organizationOption == 0)
-            {
-                teamName = "All Organizations";
-                people = People;
-            }
-            else
-            {
-                Organization organization = this[organizationOptionMap[organizationOption]];
-                organizationName = organization.ToNameString();
-                while (teamOption == -1)
-                {
-                    Console.WriteLine($"\nList {organizationName} Members");
-                    teamCounter = 1;
-                    Console.WriteLine("0)  All Teams.");
-                    foreach (String teamKey in organization.Teams.Keys)
-                    {
-                        organization.Teams[teamKey].Display(true, false, teamCounter);
-                        teamOptionMap.Add(teamCounter, teamKey);
-                        teamCounter++;
-                    }
-                    Console.WriteLine($"Select the team to list members for.");
-                    String response = IApplication.READ_RESPONSE().ToLower();
-                    try
-                    {
-                        teamOption = int.Parse(response);
-                    }
-                    catch
-                    {
-                        teamOption = -1;
-                    }
-                    if (!teamOptionMap.ContainsKey(teamOption)) teamOption = 0;
-                }
-                if (teamOption == 0)
-                {
-                    teamName = String.Format("All {0} Teams", organizationName);                    
-                    people = organization.People;
-                }
-                else
-                {
-                    teamName = organization.Teams[teamOptionMap[teamOption]].ToNameString();
-                    people = organization.Teams[teamOptionMap[teamOption]].People;
-                }
-            }
-            Console.WriteLine($"\n{teamName}");
-            int counter = 1;
-            foreach (String personKey in people.Keys)
-            {
-                people[personKey].Display(counter);
-                counter++;
-            }
+            People.List(this);
         }
         internal void ImportExportTeamMembers()
         {
+            /*TODO - ImportExportTeamMembers*/
             throw new NotImplementedException();
         }
         internal void NameTeam()
         {
+            /*TODO - NameTeam*/
             throw new NotImplementedException();
         }
         internal void AssignTeamManager()
         {
+            /*TODO - AssignTeamManager*/
             throw new NotImplementedException();
         }
         internal void AddReportingTeam()
         {
+            /*TODO - AddReportingTeam*/
             throw new NotImplementedException();
         }
         internal void RemoveReportingTeam()
         {
+            /*TODO - RemoveReportingTeam*/
             throw new NotImplementedException();
         }
         internal void AddTeamStaff()
         {
+            /*TODO - AddTeamStaff*/
             throw new NotImplementedException();
         }
         internal void RemoveTeamStaff()
         {
+            /*TODO - RemoveTeamStaff*/
             throw new NotImplementedException();
         }
         internal void DisplayTeam()
         {
+            /*TODO - DisplayTeam*/
             throw new NotImplementedException();
         }
         internal void NamePerson()
@@ -411,7 +673,7 @@ namespace FinalProject
             {
                 while (organizationOption == -1)
                 {
-                    Console.WriteLine("\nReassign Member Name");
+                    Console.WriteLine("\nReassign Member _name");
                     orgnizationCounter = 1;
                     if (Keys.Count > 1)
                     {
@@ -421,7 +683,7 @@ namespace FinalProject
                             organizationOptionMap.Add(orgnizationCounter, organizationKey);
                             orgnizationCounter++;
                         }
-                        Console.WriteLine($"Select the organization to select the person from.");
+                        Console.WriteLine($"Select the member to select the member from.");
                         response = IApplication.READ_RESPONSE().ToLower();
                         try
                         {
@@ -445,7 +707,7 @@ namespace FinalProject
                 {
                     while (teamOption == -1)
                     {
-                        Console.WriteLine($"\nReassign Member Name from {organizationName}");
+                        Console.WriteLine($"\nReassign Member _name from {organizationName}");
                         teamCounter = 1;
                         if (organization.Teams.Count > 1)
                         {
@@ -456,7 +718,7 @@ namespace FinalProject
                                 teamOptionMap.Add(teamCounter, teamKey);
                                 teamCounter++;
                             }
-                            Console.WriteLine($"Select the team to select the person from.");
+                            Console.WriteLine($"Select the member to select the member from.");
                             response = IApplication.READ_RESPONSE().ToLower();
                             try
                             {
@@ -480,7 +742,7 @@ namespace FinalProject
                     {
                         while (memberOption == -1)
                         {
-                            Console.WriteLine($"\nReassign Member Name from {organizationName} - {teamName}");
+                            Console.WriteLine($"\nReassign Member _name from {organizationName} - {teamName}");
                             memberCounter = 1;
                             if (team.Members.Keys.Count > 1)
                             {
@@ -490,7 +752,7 @@ namespace FinalProject
                                     memberOptionMap.Add(memberCounter, memberKey);
                                     memberCounter++;
                                 }
-                                Console.WriteLine($"Select the person to reassign the name for.");
+                                Console.WriteLine($"Select the member to reassign the name for.");
                                 response = IApplication.READ_RESPONSE().ToLower();
                                 try
                                 {
@@ -519,113 +781,125 @@ namespace FinalProject
         }
         internal void AssignPersonTeam()
         {
+            /*TODO - AssignPersonTeam*/
             throw new NotImplementedException();
         }
         internal void AddPersonRole()
         {
+            /*TODO - AddPersonRole*/
             throw new NotImplementedException();
         }
         internal void RemovePersonRole()
         {
+            /*TODO - RemovePersonRole*/
             throw new NotImplementedException();
         }
         internal void ListPersonRoles()
         {
+            /*TODO - ListPersonRoles*/
             throw new NotImplementedException();
         }
         internal void AddRole()
         {
-            RoleDefinitions.AddRole();
+            OrganizationalRoles.Add();
         }
         internal void CopyRole()
         {
-            RoleDefinitions.CopyRole();
+            OrganizationalRoles.Copy();
         }
         internal void RemoveRole()
         {
-            RoleDefinitions.RemoveRole();
+            OrganizationalRoles.Remove();
         }
         internal void ListRoles()
         {
-            RoleDefinitions.ListRoles();
+            OrganizationalRoles.List();
         }
         internal void ExportRoles()
         {
-            RoleDefinitions.ExportRoles();
+            OrganizationalRoles.Export(OrganizationalRoles);
         }
         internal void ImportRoles()
         {
-            RoleDefinitions.ImportRoles();
+            OrganizationalRoles.Import(OrganizationalRoles);
         }
         internal void AddMember()
         {
             int orgnizationCounter, teamCounter;
             String organizationName, teamName;
+            Organization organization;
+            Boolean done = false;
             Dictionary<int, String> organizationOptionMap = new();
             Dictionary<int, String> teamOptionMap = new();
             int organizationOption = -1;
             int teamOption = -1;
-            if (Keys.Count > 0)
-            {
-                while (organizationOption == -1)
+            while (organizationOption == -1)
             {
                 Console.WriteLine("\nAdd Member");
                 orgnizationCounter = 1;
-                    if(Keys.Count > 1)
+                if(Keys.Count > 1)
+                {
+                    foreach (String organizationKey in Keys)
                     {
-                        foreach (String organizationKey in Keys)
-                        {
-                            this[organizationKey].Display(true, false, orgnizationCounter);
-                            organizationOptionMap.Add(orgnizationCounter, organizationKey);
-                            orgnizationCounter++;
-                        }
-                        Console.WriteLine($"Select the organization to add the person to.");
-                        String response = IApplication.READ_RESPONSE().ToLower();
-                        try
-                        {
-                            organizationOption = int.Parse(response);
-                        }
-                        catch
-                        {
-                            organizationOption = -1;
-                        }
-                        if (!organizationOptionMap.ContainsKey(organizationOption)) organizationOption = -1;
-                    } else
-                    {
-                        organizationOptionMap.Add(1, Keys.First());
-                        organizationOption = 1;
+                        this[organizationKey].Display(true, false, orgnizationCounter);
+                        organizationOptionMap.Add(orgnizationCounter, organizationKey);
+                        orgnizationCounter++;
                     }
+                    Console.WriteLine($"Select the member to add the member to.");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    try
+                    {
+                        organizationOption = int.Parse(response);
+                    }
+                    catch
+                    {
+                        organizationOption = -1;
+                    }
+                    if (!organizationOptionMap.ContainsKey(organizationOption)) organizationOption = -1;
+                } else if (Keys.Count == 1)
+                {
+                    organizationOptionMap.Add(1, Keys.First());
+                    organizationOption = 1;
+                } else
+                {
+                    organization = new Organization(OrganizationalRoles, false);
+                    Add(organization.ToKeyString(), organization);
+                    organizationOptionMap.Add(1, Keys.First());
+                    organizationOption = 1;
+                    done = true;
                 }
-            Organization organization = this[organizationOptionMap[organizationOption]];
-            organizationName = organization.ToNameString();
+            }
+            if(!done)
+            {
+                organization = this[organizationOptionMap[organizationOption]];
+                organizationName = organization.ToNameString();
                 if (organization.Teams.Keys.Count > 0)
                 {
-
                     while (teamOption == -1)
                     {
                         Console.WriteLine($"\nAdd Member to {organizationName}");
                         teamCounter = 1;
-                        if(organization.Teams.Count > 1)
+                        if (organization.Teams.Count > 1)
                         {
-
-                        foreach (String teamKey in organization.Teams.Keys)
-                        {
-                            organization.Teams[teamKey].Display(true, false, teamCounter);
-                            teamOptionMap.Add(teamCounter, teamKey);
-                            teamCounter++;
+                            foreach (String teamKey in organization.Teams.Keys)
+                            {
+                                organization.Teams[teamKey].Display(true, false, teamCounter);
+                                teamOptionMap.Add(teamCounter, teamKey);
+                                teamCounter++;
+                            }
+                            Console.WriteLine($"Select the member to add the member to.");
+                            String response = IApplication.READ_RESPONSE().ToLower();
+                            try
+                            {
+                                teamOption = int.Parse(response);
+                            }
+                            catch
+                            {
+                                teamOption = -1;
+                            }
+                            if (!teamOptionMap.ContainsKey(teamOption)) teamOption = -1;
                         }
-                        Console.WriteLine($"Select the team to add the person to.");
-                        String response = IApplication.READ_RESPONSE().ToLower();
-                        try
-                        {
-                            teamOption = int.Parse(response);
-                        }
-                        catch
-                        {
-                            teamOption = -1;
-                        }
-                        if (!teamOptionMap.ContainsKey(teamOption)) teamOption = -1;
-                        } else
+                        else
                         {
                             teamOptionMap.Add(1, organization.Teams.Keys.First());
                             teamOption = 1;
@@ -634,119 +908,96 @@ namespace FinalProject
                     Team team = organization.Teams[teamOptionMap[teamOption]];
                     teamName = team.ToNameString();
                     Console.WriteLine($"\nAdd Member to {teamName} in {organizationName}");
-                    Person person = new(false);
-            teamName = team.ToNameString();
-            if (team.People.Keys.Contains(person.Key))
-            {
-                Console.WriteLine($"Memeber {person.ToNameString()} already exists in {teamName}.");
-                Console.Write("overwrite?");
-                String response = IApplication.READ_RESPONSE().ToLower();
-                if (IApplication.YES_RESPONSE.Contains(response))
-                {
-                    team.RemovePerson(person.Key);
-                    team.Members.Add(person.Key, person);
-                }
-            }
-            else team.Members.Add(person.Key, person);
+                    Person person = new(OrganizationalRoles, organization, team, false);
+                    teamName = team.ToNameString();
+                    if (team.People.Keys.Contains(person.Key))
+                    {
+                        Console.WriteLine($"Memeber {person.ToNameString()} already exists in {teamName}.");
+                        Console.Write("overwrite?");
+                        String response = IApplication.READ_RESPONSE().ToLower();
+                        if (IApplication.YES_RESPONSE.Contains(response))
+                        {
+                            team.RemoveMember(person.Key);
+                            team.DescribedObjectDictionaryOfNamedObjects.Add(person.Key, person);
+                        }
+                    }
+                    else team.DescribedObjectDictionaryOfNamedObjects.Add(person.Key, person);
                 }
                 else
                 {
-                    Team team = new Team(RoleDefinitions, false);
+                    Team team = new Team(OrganizationalRoles, false);
                     organization.Teams.Add(team.Key, team);
                 }
             }
-            else
-            {
-                Organization organization = new Organization(false);
-                Add(organization.Key, organization);
-            }
         }
-        internal void CopyPerson()
+        internal void CopyMember()
         {
-            String personKey = null;
-            while(personKey is not null)
+            Person person = null;
+            Console.WriteLine("\nCopy Member");
+            if (People.Count == 0) AddMember();
+            if (People.Count > 1)
             {
-                personKey = RequestPerson();
+                while (person is null)
+                {
+                    person = RequestPerson();
+                }
+            } else {
+                person = People.First().Value;
             }
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].CopyPerson(personKey);
+            Team teamKey = FindPersonTeam(person);
+            teamKey.CopyMember(person.Key);
         }
-        internal void EditPerson()
+        internal void RemoveMember()
         {
-            String personKey = null;
-            while (personKey is not null)
-            {
-                personKey = RequestPerson();
-            }
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].EditPerson(personKey);
+            People.Remove(this);
         }
-        internal void RemovePerson()
+        internal void DisplayMember()
         {
-            String personKey = null;
-            while (personKey is not null)
-            {
-                personKey = RequestPerson();
-            }
-            String teamKey = FindPersonTeamKey(personKey);
-            Teams[teamKey].RemovePerson(personKey);
-        }
-        internal void DisplayPerson()
-        {
+            /*TODO - DisplayMember*/
             throw new NotImplementedException();
         }
-        internal void DisplayPersonByKey(String personKey)
+        internal void DisplayPerson(Person person)
         {
-            People[personKey].Display();
-        }
-        internal void ListPeople()
-        {
-            People.List();
-        }
-        internal void ExportPeople()
-        {
-            People.ExportPeople();
-        }
-        internal void ImportPeople()
-        {
-            People.ImportPeople(this);
+            person.Display();
         }
         internal void AddUnit()
         {
-            Units.Add();
+            OrganizationalUnits.Add();
         }
         internal void CopyUnit()
         {
-            Units.Copy();
+            OrganizationalUnits.Copy();
         }
         internal void EditUnit()
         {
-            Units.Edit();
+            OrganizationalUnits.Edit();
         }
         internal void RemoveUnit()
         {
-            Units.Remove();
+            OrganizationalUnits.Remove();
         }
         internal void ListUnits()
         {
-            Units.List();
+            OrganizationalUnits.List();
         }
         internal void ExportUnits()
         {
-            Units.ExportUnits();
+            OrganizationalUnits.Export(OrganizationalUnits);
         }
         internal void ImportUnits()
         {
-            Units.ImportUnits();
+            OrganizationalUnits.Import(OrganizationalUnits);
         }
-        private String RequestPersonTeam(Roles roleDefinitions)
+        private Person RequestPersonTeam(Roles roleDefinitions)
         {
             Organization organization;
             Team team;
+            Person resultPerson=null;
             int teamCounter, orgCounter;
             int teamOption, orgOption;
             Dictionary<int, String> teamOptionMap, orgOptionMap;
-            String response, resultPersonKey = "", resultTeamKey = "", resultOrganizationKey="";
+            String response, resultTeamKey = "", resultOrganizationKey="";
+
             while (resultTeamKey == "")
             {
                 teamOption = 0;
@@ -764,7 +1015,7 @@ namespace FinalProject
                     if(teamOptionMap.Count>0)
                     {
                         Console.WriteLine($"{teamCounter})  *Add new Team*");
-                        Console.WriteLine("Select the team the person belongs to:  ");
+                        Console.WriteLine("Select the member the member belongs to:  ");
                         response = IApplication.READ_RESPONSE();
                         try
                         {
@@ -783,14 +1034,14 @@ namespace FinalProject
                     orgCounter = 1;
                     foreach (String orgKey in Keys)
                     {
-                        this[orgKey].DisplayOrganizationName(orgCounter);
+                        this[orgKey].Display(orgCounter);
                         orgOptionMap.Add(orgCounter, orgKey);
                         orgCounter++;
                     }
                     if (orgOptionMap.Count > 0)
                     {
-                        Console.WriteLine($"{orgCounter})  *Add new Organization*");
-                        Console.WriteLine("Select the team the team belongs to:  ");
+                        Console.WriteLine($"{orgCounter})  *Add new Values*");
+                        Console.WriteLine("Select the member the member belongs to:  ");
                         response = IApplication.READ_RESPONSE();
                         try
                         {
@@ -805,40 +1056,35 @@ namespace FinalProject
                     if (orgOption == orgCounter)
                     {
                         organization = new(roleDefinitions, false);
-                        resultOrganizationKey = organization.OrganizationKey;
-                        if(Keys.Contains(resultOrganizationKey)) {
-                            organization.Add(this[resultOrganizationKey]);
-                            Remove(resultOrganizationKey);
-                        }
-                        Add(resultOrganizationKey, organization);
-                        resultTeamKey = this[resultOrganizationKey].Teams.First().Key;
-                        resultPersonKey = this[resultOrganizationKey].Teams[resultTeamKey].People.First().Key;
+                        Add(organization.Key, organization);
+                        resultTeamKey = organization.Teams.Last().Key;
+                        resultPerson = organization.Teams[resultTeamKey].People.First().Value;
                     }
                     else if (orgOption > 0 && orgOption < orgCounter)
                     {
                         resultOrganizationKey = orgOptionMap[orgOption];
-                        team = new(RoleDefinitions, false);
+                        team = new(OrganizationalRoles, false);
                         this[resultOrganizationKey].Add(team.Key, team);
                         resultTeamKey = team.Key;
-                        resultPersonKey = this[resultOrganizationKey].Teams[resultTeamKey].People.First().Key;
+                        resultPerson = this[resultOrganizationKey].Teams[resultTeamKey].People.First().Value;
                     }
                 }
                 else if (teamOption > 0 && teamOption < teamCounter)
                 {
                     resultTeamKey = orgOptionMap[teamOption];
-                    resultPersonKey = this[resultOrganizationKey].Teams[resultTeamKey].People.First().Key;
+                    resultPerson = this[resultOrganizationKey].Teams[resultTeamKey].People.First().Value;
                 }
             }
-            return resultPersonKey;
+            return resultPerson;
         }
-        private String FindPersonTeamKey(String personKey)
+        internal Team FindPersonTeam(Person person)
         {
-            String teamKey = null;
-            String temp;
+            Team teamKey = null;
+            Team temp;
             foreach(String organizationKey in Keys)
             {
                 Organization organization = this[organizationKey];
-                temp = organization.FindPersonTeamKey(personKey);
+                temp = organization.FindPersonTeam(person);
                 if(temp is not null) {
                     teamKey = temp;
                     break;
@@ -846,20 +1092,21 @@ namespace FinalProject
             }
             return teamKey;
         }
-        private String FindTeamOrganizationKey(String teamKey)
+        private Organization FindTeamOrganization(Team team)
         {
-            String organizationKey = null;
+            Organization organization = null;
             foreach(String key in Keys)
             {
-                if (this[key].ContainsKey(teamKey)) organizationKey = key;
+                if (this[key].ContainsKey(team.Key)) organization = this[key];
             }
-            return organizationKey;
+            return organization;
         }
-        private String RequestPerson()
+        private Person RequestPerson()
         {
             int option = 0;
-            String result = null;
-            Dictionary<int, String> optionMap;
+            Person result = null;
+            String response;
+            Dictionary<int, Person> optionMap;
             while(option==0)
             {
                 int counter = 1;
@@ -868,14 +1115,14 @@ namespace FinalProject
                 {
                     Person person = People[personKey];
                     person.Display(counter);
-                    optionMap.Add(counter, personKey);
+                    optionMap.Add(counter, person);
                     counter++;
                 }
-                Console.WriteLine("Please select the person:  ");
-                result = IApplication.READ_RESPONSE();
+                Console.WriteLine("Please select the member:  ");
+                response = IApplication.READ_RESPONSE();
                 try
                 {
-                    option = int.Parse(result);
+                    option = int.Parse(response);
                 }
                 catch { option = 0; }
                 if(optionMap.ContainsKey(option))
@@ -891,6 +1138,19 @@ namespace FinalProject
         }
         private void ThrowNotImplementedException()
         {
+            /*TODO -- ThrowNotImplementedException*/
+            throw new NotImplementedException();
+        }
+
+        internal override Organization CreateNewDescribedObject(Boolean empty = true)
+        {
+            /*TODO - CreateNewDescribedObject*/
+            throw new NotImplementedException();
+        }
+
+        internal override Organization CreateNewDescribedObject(String organizationName, String organizationDescription)
+        {
+            /*TODO - CreateNewDescribedObject*/
             throw new NotImplementedException();
         }
     }

@@ -5,7 +5,6 @@ namespace FinalProject
 {
     public class Application : IApplication
     {
-        //throw new NotImplementedException();
         private Boolean Running { get; set; }
         private Plan Plan { get; set; }
         private Organizations Organizations { get { return Plan; } set { Plan = new Plan(Plan, value);  } }
@@ -316,8 +315,8 @@ namespace FinalProject
                     { 0, new(false, new(new("\nOrganizations Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
                     { 1, new(true, new(new("1)  Add Organization", null), new("", Organizations.AddOrganization))) },
                     { 2, new(true, new(new("2)  Copy Organization", null), new("", Organizations.CopyOrganization))) },
-                    { 3, new(true, new(new("3)  Manage Organization", null), new("OrganizationMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Organization", null), new("", Organizations.RemoveOrganization))) },
+                    { 3, new(true, new(new("3)  Manage Organizations", null), new("OrganizationMenu", null))) },
+                    { 4, new(true, new(new("4)  Remove Organization", null), new("", Plan.RemoveOrganization))) },
                     { 5, new(true, new(new("5)  List Organizations", null), new("", Organizations.ListOrganizations))) },
                     { 6, new(true, new(new("6)  Export Organizations", null), new("", Organizations.ExportOrganizations))) },
                     { 7, new(true, new(new("7)  Import Organizations", null), new("", Organizations.ImportOrganizations))) },
@@ -329,11 +328,11 @@ namespace FinalProject
                     { 1, new(true, new(new("1)  Add Team", null), new("", Organizations.AddTeam))) },
                     { 2, new(true, new(new("2)  Copy Team", null), new("", Organizations.CopyTeam))) },
                     { 3, new(true, new(new("3)  Manage Team", null), new("TeamMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Team", null), new("", Organizations.RemoveTeam))) },
-                    { 5, new(true, new(new("5)  List Teams", null), new("", Organizations.ListTeams))) },
-                    { 6, new(true, new(new("6)  Import/Export Teams", null), new("", Organizations.ImportExportTeams))) },
-                    { 7, new(true, new(new("7)  Organization Options", null), new("OrganizationOptionMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Organizations Menu", null), new("OrganizationsMenu", null))) },
+                    { 4, new(true, new(new("4)  Remove Team", null), new("", Plan.RemoveTeam))) },
+                    { 5, new(true, new(new("5)  List Members", null), new("", Organizations.ListTeams))) },
+                    { 6, new(true, new(new("6)  Import/Export Members", null), new("", Organizations.ImportExportTeams))) },
+                    { 7, new(true, new(new("7)  Team Options", null), new("OrganizationOptionMenu", null))) },
+                    { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationsMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
                 { "OrganizationOptionMenu", new(){
@@ -347,10 +346,10 @@ namespace FinalProject
                 { "TeamMenu", new(){
                     { 0, new(false, new(new("\nTeam Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
                     { 1, new(true, new(new("1)  Add Member", null), new("", Organizations.AddMember))) },
-                    { 2, new(true, new(new("2)  Copy Member", null), new("", Organizations.CopyPerson))) },
+                    { 2, new(true, new(new("2)  Copy Member", null), new("", Organizations.CopyMember))) },
                     { 3, new(true, new(new("3)  Manage Members", null), new("MemberMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Member", null), new("", Organizations.RemovePerson))) },
-                    { 5, new(true, new(new("5)  List Members", null), new("", Organizations.ListTeamMembers))) },
+                    { 4, new(true, new(new("4)  Remove Member", null), new("", Organizations.RemoveMember))) },
+                    { 5, new(true, new(new("5)  List Members", null), new("", Organizations.ListMembers))) },
                     { 6, new(true, new(new("6)  Import/Export Members", null), new("", Organizations.ImportExportTeamMembers))) },
                     { 7, new(true, new(new("7)  Team Options", null), new("TeamOptionMenu", null))) },
                     { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationMenu", null))) },
@@ -376,7 +375,7 @@ namespace FinalProject
                     { 3, new(true, new(new("3)  Add Role Assignment", null), new("", Organizations.AddPersonRole))) },
                     { 4, new(true, new(new("4)  Remove Role Assignment", null), new("", Organizations.RemovePersonRole))) },
                     { 5, new(true, new(new("5)  List Assigned Roles", null), new("", Organizations.ListPersonRoles))) },
-                    { 6, new(true, new(new("6)  Display Member", null), new("", Organizations.DisplayPerson))) },
+                    { 6, new(true, new(new("6)  Display Member", null), new("", Organizations.DisplayMember))) },
                     { 8, new(true, new(new("8)  Return to Team Menu", null), new("TeamMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },

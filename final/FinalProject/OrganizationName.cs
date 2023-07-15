@@ -47,7 +47,7 @@
         }
         internal override String ToKeyString()
         {
-            return ToNameString();
+            return IStringUtilities.ProperKey(ToNameString());
         }
 
         public static implicit operator OrganizationName(string name)

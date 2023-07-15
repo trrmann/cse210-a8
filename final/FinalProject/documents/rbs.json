@@ -1,0 +1,262 @@
+{
+  "OrganizationalUnits": {
+    "Units": {
+      "DictionaryDescribedObject": {}
+    },
+    "DictionaryDescribedObject": {}
+  },
+  "OrganizationalRoles": {
+    "PersonalRoleKeys": {
+      "DictionaryDescribedObject": {
+        "executive Officer": null,
+        "manager": null
+      }
+    },
+    "DictionaryDescribedObject": {}
+  },
+  "Organizations": {
+    "retailBusinessServices": {
+      "ChiefAdminstativeTeam": {
+        "Manager": {
+          "PersonalRoleKeys": [
+            "Executive Officer",
+            "Manager"
+          ],
+          "NameObject": {
+            "NameType": 0,
+            "Name": "Chief Executive Officer"
+          }
+        },
+        "TeamMembers": {
+          "retailBusinessServices-ExecutiveBoard-ChiefExecutiveOfficer": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          }
+        },
+        "Description": null,
+        "NameObject": {
+          "NameType": 1,
+          "Name": "Executive Board"
+        }
+      },
+      "OrganizationTeams": {
+        "retailBusinessServices-ExecutiveBoard": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          },
+          "TeamMembers": {
+            "retailBusinessServices-ExecutiveBoard-ChiefExecutiveOfficer": {
+              "PersonalRoleKeys": [
+                "Executive Officer",
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Chief Executive Officer"
+              }
+            }
+          },
+          "Description": null,
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Executive Board"
+          }
+        },
+        "retailBusinessServices-MarketingAndDipla": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Jill Dembosky"
+            }
+          },
+          "TeamMembers": {
+            "retailBusinessServices-MarketingAndDipla-JillDembosky": {
+              "PersonalRoleKeys": [
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Jill Dembosky"
+              }
+            }
+          },
+          "Description": "Loyalty",
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Marketing and Dipla"
+          }
+        },
+        "retailBusinessServices-Copient": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Jennifer Franklin"
+            }
+          },
+          "TeamMembers": {
+            "retailBusinessServices-Copient-JenniferFranklin": {
+              "PersonalRoleKeys": [
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Jennifer Franklin"
+              }
+            },
+            "retailBusinessServices-Copient-MarkBrewer": {
+              "PersonalRoleKeys": [],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Mark Brewer"
+              }
+            },
+            "retailBusinessServices-Copient-TracyMann": {
+              "PersonalRoleKeys": [],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Tracy Mann"
+              }
+            },
+            "retailBusinessServices-Copient-ClintLambert": {
+              "PersonalRoleKeys": [],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Clint Lambert"
+              }
+            }
+          },
+          "Description": "AMS",
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Copient"
+          }
+        }
+      },
+      "Description": "RBS",
+      "NameObject": {
+        "NameType": 1,
+        "Name": "Retail Business Services"
+      }
+    },
+    "nationalCashRegister": {
+      "ChiefAdminstativeTeam": {
+        "Manager": {
+          "PersonalRoleKeys": [
+            "Executive Officer",
+            "Manager"
+          ],
+          "NameObject": {
+            "NameType": 0,
+            "Name": "Chief Executive Officer"
+          }
+        },
+        "TeamMembers": {
+          "nationalCashRegister-ExecutiveBoard-ChiefExecutiveOfficer": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          }
+        },
+        "Description": null,
+        "NameObject": {
+          "NameType": 1,
+          "Name": "Executive Board"
+        }
+      },
+      "OrganizationTeams": {
+        "nationalCashRegister-ExecutiveBoard": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Executive Officer",
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Chief Executive Officer"
+            }
+          },
+          "TeamMembers": {
+            "nationalCashRegister-ExecutiveBoard-ChiefExecutiveOfficer": {
+              "PersonalRoleKeys": [
+                "Executive Officer",
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Chief Executive Officer"
+              }
+            }
+          },
+          "Description": null,
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Executive Board"
+          }
+        },
+        "nationalCashRegister-AdvancedMarketingSystem": {
+          "Manager": {
+            "PersonalRoleKeys": [
+              "Manager"
+            ],
+            "NameObject": {
+              "NameType": 0,
+              "Name": "Terri M"
+            }
+          },
+          "TeamMembers": {
+            "nationalCashRegister-AdvancedMarketingSystem-TerriM": {
+              "PersonalRoleKeys": [
+                "Manager"
+              ],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Terri M"
+              }
+            },
+            "nationalCashRegister-AdvancedMarketingSystem-MarkZ": {
+              "PersonalRoleKeys": [],
+              "NameObject": {
+                "NameType": 0,
+                "Name": "Mark Z"
+              }
+            }
+          },
+          "Description": "Copient",
+          "NameObject": {
+            "NameType": 1,
+            "Name": "Advanced Marketing System"
+          }
+        }
+      },
+      "Description": "NCR",
+      "NameObject": {
+        "NameType": 1,
+        "Name": "National Cash Register"
+      }
+    }
+  }
+}

@@ -1,11 +1,41 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
-    public abstract class NamedObject
+    internal class JsonNamedObject
+    {
+        protected NamedObject _namedObject { get; set; } = new();
+        protected String Key { get { return _namedObject.Key; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("NameObject")]
+        public JsonName NameObject { get { return _namedObject.Name; } set {_namedObject.Name = value; } }
+        public JsonNamedObject()
+        {
+            NameObject = new();
+        }
+        [JsonConstructor]
+        public JsonNamedObject(JsonName Name)
+        {
+            this.NameObject = Name;
+        }
+        public JsonNamedObject(NamedObject namedObject)
+        {
+            _namedObject = namedObject;
+        }
+        public static implicit operator JsonNamedObject(NamedObject namedObject)
+        {
+            return new(namedObject);
+        }
+        public static implicit operator NamedObject(JsonNamedObject namedObject) {
+            return namedObject._namedObject;
+        }
+    }
+    public class NamedObject
     {
         internal String Key { get { return ToKeyString(); } }
-        protected Name Name { get; set; }
+        internal Name Name { get; set; }
         protected virtual void Init(Boolean empty = true)
         {
             Init(NameType.Thing, empty);
@@ -19,9 +49,21 @@ namespace FinalProject
         {
             Name = name;
         }
+        public NamedObject()
+        {
+            Init();
+        }
+        public NamedObject(Name name)
+        {
+            Init(name);
+        }
+        internal static NamedObject CreateNamedObject()
+        {
+            return new NamedObject();
+        }
         protected virtual void DisplayRequestname()
         {
-            Console.WriteLine("\nPlease enter Name.");
+            Console.WriteLine("\nPlease enter _name.");
         }
         protected void RequestName(NameType type)
         {
@@ -39,7 +81,7 @@ namespace FinalProject
         }
         protected virtual void DisplaySetName()
         {
-            Console.WriteLine("\nSet Name");
+            Console.WriteLine("\nSet _name");
         }
         protected virtual void DisplayRequestReSetName()
         {
@@ -70,16 +112,16 @@ namespace FinalProject
         {
             return Name.ToNameString();
         }
-        internal String ToKeyString()
+        internal virtual String ToKeyString()
         {
-            return Name.ToKeyString();
+            return IStringUtilities.Proper(Name.ToKeyString());
         }
         /**
         public override String ToString()
         {
             switch(Type)
             {
-                case NameType.Organization:
+                case NameType.Values:
                     return ThingName;
                 case NameType.Place:
 
@@ -14959,14 +15001,14 @@ namespace FinalProject
                     break;
                 case NameType.Thing:
                     return ThingName;
-                default: return Name;
+                default: return _name;
             }
         }
         public virtual String ToKeyString()
         {
             switch (Type)
             {
-                case NameType.Person:
+                case NameType._person:
                     if (UseTitle && HasTitle && HasGivenName && HasMiddleName && HasSurName && UseSuffix && HasSuffix) return String.Format("{0}{1}{2}{3}{4}", Proper(Title), Proper(Given), Proper(Middle), Proper(Sur), Proper(Suffix));
                     else if (UseTitle && HasTitle && HasGivenName && HasMiddleName && HasSurName) return String.Format("{0}{1}{2}{3}", Proper(Title), Proper(Given), Proper(Middle), Proper(Sur));
                     else if (UseTitle && HasTitle && HasGivenName && HasMiddleName && UseSuffix && HasSuffix) return String.Format("{0}{1}{2}{3}", Proper(Title), Proper(Given), Proper(Middle), Proper(Suffix));
@@ -14999,13 +15041,13 @@ namespace FinalProject
                     else if (HasSurName) return Proper(Sur);
                     else if (UseSuffix && HasSuffix) return Proper(Suffix);
                     else return "";
-                case NameType.Organization:
+                case NameType.Values:
                     return Proper(ThingName);
                 case NameType.Place:
                     break;
                 case NameType.Thing:
                     return Proper(ThingName);
-                default: return Name;
+                default: return _name;
             }
         }
         /**/
