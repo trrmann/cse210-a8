@@ -1,8 +1,77 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace FinalProject
 {
+    internal class JsonPlan : JsonDescribedObject
+    {
+        protected Plan Plan { get; set; }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("NamedObject")]
+        public new JsonNamedObject NamedObject
+        {
+            get
+            {
+                return Plan;
+            }
+            set
+            {
+                if (value.GetType().IsInstanceOfType(typeof(Plan)))
+                {
+                    Plan = (Plan)value;
+                }
+                else
+                {
+                    Plan = new();
+                    Plan.Name = value.Name;
+                }
+            }
+        }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Description")]
+        public new String Description { get { return Plan.Description; } set { Plan.Description = value; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Manager")]
+        public JsonName Manager { get { return Plan.Manager; } set { Plan.Manager = value; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Tasks")]
+        public JsonTasks Tasks { get { return Plan.Tasks; } set { Plan.Tasks = value; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Risks")]
+        public JsonRisks Risks { get { return Plan.Risks; } set { Plan.Risks = value; } }
+        public JsonPlan() : base()
+        {
+            this.Plan = new();
+        }
+        [JsonConstructor]
+        public JsonPlan(JsonNamedObject NamedObject, String Description, JsonName Manager, JsonTasks Tasks, JsonRisks Risks) : base()
+        {
+            this.NamedObject = NamedObject;
+            this.Description = Description;
+            this.Manager = Manager;
+            this.Tasks = Tasks;
+            this.Risks = Risks;
+        }
+        public JsonPlan(Plan Plan) : base()
+        {
+            this.Plan = Plan;
+        }
+        public static implicit operator JsonPlan(Plan plan)
+        {
+            return new(plan);
+        }
+        public static implicit operator Plan(JsonPlan plan)
+        {
+            return plan.Plan;
+        }
+    }
     public class Plan : DescribedObject
     {
         public Plan() {
@@ -37,8 +106,8 @@ namespace FinalProject
             this.Risks = Risks;
         }
         internal Name Manager { get; set; }
-        private Tasks Tasks { get; set; }
-        private Risks Risks { get; set; }
+        internal Tasks Tasks { get; set; }
+        internal Risks Risks { get; set; }
 
         private void DisplayName(int option = -1)
         {
@@ -507,28 +576,118 @@ namespace FinalProject
         }
         internal void Load()
         {
-            /*TODO - Load*/
-            throw new NotImplementedException();
+            Console.Write("Enter the filename to read from");
+            String fileName = IApplication.READ_RESPONSE();
+            String json = File.ReadAllText(fileName);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 10
+            };
+            JsonPlan plan = JsonSerializer.Deserialize<JsonPlan>(json, options);
+            Plan result = (Plan)plan;
+            Init(result);
         }
         internal void Save()
         {
-            /*TODO - Save*/
-            throw new NotImplementedException();
+            JsonPlan plan = new(this);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 10
+            };
+            String json = JsonSerializer.Serialize(plan, options);
+            Console.Write("Enter the filename to write to");
+            String fileName = IApplication.READ_RESPONSE();
+            File.WriteAllText(fileName, json);
         }
         internal void Copy()
         {
-            /*TODO - Copy*/
-            throw new NotImplementedException();
+            Boolean overwrite = false;
+            Console.Write("Enter the filename to copy.");
+            String filename = IApplication.READ_RESPONSE();
+            Console.Write("Enter the new filename.");
+            String newFilename = IApplication.READ_RESPONSE();
+            if (File.Exists(newFilename))
+            {
+                Console.WriteLine($"File {newFilename} already exists.");
+                Console.Write($"overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                overwrite = IApplication.YES_RESPONSE.Contains(response);
+            }
+            else overwrite = true;
+            if (File.Exists(filename) && overwrite)
+            {
+                File.Copy(filename, newFilename, overwrite);
+                if (File.Exists(filename) && File.Exists(newFilename))
+                {
+                    Console.WriteLine($"File {filename} copied to {newFilename}.");
+                }
+            }
+            else
+            {
+                if (overwrite) Console.WriteLine($"Can't find file {filename}.");
+            }
         }
         internal void Rename()
         {
-            /*TODO - Rename*/
-            throw new NotImplementedException();
+            Boolean overwrite = false;
+            Console.Write("Enter the filename to ranme.");
+            String filename = IApplication.READ_RESPONSE();
+            Console.Write("Enter the new filename.");
+            String newFilename = IApplication.READ_RESPONSE();
+            if (File.Exists(newFilename))
+            {
+                Console.WriteLine($"File {newFilename} already exists.");
+                Console.Write($"overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                overwrite = IApplication.YES_RESPONSE.Contains(response);
+            }
+            else overwrite = true;
+            if (File.Exists(filename)&& overwrite)
+            {
+                File.Move(filename, newFilename, overwrite);
+                if (!File.Exists(filename)&& File.Exists(newFilename))
+                {
+                    Console.WriteLine($"File {filename} renamed to {newFilename}.");
+                }
+            }
+            else
+            {
+                if (overwrite) Console.WriteLine($"Can't find file {filename}.");
+            }
         }
         internal void Delete()
         {
-            /*TODO - Delete*/
-            throw new NotImplementedException();
+            Console.Write("Enter the filename to delete.");
+            String filename = IApplication.READ_RESPONSE();
+            if(File.Exists(filename))
+            {
+                File.Delete(filename);
+                if (!File.Exists(filename))
+                {
+                    Console.WriteLine($"File {filename} delated.");
+                }
+            } else
+            {
+                Console.WriteLine($"Can't find file {filename}.");
+            }
+        }
+        internal void Showfiles()
+        {
+            List<String> files = new List<String>(Directory.GetFiles("."));
+            Console.WriteLine("\nShow files.");
+            foreach (String file in files)
+            {
+                List<String> parts = new List<String>(file.Split('\\'));
+                parts.RemoveAt(0);
+                Console.WriteLine(String.Join('\\', parts));
+            }
         }
         internal void Test()
         {

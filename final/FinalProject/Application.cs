@@ -27,6 +27,7 @@ namespace FinalProject
                     { 3, new(true, new(new("3)  Copy Plan", null), new("", Plan.Copy))) },
                     { 4, new(true, new(new("4)  Rename Plan", null), new("", Plan.Rename))) },
                     { 5, new(true, new(new("5)  Delete Plan", null), new("", Plan.Delete))) },
+                    { 6, new(true, new(new("6)  List Files", null), new("", Plan.Showfiles))) },
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
