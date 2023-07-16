@@ -7,49 +7,42 @@
         {
             Init(taskName, taskDescription);
         }
-        public ImplementedGoNoGo(Boolean empty = true)
+        public ImplementedGoNoGo()
         {
-            Init(empty);
+            Init();
         }
         public ImplementedGoNoGo(ImplementedGoNoGo task)
         {
             Init(task);
         }
-        protected override void DisplayRequestname()
+        protected override void DisplayRequestNameMessage()
         {
             Console.WriteLine("\nPlease enter the task name.");
         }
-        protected override void DisplayRequestDescription()
+        protected override void DisplayRequestDescriptionMessage()
         {
             Console.WriteLine("\nPlease enter the task description.");
         }
+        /*TODO Init*/
+        /**
         protected override void Init(String taskName, String taskDescription, Boolean empty = true)
         {
             switch (taskName)
             {
                 case "":
-                    Init(false);
+                    Init();
                     break;
                 default:
-                    Name = new ThingName(taskName);
+                    Name = taskName;
                     Description = taskDescription;
                     break;
             }
         }
+        /**/
         private void Init(ImplementedGoNoGo task)
         {
             Name = task.Name;
             Description = task.Description;
-        }
-        internal override String ToKeyString()
-        {
-            return Name.ToKeyString();
-        }
-        internal override ImplementedGoNoGo CreateCopy(String newName)
-        {
-            ImplementedGoNoGo result = new(this);
-            result.Name = new ThingName(newName);
-            return result;
         }
     }
 }

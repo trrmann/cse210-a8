@@ -8,6 +8,7 @@ namespace FinalProject
     {
         protected DescribedObjectDictionary<NamedObject> DescribedObjectDictionary { get; set; }
         [JsonInclude]
+        [JsonRequired]
         [JsonPropertyName("DescribedObjectDictionaryOfNamedObjects")]
         public Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects
         {
@@ -29,13 +30,58 @@ namespace FinalProject
                 }
             }
         }
-        [JsonConstructor]
-        public JsonDescribedObjectDictionary(JsonName name, String description, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects) : base(name, description)
+        public JsonDescribedObjectDictionary()
         {
+            Init();
+        }
+        [JsonConstructor]
+        public JsonDescribedObjectDictionary(String Name, NameType Type, String Description, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(Name, Type, Description, DescribedObjectDictionaryOfNamedObjects);
+        }
+
+        public JsonDescribedObjectDictionary(JsonNamedObject Name, String Description, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(new JsonDescribedObject(Name, Description), DescribedObjectDictionaryOfNamedObjects);
+        }
+        public JsonDescribedObjectDictionary(JsonDescribedObject DescribedObject, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(DescribedObject, DescribedObjectDictionaryOfNamedObjects);
+        }
+        public JsonDescribedObjectDictionary(JsonDescribedObjectDictionary<JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(DescribedObjectDictionaryOfNamedObjects);
+        }
+        public JsonDescribedObjectDictionary(DescribedObjectDictionary<NamedObject> DescribedObjectDictionaryOfNamedObjects) 
+        {
+            Init(DescribedObjectDictionaryOfNamedObjects);
+        }
+        protected override void Init()
+        {
+            Init("", NameType.Thing, "", new());
+        }
+        protected void Init(String Name, NameType Type, String Description, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(new JsonNamedObject(Name, Type), Description, DescribedObjectDictionaryOfNamedObjects);
+        }
+        protected void Init(JsonNamedObject Name, String Description, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(new JsonDescribedObject(Name, Description), DescribedObjectDictionaryOfNamedObjects);
+        }
+        protected void Init(JsonDescribedObject DescribedObject, Dictionary<String, JNO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            base.Init(DescribedObject);
             this.DescribedObjectDictionaryOfNamedObjects = DescribedObjectDictionaryOfNamedObjects;
         }
-        public JsonDescribedObjectDictionary(DescribedObjectDictionary<NamedObject> describedObjectDictionary) : base((DescribedObject)describedObjectDictionary)
+        protected void Init(JsonDescribedObjectDictionary<JNO> DescribedObjectDictionaryOfNamedObjects)
         {
+            Init(DescribedObjectDictionaryOfNamedObjects._describedObject);
+            this.DescribedObjectDictionaryOfNamedObjects = DescribedObjectDictionaryOfNamedObjects.DescribedObjectDictionaryOfNamedObjects;
+        }
+        protected void Init(DescribedObjectDictionary<NamedObject> DescribedObjectDictionaryOfNamedObjects)
+        {
+            Init(((JsonDescribedObjectDictionary<JNO>)DescribedObjectDictionaryOfNamedObjects)._describedObject);
+            this.DescribedObjectDictionaryOfNamedObjects = ((JsonDescribedObjectDictionary<JNO>)DescribedObjectDictionaryOfNamedObjects).DescribedObjectDictionaryOfNamedObjects;
         }
         public static implicit operator JsonDescribedObjectDictionary<JNO>(DescribedObjectDictionary<NamedObject> describedObjectDictionary)
         {
@@ -46,7 +92,7 @@ namespace FinalProject
             return describedObjectDictionary.DescribedObjectDictionary;
         }
     }
-    public abstract class DescribedObjectDictionary<NO> : DescribedObject, IDictionary<String, NO> where NO : NamedObject
+    public class DescribedObjectDictionary<NO> : DescribedObject, IDictionary<String, NO> where NO : NamedObject
     {
         internal Dictionary<String, NO> DescribedObjectDictionaryOfNamedObjects { get; set; } = new();
         public ICollection<String> Keys => ((IDictionary<String, NO>)DescribedObjectDictionaryOfNamedObjects).Keys;
@@ -54,61 +100,113 @@ namespace FinalProject
         public int Count => ((ICollection<KeyValuePair<String, NO>>)DescribedObjectDictionaryOfNamedObjects).Count;
         public bool IsReadOnly => ((ICollection<KeyValuePair<String, NO>>)DescribedObjectDictionaryOfNamedObjects).IsReadOnly;
         public NO this[String key] { get => ((IDictionary<String, NO>)DescribedObjectDictionaryOfNamedObjects)[key]; set => ((IDictionary<String, NO>)DescribedObjectDictionaryOfNamedObjects)[key] = value; }
-        protected override void Init(Boolean empty = true)
+        public DescribedObjectDictionary()
         {
-            base.Init(empty);
+            Init();
         }
-        protected override void Init(NameType type, Boolean empty = true)
+        public DescribedObjectDictionary(String name, NameType type, String Description, Dictionary<String, NO> DictionaryOfNamedObjects)
         {
-            base.Init(type, empty);
+            Init(name, type, Description, DictionaryOfNamedObjects);
         }
-        protected override void Init(Name name)
+        public DescribedObjectDictionary(Name name, String Description, Dictionary<String, NO> DictionaryOfNamedObjects)
         {
-            base.Init(name);
+            Init(name, Description, DictionaryOfNamedObjects);
         }
-        protected override void Init(Name name, String description)
+        public DescribedObjectDictionary(DescribedObject name, Dictionary<String, NO> DictionaryOfNamedObjects)
         {
-            base.Init(name, description);
+            Init(name, DictionaryOfNamedObjects);
         }
-        protected override void DisplayRequestname()
+        public DescribedObjectDictionary(DescribedObjectDictionary<NO> DescribedObjectDictionaryOfNamedObjects)
         {
-            Console.WriteLine("\nPlease enter collection name.");
+            Init(DescribedObjectDictionaryOfNamedObjects);
+        }
+        protected override void Init(Boolean interactive = false)
+        {
+            Init("", NameType.Thing, "", new());
+        }
+        protected void Init(String name, NameType type, String Description, Dictionary<String, NO> DictionaryOfNamedObjects)
+        {
+            Init(new Name(name, type), Description, DictionaryOfNamedObjects);
+        }
+        protected void Init(Name Name, String Description, Dictionary<String, NO> DictionaryOfNamedObjects)
+        {
+            this.Name = Name;
+            this.Description = Description;
+            this.DescribedObjectDictionaryOfNamedObjects = DictionaryOfNamedObjects;
+        }
+        protected void Init(DescribedObject Name, Dictionary<String, NO> DictionaryOfNamedObjects)
+        {
+            this.Name = Name.Name;
+            this.Description = Name.Description;
+            this.DescribedObjectDictionaryOfNamedObjects = DictionaryOfNamedObjects;
+        }
+        protected void Init(DescribedObjectDictionary<NO> DescribedObjectDictionaryOfNamedObjects)
+        {
+            this.Name = DescribedObjectDictionaryOfNamedObjects.Name;
+            this.Description = DescribedObjectDictionaryOfNamedObjects.Description;
+            this.DescribedObjectDictionaryOfNamedObjects = DescribedObjectDictionaryOfNamedObjects.DescribedObjectDictionaryOfNamedObjects;
+        }
+        public static implicit operator String(DescribedObjectDictionary<NO> describedObject)
+        {
+            return describedObject;
+        }
+        public static implicit operator DescribedObjectDictionary<NO>(String name)
+        {
+            return new DescribedObjectDictionary<NO>(name, new());
+        }
+        public static implicit operator NameType(DescribedObjectDictionary<NO> describedObject)
+        {
+            return describedObject;
+        }
+        public static implicit operator DescribedObjectDictionary<NO>(NameType type)
+        {
+            return new Name("", type);
+        }
+        public static implicit operator Name(DescribedObjectDictionary<NO> describedObject)
+        {
+            return describedObject.Name;
+        }
+        public static implicit operator DescribedObjectDictionary<NO>(Name name)
+        {
+            return new DescribedObjectDictionary<NO>(name);
+        }
+        protected override void DisplayRequestNameMessage()
+        {
+            base.DisplayRequestNameMessage();
+            Console.WriteLine("\nPlease enter the collection name.");
+        }
+        protected override void DisplayRequestDescriptionMessage()
+        {
+            base.DisplayRequestDescriptionMessage();
+            Console.WriteLine("\nPlease enter the collection description.");
+        }
+        protected override void DisplaySetNameMessage()
+        {
+            base.DisplaySetNameMessage();
+            Console.WriteLine("\nSet collection name.");
+        }
+        protected override void DisplaySetDescriptionMessage()
+        {
+            base.DisplaySetDescriptionMessage();
+            Console.WriteLine("\nSet collection description.");
+        }
+        protected override void DisplayRequestReSetNameMessage()
+        {
+            base.DisplayRequestReSetNameMessage();
+            Console.WriteLine("\nrename collection?");
+        }
+        protected override void DisplayRequestReSetDescriptionMessage()
+        {
+            base.DisplayRequestReSetDescriptionMessage();
+            Console.WriteLine("\nredescribe collection?");
         }
         internal override void Display(int option = -1)
         {
             base.Display(option);
         }
-        protected override void DisplaySetName()
-        {
-            Console.WriteLine("\nSet collection name");
-        }
-        protected override void DisplayRequestReSetName()
-        {
-            Console.WriteLine("\nRename collection?");
-        }
-        protected override void DisplayRequestSetName()
-        {
-            Console.WriteLine("\nWhat is the collection name?");
-        }
-        protected override void DisplayRequestDescription()
-        {
-            Console.WriteLine("\nPlease enter the collection description.");
-        }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
             base.Display(name, description, option);
-        }
-        protected override void DisplaySetDescription()
-        {
-            Console.WriteLine("\nSet collection description");
-        }
-        protected override void DisplayRequestReSetDescription()
-        {
-            Console.WriteLine("\nRedescribe collection?");
-        }
-        protected override void DisplayRequestSetDescription()
-        {
-            Console.WriteLine("\nWhat is the collection description?");
         }
         public void Add(String key, NO value)
         {

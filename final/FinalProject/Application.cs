@@ -7,7 +7,6 @@ namespace FinalProject
     {
         private Boolean Running { get; set; }
         private Plan Plan { get; set; }
-        private Organizations Organizations { get { return Plan; } set { Plan = new Plan(Plan, value);  } }
         private BackoutPlan BackoutPlan {  get; set; }
         private String CurrentMenuName { get; set; }
         private Dictionary<String, Dictionary<int, Tuple<Boolean, Tuple<Tuple<String, Func<String>>, Tuple<String, Action>>>>> MenuDictionary { get { return new() {
@@ -17,8 +16,8 @@ namespace FinalProject
                     { 2, new(true, new(new("2)  Manage Tasks",null), new ("TaskMenu", null))) },
                     { 3, new(true, new(new("3)  Manage Risks",null), new ("RiskMenu", null))) },
                     { 4, new(true, new(new("4)  Manage Plan",null), new ("PlanMenu", null))) },
-                    { 5, new(true, new(new("5)  Display Plan",null), new ("", Plan.Display))) },
-                    { 8, new(true, new(new("8)  Plan Options",null), new ("PlanOptionsMenu", null))) },
+                    { 5, new(true, new(new("5)  Manage Plan Summary", null), new("PlanSummaryMenu", null))) },
+                    { 6, new(true, new(new("6)  Display Plan",null), new ("", Plan.Display))) },
                     { 9, new(true, new(new("9)  Quit.",null), new ("", Exit))) } }
                 },
                 { "FileMenu", new(){
@@ -37,6 +36,19 @@ namespace FinalProject
                     { 2, new(true, new(new("2)  Manage Assigned Tasks", null), new("AssignedTasksMenu", null))) },
                     { 3, new(true, new(new("3)  Manage Scheduled Tasks", null), new("ScheduledTasksMenu", null))) },
                     { 4, new(true, new(new("4)  Manage Implemented Tasks", null), new("ImplementedTasksMenu", null))) },
+                    { 5, new(true, new(new("5)  Manage Tasks", null), new("TasksMenu", null))) },
+                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
+                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
+                },
+                { "TasksMenu", new(){
+                    { 0, new(false, new(new("\nTemplate Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
+                    { 1, new(true, new(new("1)  Add Task", null), new("", Plan.AddTask))) },
+                    { 2, new(true, new(new("2)  Copy Task", null), new("", Plan.CopyTask))) },
+                    { 3, new(true, new(new("3)  Edit Task", null), new("", Plan.EditTask))) },
+                    { 4, new(true, new(new("4)  Remove Task", null), new("", Plan.RemoveTask))) },
+                    { 5, new(true, new(new("5)  List Tasks", null), new("", Plan.ListTasks))) },
+                    { 6, new(true, new(new("6)  Export Tasks", null), new("", Plan.ExportTasks))) },
+                    { 7, new(true, new(new("7)  Import Tasks", null), new("", Plan.ImportTasks))) },
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
@@ -292,113 +304,12 @@ namespace FinalProject
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
-                { "PlanOptionsMenu", new(){
-                    { 0, new(false, new(new("\nPlan Options Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Manage Plan Summary", null), new("PlanSummaryMenu", null))) },
-                    { 2, new(true, new(new("2)  Manage Organizations", null), new("OrganizationsMenu", null))) },
-                    { 3, new(true, new(new("3)  Manage Units", null), new("UnitsMenu", null))) },
-                    { 4, new(true, new(new("4)  Manage Roles", null), new("RolesMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
                 { "PlanSummaryMenu", new(){
                     { 0, new(false, new(new("\nPlan Summary Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Assign Name", null), new("", Plan.SetName))) },
-                    { 2, new(true, new(new("2)  Assign Description", null), new("", Plan.SetDescription))) },
-                    { 3, new(true, new(new("3)  {0}", Plan.GetAssignManagerOrAddManager), new("", Plan.AssignManagerOrAddManager))) },
+                    { 1, new(true, new(new("1)  Assign Name", null), new("", Plan.RequestName))) },
+                    { 2, new(true, new(new("2)  Assign Description", null), new("", Plan.RequestDescription))) },
+                    { 3, new(true, new(new("3)  Assign Manager", null), new("", Plan.SetManager))) },
                     { 4, new(true, new(new("4)  Display Summary", null), new("", Plan.DisplaySummary))) },
-                    { 7, new(true, new(new("7)  Return to Plan Options Menu", null), new("PlanOptionsMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "OrganizationsMenu", new(){
-                    { 0, new(false, new(new("\nOrganizations Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Organization", null), new("", Organizations.AddOrganization))) },
-                    { 2, new(true, new(new("2)  Copy Organization", null), new("", Organizations.CopyOrganization))) },
-                    { 3, new(true, new(new("3)  Manage Organizations", null), new("OrganizationMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Organization", null), new("", Plan.RemoveOrganization))) },
-                    { 5, new(true, new(new("5)  List Organizations", null), new("", Organizations.ListOrganizations))) },
-                    { 6, new(true, new(new("6)  Export Organizations", null), new("", Organizations.ExportOrganizations))) },
-                    { 7, new(true, new(new("7)  Import Organizations", null), new("", Organizations.ImportOrganizations))) },
-                    { 8, new(true, new(new("8)  Return to Plan Options Menu", null), new("PlanOptionsMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "OrganizationMenu", new(){
-                    { 0, new(false, new(new("\nOrganization Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Team", null), new("", Organizations.AddTeam))) },
-                    { 2, new(true, new(new("2)  Copy Team", null), new("", Organizations.CopyTeam))) },
-                    { 3, new(true, new(new("3)  Manage Team", null), new("TeamMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Team", null), new("", Plan.RemoveTeam))) },
-                    { 5, new(true, new(new("5)  List Members", null), new("", Organizations.ListTeams))) },
-                    { 6, new(true, new(new("6)  Import/Export Members", null), new("", Organizations.ImportExportTeams))) },
-                    { 7, new(true, new(new("7)  Team Options", null), new("OrganizationOptionMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationsMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "OrganizationOptionMenu", new(){
-                    { 0, new(false, new(new("\nOrganization Options Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Name Organization", null), new("", Organizations.NameOrganization))) },
-                    { 2, new(true, new(new("2)  Describe Organization", null), new("", Organizations.DescribeOrganization))) },
-                    { 3, new(true, new(new("3)  Display Organization", null), new("", Organizations.DisplayOrganization))) },
-                    { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "TeamMenu", new(){
-                    { 0, new(false, new(new("\nTeam Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Member", null), new("", Organizations.AddMember))) },
-                    { 2, new(true, new(new("2)  Copy Member", null), new("", Organizations.CopyMember))) },
-                    { 3, new(true, new(new("3)  Manage Members", null), new("MemberMenu", null))) },
-                    { 4, new(true, new(new("4)  Remove Member", null), new("", Organizations.RemoveMember))) },
-                    { 5, new(true, new(new("5)  List Members", null), new("", Organizations.ListMembers))) },
-                    { 6, new(true, new(new("6)  Import/Export Members", null), new("", Organizations.ImportExportTeamMembers))) },
-                    { 7, new(true, new(new("7)  Team Options", null), new("TeamOptionMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "TeamOptionMenu", new(){
-                    { 0, new(false, new(new("\nTeam Option Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Assign Team Name", null), new("", Organizations.NameTeam))) },
-                    // Describe Team
-                    { 2, new(true, new(new("2)  Assign Manager", null), new("", Organizations.AssignTeamManager))) },
-                    { 3, new(true, new(new("3)  Add Reporting Team", null), new("", Organizations.AddReportingTeam))) },
-                    { 4, new(true, new(new("4)  Remove Reporting Team", null), new("", Organizations.RemoveReportingTeam))) },
-                    { 5, new(true, new(new("5)  Add Staff Memebers", null), new("", Organizations.AddTeamStaff))) },
-                    { 6, new(true, new(new("6)  Remove Staff Memebers", null), new("", Organizations.RemoveTeamStaff))) },
-                    { 7, new(true, new(new("7)  Display Team", null), new("", Organizations.DisplayTeam))) },
-                    { 8, new(true, new(new("8)  Return to Organization Menu", null), new("OrganizationMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "MemberMenu", new(){
-                    { 0, new(false, new(new("\nMember Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Reassign Name", null), new("", Organizations.NamePerson))) },
-                    { 2, new(true, new(new("2)  Assign Team", null), new("", Organizations.AssignPersonTeam))) },
-                    { 3, new(true, new(new("3)  Add Role Assignment", null), new("", Organizations.AddPersonRole))) },
-                    { 4, new(true, new(new("4)  Remove Role Assignment", null), new("", Organizations.RemovePersonRole))) },
-                    { 5, new(true, new(new("5)  List Assigned Roles", null), new("", Organizations.ListPersonRoles))) },
-                    { 6, new(true, new(new("6)  Display Member", null), new("", Organizations.DisplayMember))) },
-                    { 8, new(true, new(new("8)  Return to Team Menu", null), new("TeamMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "RolesMenu", new(){
-                    { 0, new(false, new(new("\nRoles Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Role", null), new("", Organizations.AddRole))) },
-                    { 2, new(true, new(new("2)  Copy Role", null), new("", Organizations.CopyRole))) },
-                    { 3, new(true, new(new("3)  Remove Role", null), new("", Organizations.RemoveRole))) },
-                    { 4, new(true, new(new("4)  List Roles", null), new("", Organizations.ListRoles))) },
-                    { 5, new(true, new(new("5)  Export Roles", null), new("", Organizations.ExportRoles))) },
-                    { 6, new(true, new(new("6)  Import Roles", null), new("", Organizations.ImportRoles))) },
-                    { 8, new(true, new(new("8)  Return to Plan Options Menu", null), new("PlanOptionsMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "UnitsMenu", new(){
-                    { 0, new(false, new(new("\nUnit Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Unit", null), new("", Organizations.AddUnit))) },
-                    { 2, new(true, new(new("2)  Copy Unit", null), new("", Organizations.CopyUnit))) },
-                    { 3, new(true, new(new("3)  Edit Unit", null), new("", Organizations.EditUnit))) },
-                    { 4, new(true, new(new("4)  Remove Unit", null), new("", Organizations.RemoveUnit))) },
-                    { 5, new(true, new(new("5)  List Units", null), new("", Organizations.ListUnits))) },
-                    { 6, new(true, new(new("6)  Export Units", null), new("", Organizations.ExportUnits))) },
-                    { 7, new(true, new(new("7)  Import Units", null), new("", Organizations.ImportUnits))) },
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 }
@@ -406,7 +317,7 @@ namespace FinalProject
             } }
         internal void Run()
         {
-            Plan = new(new Organizations());
+            Plan = new();
             Running = true;
             CurrentMenuName = "MainMenu";
             while (Running)

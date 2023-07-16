@@ -66,9 +66,9 @@ namespace FinalProject
     }
     public abstract class DictionaryNamedObject<NO> : Dictionary<String, NO> where NO : NamedObject
     {
-        protected virtual void Init(Boolean empty = true)
+        protected virtual void Init()
         {
-            //base.Init(empty);
+            //base.Init();
         }
         internal virtual void Display(int option = -1)
         {

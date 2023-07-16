@@ -1,4 +1,7 @@
-﻿namespace FinalProject
+﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+
+namespace FinalProject
 {
     public class Plan : DescribedObject
     {
@@ -9,40 +12,31 @@
         {
             Init(plan);
         }
-        public Plan(Organizations organizations)
+        public Plan(String Name, String Description, String Manager, Tasks Tasks, Risks Risks)
         {
-            Init(organizations);
-        }
-        public Plan(Plan plan, Organizations organizations)
-        {
-            Init(plan, organizations);
+            Init(Name, Description, Manager, Tasks, Risks);
         }
         protected void Init()
         {
-            Init(null, null, new(), new());
-        }
-        protected void Init(Organizations organizations)
-        {
-            Init(null, null, organizations, new());
-        }
-        protected void Init(Plan plan, Organizations organizations)
-        {
-            Init(plan.Description, plan.Manager, organizations, plan.Tasks);
+            Init("", "", "", new(), new());
         }
         protected void Init(Plan plan)
         {
-            Init(plan.Description, plan.Manager, plan.Organizations, plan.Tasks);
+            Init(plan.Name, plan.Description, plan.Manager, plan.Tasks, plan.Risks);
         }
-        protected void Init(String description, Person manager, Organizations organizations, Tasks tasks)
+        protected void Init(String Name, String Description, String Manager, Tasks Tasks, Risks Risks)
         {
-            base.Init(NameType.Thing, true);
-            Description = description;
-            Manager = manager;
-            Organizations = organizations;
-            Tasks = tasks;
+            Init(new Name(Name, NameType.Thing), Description, new Name(Manager, NameType.Person), Tasks, Risks);
         }
-        public Organizations Organizations { get; internal set; }
-        internal Person Manager { get; set; }
+        protected void Init(Name Name, String Description, Name Manager, Tasks Tasks, Risks Risks)
+        {
+            this.Name = Name;
+            this.Description = Description;
+            this.Manager = Manager;
+            this.Tasks = Tasks;
+            this.Risks = Risks;
+        }
+        internal Name Manager { get; set; }
         private Tasks Tasks { get; set; }
         private Risks Risks { get; set; }
 
@@ -56,13 +50,13 @@
         }
         private void DisplayManager()
         {
-            Organizations.DisplayPerson(Manager);
+            Manager.Display();
         }
         internal String GetNameForMenus()
         {
             if (IsNamed() && IsManaged())
             {
-                return Name + " by " + Manager.ToNameString();
+                return Name + " by " + Manager;
             }
             else if (IsNamed())
             {
@@ -70,7 +64,7 @@
             }
             else if (IsManaged())
             {
-                return "? by " + Manager.ToNameString();
+                return "? by " + Manager;
             }
             else
             {
@@ -79,29 +73,29 @@
         }
         private Boolean IsManaged()
         {
-            return Manager != null;
+            return Manager != "";
         }
-        protected override void DisplaySetName()
+        protected override void DisplaySetNameMessage()
         {
-            Console.WriteLine("\nAssign _name");
+            Console.WriteLine("\nAssign Name");
         }
-        protected override void DisplayRequestReSetName()
+        protected override void DisplayRequestReSetNameMessage()
         {
             Console.WriteLine("\nRename plan?");
         }
-        protected override void DisplayRequestSetName()
+        protected override void DisplayRequestNameMessage()
         {
             Console.WriteLine("\nWhat is the name of the plan?");
         }
-        protected override void DisplaySetDescription()
+        protected override void DisplaySetDescriptionMessage()
         {
             Console.WriteLine("\nAssign Description");
         }
-        protected override void DisplayRequestReSetDescription()
+        protected override void DisplayRequestReSetDescriptionMessage()
         {
             Console.WriteLine("\nRedescribe plan?");
         }
-        protected override void DisplayRequestSetDescription()
+        protected override void DisplayRequestDescriptionMessage()
         {
             Console.WriteLine("\nWhat is the description of the plan?");
         }
@@ -118,92 +112,229 @@
             }
             if (setManager)
             {
-                int option = -1;
-                Dictionary<int, Person> optionMap = Organizations.People.GetOptionMap();
-                while (!optionMap.Keys.Contains(option))
-                {
-                    Console.Write("\n");
-                    Organizations.People.DisplayPersonOptions();
-                    Console.WriteLine("\nWho is managing the plan?");
-                    try
-                    {
-                        option = int.Parse(IApplication.READ_RESPONSE());
-                    }
-                    catch
-                    {
-                        IApplication.DisplayInvalidMenuSelection();
-                    }
-                }
-                Manager = optionMap[option];
-                Manager.AddRole(Organizations.OrganizationalRoles, "Manager");
+                Console.Write("\n");
+                Console.WriteLine("\nWho is managing the plan?");
+                Manager = IApplication.READ_RESPONSE();
             }
-        }
-        private void AddManager()
-        {
-            Manager = Organizations.AddPerson();
-            Manager.AddRole(Organizations.OrganizationalRoles, "Manager");
         }
         internal void DisplaySummary()
         {
             Console.WriteLine($"\nView Summary ({GetNameForMenus()})");
             Console.WriteLine($"{Description}");
         }
-        internal void RemoveOrganization() {
-            Organizations.RemoveOrganization(this);
-        }
-        internal void RemoveTeam()
-        {
-            Organizations.RemoveTeam(this);
-        }
-        internal void RemovePerson()
-        {
-            Organizations.RemovePerson(this);
-        }
-        internal void CopyPerson()
-        {
-            Organizations.CopyPerson(this);
-        }
-        internal void EditPerson()
-        {
-            Organizations.EditPerson(this);
-        }
         internal void AddTask()
         {
-            /*TODO - AddTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a task ({GetNameForMenus()})");
+            Task templateTask = new Task(true);
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
+        }
+        internal Task SelectTask(Boolean ensureResult = false)
+        {
+            if (Tasks.Count == 0)
+            {
+                if (ensureResult)
+                {
+                    AddTask();
+                    return Tasks.First().Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else if (Tasks.Count == 1) return Tasks.First().Value;
+            else
+            {
+                int option = 0;
+                Dictionary<int, Task> optionMap = new();
+                while (option < 1)
+                {
+                    int counter = 1;
+                    optionMap = new();
+                    foreach (String key in Tasks.Keys)
+                    {
+                        Tasks[key].Display(counter);
+                        optionMap.Add(counter, Tasks[key]);
+                        counter++;
+                    }
+                    Console.Write("Select a task");
+                    String response = IApplication.READ_RESPONSE();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.Keys.Contains(option)) option = -1;
+                }
+                return optionMap[option];
+            }
         }
         internal void CopyTask()
         {
-            /*TODO - CopyTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nCopy a Task ({GetNameForMenus()})");
+            Task risk = SelectTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Task newrisk = new Task(risk);
+                newrisk.Name = "";
+                newrisk.RequestName();
+                if (Tasks.Keys.Contains(newrisk.Key))
+                {
+                    Console.WriteLine($"{newrisk.Name.Value} already defined.");
+                    Console.Write("overwrite (y/n)");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        Tasks.Remove(newrisk.Key);
+                        Tasks.Add(newrisk.Key, newrisk);
+                    }
+                }
+                else
+                {
+                    Tasks.Add(newrisk.Key, newrisk);
+                }
+            }
         }
         internal void EditTask()
         {
-            /*TODO - EditTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nEdit a Task ({GetNameForMenus()})");
+            Task risk = SelectTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Console.Write("\nrename (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Name = "";
+                    risk.RequestName();
+                }
+                Console.Write("\nchange description (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Description = "";
+                    risk.RequestDescription();
+                }
+                Console.Write("\nchange task type (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskType();
+                }
+                Console.Write("\nchange task state (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskState();
+                }
+                Console.Write("\nchange command (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Command = "";
+                    risk.RequestCommand();
+                }
+                Console.Write("\nchange assugned roles (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.AssignedRoles.Clear();
+                    risk.RequestAssignedRoles();
+                }
+                Console.Write("\nchange required pre-requisite tasks (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequiredPreRequisiteTasks.Clear();
+                    risk.RequestRequiredPreRequisiteTasks();
+                }
+                Console.Write("\nchange pre-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PreWaitTimeSeconds = -2;
+                    risk.RequestPreWaitTimeSeconds();
+                }
+                Console.Write("\nchange duration (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.DurationSeconds = -2;
+                    risk.RequestDurationSeconds();
+                }
+                Console.Write("\nchange post-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PostWaitTimeSeconds = -2;
+                    risk.RequestPostWaitTimeSeconds();
+                }
+            }
         }
         internal void RemoveTask()
         {
-            /*TODO - RemoveTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nRemove a Task ({GetNameForMenus()})");
+            Task risk = SelectTask();
+            if (risk is not null) Tasks.Remove(risk.Key);
         }
         internal void ListTasks()
         {
-            /*TODO - ListTasks*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nDisplay Taskss ({GetNameForMenus()})\n");
+            foreach (String key in Tasks.Keys)
+            {
+                Tasks[key].Display();
+            }
         }
         internal void ExportTasks()
         {
-            Tasks.Export(Tasks);
+            Tasks.Export();
         }
         internal void ImportTasks()
         {
-            Tasks.Import(Tasks);
+            Tasks = Tasks.Import();
         }
         internal void AddBenchmark()
         {
-            /*TODO - AddBenchmark*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a benchmark task ({GetNameForMenus()})");
+            //Benchmark templateTask = new Benchmark(true);
+            /*TODO Add Benchmark*/
+            Benchmark templateTask = new Benchmark();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyBenchmark()
         {
@@ -227,41 +358,152 @@
         }
         internal void AddRisk()
         {
-            /*TODO - AddRisk*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a Risk ({GetNameForMenus()})");
+            Risk risk = new Risk(true);
+            if(Risks.Keys.Contains(risk.Key))
+            {
+                Console.WriteLine($"{risk.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if(IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Risks.Remove(risk.Key);
+                    Risks.Add(risk.Key, risk);
+                }
+            } else
+            {
+                Risks.Add(risk.Key, risk);
+            }
+        }
+        internal Risk SelectRisk(Boolean ensureResult = false)
+        {
+            if(Risks.Count == 0)
+            {
+                if(ensureResult)
+                {
+                    AddRisk();
+                    return Risks.First().Value;
+                } else
+                {
+                    return null;
+                }
+            } else if (Risks.Count == 1) return Risks.First().Value;
+            else
+            {
+                int option = 0;
+                Dictionary<int, Risk> optionMap = new();
+                while(option<1)
+                {
+                    int counter = 1;
+                    optionMap = new();
+                    foreach(String key in Risks.Keys)
+                    {
+                        Risks[key].Display(counter);
+                        optionMap.Add(counter, Risks[key]);
+                        counter++;
+                    }
+                    Console.Write("Select a templateTask");
+                    String response = IApplication.READ_RESPONSE();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.Keys.Contains(option)) option = -1;
+                }
+                return optionMap[option];
+            }
         }
         internal void CopyRisk()
         {
-            /*TODO - CopyRisk*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nCopy a Risk ({GetNameForMenus()})");
+            Risk risk = SelectRisk();
+            if(risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Risk newrisk = new Risk(risk);
+                newrisk.Name = "";
+                newrisk.RequestName();
+                if (Risks.Keys.Contains(newrisk.Key))
+                {
+                    Console.WriteLine($"{newrisk.Name.Value} already defined.");
+                    Console.Write("overwrite (y/n)");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        Risks.Remove(newrisk.Key);
+                        Risks.Add(newrisk.Key, newrisk);
+                    }
+                }
+                else
+                {
+                    Risks.Add(newrisk.Key, newrisk);
+                }
+            }
         }
         internal void EditRisk()
         {
-            /*TODO - EditRisk*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nEdit a Risk ({GetNameForMenus()})");
+            Risk risk = SelectRisk();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Console.Write("\nrename (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Name = "";
+                    risk.RequestName();
+                }
+                Console.Write("\nchange description (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Description = "";
+                    risk.RequestDescription();
+                }
+                Console.Write("\nchange severity (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Severity = "";
+                    risk.RequestSeverity();
+                }
+            }
         }
         internal void RemoveRisk()
         {
-            /*TODO - RemoveRisk*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nRemove a Risk ({GetNameForMenus()})");
+            Risk risk = SelectRisk();
+            if (risk is not null) Risks.Remove(risk.Key);
         }
         internal void ListRisks()
         {
-            /*TODO - ListRisks*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nDisplay Risks ({GetNameForMenus()})\n");
+            foreach (String key in Risks.Keys)
+            {
+                Risks[key].Display();
+            }
         }
         internal void ExportRisks()
         {
-            Risks.Export(Risks);
+            Risks.Export();
         }
         internal void ImportRisks()
         {
-            Risks.Import(Risks);
+            Risks = Risks.Import();
         }
         internal void Display()
         {
-            /*TODO - Display*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nDisplay Plan ({GetNameForMenus()})");
+            Console.WriteLine($"{Description}");
+            ListRisks();
+            ListTasks();
         }
         internal void Load()
         {
@@ -288,17 +530,6 @@
             /*TODO - Delete*/
             throw new NotImplementedException();
         }
-        internal String GetAssignManagerOrAddManager()
-        {
-            if (Organizations.People.Count > 0) return "Assign Manager";
-            else return "Add Manager";
-        }
-        internal void AssignManagerOrAddManager()
-        {
-            if (Organizations.People.Count > 0) SetManager();
-            else AddManager();
-        }
-
         internal void Test()
         {
             /*TODO - Test*/
@@ -336,8 +567,25 @@
         }
         internal void AddTemplateTask()
         {
-            /*TODO - AddTemplateTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a template task ({GetNameForMenus()})");
+            //TemplateTask templateTask = new TemplateTask(true);
+            /*TODO AddTemplateTask*/
+            TemplateTask templateTask = new TemplateTask();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyTemplateTask()
         {
@@ -361,20 +609,37 @@
         }
         internal void ExportTemplateTasks()
         {
-            Tasks.Export(Tasks);
+            Tasks.Export();
             /*TODO - ExportTemplateTasks*/
             throw new NotImplementedException();
         }
         internal void ImportTemplateTasks()
         {
-            Tasks.Import(Tasks);
+            Tasks.Import();
             /*TODO - ImportTemplateTasks*/
             throw new NotImplementedException();
         }
         internal void AddTemplateBenchmarkTask()
         {
-            /*TODO - AddTemplateBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a template benchmark task ({GetNameForMenus()})");
+            //TemplateBenchmark templateTask = new TemplateBenchmark(true);
+            /*TODO AddTemplateBenchmarkTask*/
+            TemplateBenchmark templateTask = new TemplateBenchmark();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyTemplateBenchmarkTask()
         {
@@ -408,8 +673,25 @@
         }
         internal void AddTemplateGoNoGoTask()
         {
-            /*TODO - AddTemplateGoNoGoTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a template Go/NoGo task ({GetNameForMenus()})");
+            //TemplateGoNoGo templateTask = new TemplateGoNoGo(true);
+            /*TODO AddTemplateGoNoGoTask*/
+            TemplateGoNoGo templateTask = new TemplateGoNoGo();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyTemplateGoNoGoTask()
         {
@@ -443,8 +725,25 @@
         }
         internal void AddTemplateMitigationTask()
         {
-            /*TODO - AddTemplateMitigationTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a template mitigation task ({GetNameForMenus()})");
+            //TemplateMitigation templateTask = new TemplateMitigation(true);
+            /*TODO AddTemplateMitigationTask*/
+            TemplateMitigation templateTask = new TemplateMitigation();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyTemplateMitigationTask()
         {
@@ -478,8 +777,25 @@
         }
         internal void AddAssignedTask()
         {
-            /*TODO - AddAssignedTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an assigned task ({GetNameForMenus()})");
+            //AssignedTask templateTask = new AssignedTask(true);
+            /*TODO AddAssignedTask*/
+            AssignedTask templateTask = new AssignedTask();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyAssignedTask()
         {
@@ -513,8 +829,25 @@
         }
         internal void AddAssignedBenchmarkTask()
         {
-            /*TODO - AddAssignedBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an assigned benchmark task ({GetNameForMenus()})");
+            //AssignedBenchmark templateTask = new AssignedBenchmark(true);
+            /*TODO AddAssignedBenchmarkTask*/
+            AssignedBenchmark templateTask = new AssignedBenchmark();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyAssignedBenchmarkTask()
         {
@@ -548,8 +881,25 @@
         }
         internal void AddAssignedGoNoGoTask()
         {
-            /*TODO - AddAssignedGoNoGoTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an assigned Go/NoGo task ({GetNameForMenus()})");
+            //AssignedGoNoGo templateTask = new AssignedGoNoGo(true);
+            /*TODO AddAssignedGoNoGoTask*/
+            AssignedGoNoGo templateTask = new AssignedGoNoGo();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyAssignedGoNoGoTask()
         {
@@ -583,8 +933,25 @@
         }
         internal void AddAssignedMitigationTask()
         {
-            /*TODO - AddAssignedMitigationTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an assigned mitigation task ({GetNameForMenus()})");
+            //AssignedMitigation templateTask = new AssignedMitigation(true);
+            /*TODO AddAssignedMitigationTask*/
+            AssignedMitigation templateTask = new AssignedMitigation();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyAssignedMitigationTask()
         {
@@ -618,6 +985,25 @@
         }
         internal void AddScheduledTask()
         {
+            Console.WriteLine($"\nAdd a scheduled task ({GetNameForMenus()})");
+            //ScheduledTask templateTask = new ScheduledTask(true);
+            /*TODO AddScheduledTask*/
+            ScheduledTask templateTask = new ScheduledTask();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
             /*TODO - AddScheduledTask*/
             throw new NotImplementedException();
         }
@@ -653,8 +1039,25 @@
         }
         internal void AddScheduledBenchmarkTask()
         {
-            /*TODO - AddScheduledBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a scheduled benchmark task ({GetNameForMenus()})");
+            //ScheduledBenchmark templateTask = new ScheduledBenchmark(true);
+            /*TODO AddScheduledBenchmarkTask*/
+            ScheduledBenchmark templateTask = new ScheduledBenchmark();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyScheduledBenchmarkTask()
         {
@@ -688,8 +1091,25 @@
         }
         internal void AddScheduledGoNoGoTask()
         {
-            /*TODO - AddScheduledGoNoGoTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a scheduled Go/NoGo task ({GetNameForMenus()})");
+            //ScheduledGoNoGo templateTask = new ScheduledGoNoGo(true);
+            /*TODO AddScheduledGoNoGoTask*/
+            ScheduledGoNoGo templateTask = new ScheduledGoNoGo();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyScheduledGoNoGoTask()
         {
@@ -723,8 +1143,25 @@
         }
         internal void AddScheduledMitigationTask()
         {
-            /*TODO - AddScheduledMitigationTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd a scheduled mitigation task ({GetNameForMenus()})");
+            //ScheduledMitigation templateTask = new ScheduledMitigation(true);
+            /*TODO AddScheduledMitigationTask*/
+            ScheduledMitigation templateTask = new ScheduledMitigation();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyScheduledMitigationTask()
         {
@@ -758,8 +1195,25 @@
         }
         internal void AddImplementedTask()
         {
-            /*TODO - AddImplementedTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an implemented task ({GetNameForMenus()})");
+            //ImplementedTask templateTask = new ImplementedTask(true);
+            /*TODO AddImplementedTask*/
+            ImplementedTask templateTask = new ImplementedTask();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyImplementedTask()
         {
@@ -793,8 +1247,25 @@
         }
         internal void AddImplementedBenchmarkTask()
         {
-            /*TODO - ImportImplementedTasks*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an implemented benchmark task ({GetNameForMenus()})");
+            //ImplementedBenchmark templateTask = new ImplementedBenchmark(true);
+            /*TODO AddImplementedBenchmarkTask*/
+            ImplementedBenchmark templateTask = new ImplementedBenchmark();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyImplementedBenchmarkTask()
         {
@@ -828,8 +1299,25 @@
         }
         internal void AddImplementedGoNoGoTask()
         {
-            /*TODO - AddImplementedGoNoGoTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an implemented Go/NoGo task ({GetNameForMenus()})");
+            //ImplementedGoNoGo templateTask = new ImplementedGoNoGo(true);
+            /*TODO AddImplementedGoNoGoTask*/
+            ImplementedGoNoGo templateTask = new ImplementedGoNoGo();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyImplementedGoNoGoTask()
         {
@@ -863,8 +1351,25 @@
         }
         internal void AddImplementedMitigationTask()
         {
-            /*TODO - AddImplementedMitigationTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nAdd an implemented mitigation task ({GetNameForMenus()})");
+            //ImplementedMitigation templateTask = new ImplementedMitigation(true);
+            /*TODO AddImplementedMitigationTask*/
+            ImplementedMitigation templateTask = new ImplementedMitigation();
+            if (Tasks.Keys.Contains(templateTask.Key))
+            {
+                Console.WriteLine($"{templateTask.Name.Value} already defined.");
+                Console.Write("overwrite (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Tasks.Remove(templateTask.Key);
+                    Tasks.Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Tasks.Add(templateTask.Key, templateTask);
+            }
         }
         internal void CopyImplementedMitigationTask()
         {

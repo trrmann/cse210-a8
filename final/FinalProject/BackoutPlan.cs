@@ -6,12 +6,9 @@
         {
         }
 
-        public BackoutPlan(Organizations organizations) : base(organizations)
+        public BackoutPlan() : base()
         {
         }
 
-        public BackoutPlan(Plan plan, Organizations organizations) : base(plan, organizations)
-        {
-        }
     }
 }

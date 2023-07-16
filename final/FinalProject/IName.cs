@@ -2,23 +2,6 @@
 {
     internal interface IName : IStringUtilities, IBitwiseUtilities
     {
-        public static Name CreateName(String name, NameType type=NameType.Thing)
-        {
-            switch (type)
-            {
-                case NameType.Person:
-                    return new PersonName(name);
-                case NameType.Organization:
-                    return new OrganizationName(name);
-                case NameType.Place:
-                    return new PlaceName(name);
-                case NameType.Thing:
-                    return new ThingName(name);
-                default:
-                    return new ThingName(name);
-            }
-
-        }
         private Dictionary<String, List<List<Boolean>>> BitWiseCombinations
         {
             get

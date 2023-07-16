@@ -1,41 +1,59 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
-    internal class JsonRisks : JsonDictionaryNamedObject<JsonRisk>
+    internal class JsonRisks : Dictionary<String, JsonRisk>
     {
-        protected Risks Risks { get; set; }
-        [JsonInclude]
-        [JsonRequired]
-        [JsonPropertyName("DNORisks")]
-        public new JsonDictionaryNamedObject<JsonRisk> Dictionary
-        {
+        protected Risks _risks {
             get
             {
-                JsonDictionaryNamedObject<JsonRisk> dictionary = new(Convert(Risks));
-                foreach (String key in DictionaryNamedObject.Keys)
+                Risks risks = new();
+                foreach(String key in Keys)
                 {
-                    dictionary.Dictionary.Add(key, (JsonRisk)(Risk)DictionaryNamedObject[key]);
+                    risks.Add(key, (Risk)this[key]);
                 }
-                return dictionary;
+                return risks;
             }
             set
             {
-                DictionaryNamedObject.Clear();
-                foreach (String key in value.Dictionary.Keys)
+                Clear();
+                foreach (String key in value.Keys)
                 {
-                    DictionaryNamedObject.Add(key, (Risk)value.Dictionary[key]);
+                    Add(key, (JsonRisk)value[key]);
                 }
             }
         }
-        [JsonConstructor]
-        public JsonRisks(JsonDictionaryNamedObject<JsonRisk> dictionary) : base(new Dictionary<String, JsonRisk>())
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Risks")]
+        public Dictionary<String, JsonRisk> Risks
         {
-            Dictionary = dictionary;
+            get
+            {
+                return this;
+            }
+            set
+            {
+                Clear();
+                foreach (String key in value.Keys)
+                {
+                    Add(key, value[key]);
+                }
+            }
         }
-        public JsonRisks(Risks risks) : base(new Dictionary<String, JsonRisk>())
+        public JsonRisks() : base()
         {
-            Risks = risks;
+            this.Risks = new();
+        }
+        [JsonConstructor]
+        public JsonRisks(Dictionary<String, JsonRisk> Risks) : base()
+        {
+            this.Risks = Risks;
+        }
+        public JsonRisks(Risks Risks) : base()
+        {
+            _risks = Risks;
         }
         public static implicit operator JsonRisks(Risks risks)
         {
@@ -43,8 +61,9 @@ namespace FinalProject
         }
         public static implicit operator Risks(JsonRisks risks)
         {
-            return risks.Risks;
+            return risks._risks;
         }
+        /**
         internal static JsonDictionaryNamedObject<JsonRisk> Convert(Risks value)
         {
             Dictionary<String, JsonRisk> result = new();
@@ -54,73 +73,46 @@ namespace FinalProject
             }
             return new(result);
         }
+        /**/
     }
-    public class Risks : DictionaryDescribedObject<Risk>
+    public class Risks : Dictionary<String, Risk>
     {
-        internal override Risk CreateNewDescribedObject(Boolean empty = true)
-        {
-            return new(empty);
-        }
-        internal override Risk CreateNewDescribedObject(String riskName, String riskDescription)
-        {
-            return CreateRisk(riskName, riskDescription, "");
-        }
         internal Risk CreateRisk(String riskName, String riskDescription, String severity)
         {
             return new(riskName, riskDescription, severity);
         }
-        internal override void DisplayDescribedObjectAlreadyExists(Risk risk)
+
+        internal void Export()
         {
-            Console.WriteLine($"Risk {risk.ToNameString()} already exists.");
+            JsonRisks risks = new(this);
+            JsonSerializerOptions options = new JsonSerializerOptions {
+                WriteIndented = true,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 5
+            };
+            String json = JsonSerializer.Serialize(risks, options);
+            Console.Write("Enter the filename to write to");
+            String fileName = IApplication.READ_RESPONSE();
+            File.WriteAllText(fileName, json);
         }
-        internal override void DisplayDescribedObjectCopyMessage()
+
+        internal Risks Import()
         {
-            Console.WriteLine("\nCopy risk");
-        }
-        internal override void DisplayDescribedObjectSelectObjectMessage()
-        {
-            Console.WriteLine($"Select the risk to copy.");
-        }
-        internal override void DisplayDescribedObjectNameMessage()
-        {
-            Console.WriteLine($"\nEnter the name of the copied risk.");
-        }
-        internal override void DisplayDescribedObjectAlreadyExistsMessage(Risk risk)
-        {
-            Console.WriteLine($"Risk {risk.ToNameString()} already exists.");
-            Console.Write("overwrite?");
-        }
-        internal override void DisplayDescribedObjectListMessage()
-        {
-            Console.WriteLine("\nList risks");
-        }
-        internal override void DisplayDescribedObjectRemoveMessage()
-        {
-            Console.WriteLine("\nRemove risk");
-        }
-        internal override void DisplayDescribedObjectNoneOptionMessage()
-        {
-            Console.WriteLine("0)  None.");
-        }
-        internal override void DisplayDescribedObjectSelectObjectToRemoveMessage()
-        {
-            Console.WriteLine($"Select the risk to remove.");
-        }
-        internal override void DisplayDescribedObjectEditMessage()
-        {
-            Console.WriteLine("\nEdit risk");
-        }
-        internal override void DisplayDescribedObjectExportMessage()
-        {
-            Console.WriteLine("\nExport risks");
-        }
-        internal override void DisplayDescribedObjectImportMessage()
-        {
-            Console.WriteLine("\nImport risks");
-        }
-        internal override void Edit()
-        {
-            base.Edit();
+            Console.Write("Enter the filename to read from");
+            String fileName = IApplication.READ_RESPONSE();
+            String json = File.ReadAllText(fileName);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 5
+            };
+            JsonRisks risks = JsonSerializer.Deserialize<JsonRisks>(json, options);
+            Risks result = (Risks)risks;
+            return result;
         }
     }
 }

@@ -2,32 +2,52 @@
 
 namespace FinalProject
 {
-    internal class JsonName
+    public class JsonName
     {
-        protected Name _name { get; set; } = IName.CreateName("");
+        protected Name _name { get; set; } = new();
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("NameType")]
-        public NameType Type { get { return _name.Type; } set { _name.Type = value; } }
+        public NameType Type {
+            get {
+                return _name.Type;
+            } set {
+                _name.Type = value;
+            }
+        }
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("Name")]
-        public String Name { get { return _name.Value; } set { _name.Value = value; } }
+        public String Name {
+            get {
+                return _name.Value;
+            } set {
+                _name.Value = value;
+            }
+        }
         public JsonName()
         {
-            Type = NameType.Thing;
-            Name = "";
+            Init("", NameType.Thing);
         }
         [JsonConstructor]
-        public JsonName(NameType Type, String Name)
+        public JsonName(String Name, NameType Type)
         {
-            this.Type = Type;
-            this.Name = Name;
+            Init(Name, Type);
         }
         public JsonName(Name name)
         {
-            _name = name;
+            Init(name);
         }
+        protected void Init(String Name, NameType Type)
+        {
+            this.Name = Name;
+            this.Type = Type;
+        }
+        protected void Init(Name Name)
+        {
+            _name = Name;
+        }
+
         public static implicit operator JsonName(Name name)
         {
             return new(name);
@@ -37,16 +57,10 @@ namespace FinalProject
             return name._name;
         }
     }
-    public abstract class Name : IName
+    public class Name : IName
     {
         internal NameType Type { get; set; }
-        internal String Value {
-            get {
-                return ToNameString();
-            }
-            set {
-                Parse(value);
-            } }
+        internal String Value { get; set; }
         public Name()
         {
             Init();
@@ -55,29 +69,39 @@ namespace FinalProject
         {
             Init(type);
         }
-        protected virtual void Init(NameType type = NameType.Thing)
+        public Name(String name, NameType type)
+        {
+            Init(name, type);
+        }
+        protected void Init(NameType type = NameType.Thing)
+        {
+            Init("", type);
+        }
+        protected void Init(String name, NameType type = NameType.Thing)
         {
             Type = type;
-            Value = "";
+            Value = name;
         }
-        protected virtual void Init()
+        internal virtual void Display(int option = -1)
         {
-            Init(NameType.Thing);
+            if (option >= 0) Console.WriteLine(String.Format("{0})  {1}", option, Value));
+            else Console.WriteLine(String.Format("{0}", Value));
         }
-        protected abstract void Init(String name);
-        protected abstract List<Boolean> OptionCombinationFlags(NameType type);
-        protected abstract List<String> OptionCombination(NameType type);
-        protected abstract List<String> KeyOptionCombination(NameType type);
-        public abstract void Parse(String value);
-        public abstract String ToNameString();
-        internal abstract String ToKeyString();
-        public static implicit operator string(Name name)
+        public static implicit operator String(Name name)
         {
             return name.Value;
+        }
+        public static implicit operator Name(String name)
+        {
+            return new(name, NameType.Thing);
         }
         public static implicit operator NameType(Name name)
         {
             return name.Type;
+        }
+        public static implicit operator Name(NameType type)
+        {
+            return new("", type);
         }
     }
     public enum NameType

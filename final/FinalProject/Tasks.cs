@@ -1,71 +1,121 @@
-﻿namespace FinalProject
+﻿using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace FinalProject
 {
-    public class Tasks : DictionaryDescribedObject<Task>
+    internal class JsonTasks : Dictionary<String, JsonTask>
     {
-        internal override Task CreateNewDescribedObject(Boolean empty = true)
+        protected Tasks _risks
         {
-            TaskType type = TaskType.Task;
-            TaskState state = TaskState.Template;
-            return Task.CreateTask(type, state, empty);
+            get
+            {
+                Tasks risks = new();
+                foreach (String key in Keys)
+                {
+                    risks.Add(key, (Task)this[key]);
+                }
+                return risks;
+            }
+            set
+            {
+                Clear();
+                foreach (String key in value.Keys)
+                {
+                    Add(key, (JsonTask)value[key]);
+                }
+            }
         }
-        internal override Task CreateNewDescribedObject(string taskName, string taskDescription)
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("Tasks")]
+        public Dictionary<String, JsonTask> Tasks
         {
-            TaskType type = TaskType.Task;
-            TaskState state = TaskState.Template;
-            return Task.CreateTask(type, state, taskName, taskDescription);
+            get
+            {
+                return this;
+            }
+            set
+            {
+                Clear();
+                foreach (String key in value.Keys)
+                {
+                    Add(key, value[key]);
+                }
+            }
         }
-        internal override void DisplayDescribedObjectAlreadyExists(Task task)
+        public JsonTasks() : base()
         {
-            Console.WriteLine($"Task {task.ToNameString()} already exists.");
+            this.Tasks = new();
         }
-        internal override void DisplayDescribedObjectCopyMessage()
+        [JsonConstructor]
+        public JsonTasks(Dictionary<String, JsonTask> Tasks) : base()
         {
-            Console.WriteLine("\nCopy task");
+            this.Tasks = Tasks;
         }
-        internal override void DisplayDescribedObjectSelectObjectMessage()
+        public JsonTasks(Tasks Tasks) : base()
         {
-            Console.WriteLine($"Select the task to copy.");
+            _risks = Tasks;
         }
-        internal override void DisplayDescribedObjectNameMessage()
+        public static implicit operator JsonTasks(Tasks risks)
         {
-            Console.WriteLine($"\nEnter the name of the copied task.");
+            return new(risks);
         }
-        internal override void DisplayDescribedObjectAlreadyExistsMessage(Task task)
+        public static implicit operator Tasks(JsonTasks risks)
         {
-            Console.WriteLine($"Task {task.ToNameString()} already exists.");
-            Console.Write("overwrite?");
+            return risks._risks;
         }
-        internal override void DisplayDescribedObjectListMessage()
+        /**
+        internal static JsonDictionaryNamedObject<JsonTask> Convert(Tasks value)
         {
-            Console.WriteLine("\nList tasks");
+            Dictionary<String, JsonTask> result = new();
+            foreach (String key in value.Keys)
+            {
+                result.Add(key, value[key]);
+            }
+            return new(result);
         }
-        internal override void DisplayDescribedObjectRemoveMessage()
+        /**/
+    }
+    public class Tasks : Dictionary<String, Task>
+    {
+        internal Task CreateTask(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds)
         {
-            Console.WriteLine("\nRemove task");
+            return new(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds);
         }
-        internal override void DisplayDescribedObjectNoneOptionMessage()
+
+        internal void Export()
         {
-            Console.WriteLine("0)  None.");
+            JsonTasks risks = new(this);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 5
+            };
+            String json = JsonSerializer.Serialize(risks, options);
+            Console.Write("Enter the filename to write to");
+            String fileName = IApplication.READ_RESPONSE();
+            File.WriteAllText(fileName, json);
         }
-        internal override void DisplayDescribedObjectSelectObjectToRemoveMessage()
+
+        internal Tasks Import()
         {
-            Console.WriteLine($"Select the task to remove.");
-        }
-        internal override void DisplayDescribedObjectEditMessage()
-        {
-            Console.WriteLine("\nEdit task");
-        }
-        internal override void DisplayDescribedObjectExportMessage()
-        {
-            Console.WriteLine("\nExport tasks");
-        }
-        internal override void DisplayDescribedObjectImportMessage()
-        {
-            Console.WriteLine("\nImport tasks");
-        }
-        internal override void Edit()
-        {
-            base.Edit();
+            Console.Write("Enter the filename to read from");
+            String fileName = IApplication.READ_RESPONSE();
+            String json = File.ReadAllText(fileName);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IncludeFields = true,
+                MaxDepth = 5
+            };
+            JsonTasks risks = JsonSerializer.Deserialize<JsonTasks>(json, options);
+            Tasks result = (Tasks)risks;
+            return result;
         }
     }
 }
