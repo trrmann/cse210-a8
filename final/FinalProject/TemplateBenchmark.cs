@@ -10,6 +10,9 @@
         public TemplateBenchmark()
         {
             Init();
+            Benchmark = new Benchmark(true);
+            /*TODO CreateTemplateBenchmark*/
+            throw new NotImplementedException();
         }
         public TemplateBenchmark(TemplateBenchmark task)
         {

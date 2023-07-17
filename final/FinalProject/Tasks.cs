@@ -6,23 +6,23 @@ namespace FinalProject
 {
     internal class JsonTasks : Dictionary<String, JsonTask>
     {
-        protected Tasks _risks
+        protected Tasks _tasks
         {
             get
             {
-                Tasks risks = new();
+                Tasks tasks = new();
                 foreach (String key in Keys)
                 {
-                    risks.Add(key, (Task)this[key]);
+                    tasks.Add(key, this[key]);
                 }
-                return risks;
+                return tasks;
             }
             set
             {
                 Clear();
                 foreach (String key in value.Keys)
                 {
-                    Add(key, (JsonTask)value[key]);
+                    Add(key, value[key]);
                 }
             }
         }
@@ -55,15 +55,15 @@ namespace FinalProject
         }
         public JsonTasks(Tasks Tasks) : base()
         {
-            _risks = Tasks;
+            _tasks = Tasks;
         }
-        public static implicit operator JsonTasks(Tasks risks)
+        public static implicit operator JsonTasks(Tasks tasks)
         {
-            return new(risks);
+            return new(tasks);
         }
-        public static implicit operator Tasks(JsonTasks risks)
+        public static implicit operator Tasks(JsonTasks tasks)
         {
-            return risks._risks;
+            return tasks._tasks;
         }
         /**
         internal static JsonDictionaryNamedObject<JsonTask> Convert(Tasks value)
@@ -115,6 +115,7 @@ namespace FinalProject
             };
             JsonTasks risks = JsonSerializer.Deserialize<JsonTasks>(json, options);
             Tasks result = (Tasks)risks;
+            /* TODO convert classes to be correct listed types*/
             return result;
         }
     }

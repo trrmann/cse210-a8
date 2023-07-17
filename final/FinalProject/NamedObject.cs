@@ -3,6 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonNamedObject), typeDiscriminator: "NamedObject")]
+    [JsonDerivedType(typeof(JsonDescribedObject), typeDiscriminator: "DescribedObject")]
     public class JsonNamedObject
     {
         protected NamedObject _namedObject { get; set; } = new();

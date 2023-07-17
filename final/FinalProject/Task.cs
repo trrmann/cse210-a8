@@ -4,9 +4,18 @@ using System.Threading.Tasks;
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonTask), typeDiscriminator: "Task")]
+    [JsonDerivedType(typeof(JsonBenchmark), typeDiscriminator: "Benchmark")]
+    [JsonDerivedType(typeof(JsonMitigation), typeDiscriminator: "Mitigation")]
+    [JsonDerivedType(typeof(JsonTemplateTask), typeDiscriminator: "TemplateTask")]
+    [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
     internal class JsonTask : JsonDescribedObject
     {
         protected Task Task { get; set; }
+        [JsonPropertyOrder(-5)]
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("NamedObject")]
@@ -89,10 +98,58 @@ namespace FinalProject
         }
         public static implicit operator JsonTask(Task task)
         {
+            if (typeof(Benchmark).IsInstanceOfType(task))
+            {
+                return new JsonBenchmark((Benchmark)task);
+            };
+            if (typeof(TemplateMitigation).IsInstanceOfType(task))
+            {
+                return new JsonTemplateMitigation((TemplateMitigation)task);
+            };
+            if (typeof(Mitigation).IsInstanceOfType(task))
+            {
+                return new JsonMitigation((Mitigation)task);
+            };
+            if (typeof(TemplateTask).IsInstanceOfType(task))
+            {
+                return new JsonTemplateTask((TemplateTask)task);
+            };
+            if (typeof(Task).IsInstanceOfType(task))
+            {
+                return new JsonTask(task);
+            };
             return new(task);
         }
         public static implicit operator Task(JsonTask task)
         {
+            if (typeof(JsonBenchmark).IsInstanceOfType(task))
+            {
+                JsonBenchmark jsonBenchmark = (JsonBenchmark)task;
+                Benchmark benchmark = new Benchmark(jsonBenchmark);
+                return benchmark;
+            };
+            if (typeof(JsonTemplateMitigation).IsInstanceOfType(task))
+            {
+                JsonTemplateMitigation jsonTemplateMitigation = (JsonTemplateMitigation)task;
+                TemplateMitigation templateMitigation = new TemplateMitigation(jsonTemplateMitigation);
+                return templateMitigation;
+            };
+            if (typeof(JsonMitigation).IsInstanceOfType(task))
+            {
+                JsonMitigation jsonMitigation = (JsonMitigation)task;
+                Mitigation mitigation = new Mitigation(jsonMitigation);
+                return mitigation;
+            };
+            if (typeof(JsonTemplateTask).IsInstanceOfType(task))
+            {
+                JsonTemplateTask jsonTemplateTask = (JsonTemplateTask)task;
+                TemplateTask templateTask = new TemplateTask(jsonTemplateTask);
+                return templateTask;
+            };
+            if (typeof(JsonTask).IsInstanceOfType(task))
+            {
+                return task.Task;
+            };
             return task.Task;
         }
     }
@@ -138,15 +195,15 @@ namespace FinalProject
         {
             Init("", NameType.Thing, "", TaskType.Task, TaskState.Template, "", new(), new(), 0, 0, 0, interactive);
         }
-        protected void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
             Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        protected void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
             Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        protected void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
             base.Init(Name, Description, interactive);
             if (interactive)
@@ -180,7 +237,7 @@ namespace FinalProject
                 this.PostWaitTimeSeconds = PostWaitTimeSeconds;
             }
         }
-        protected void Init(Task task, Boolean interactive = false)
+        protected virtual void Init(Task task, Boolean interactive = false)
         {
             base.Init(task, interactive);
             Name = task.Name;
@@ -194,7 +251,7 @@ namespace FinalProject
             DurationSeconds = task.DurationSeconds;
             PostWaitTimeSeconds = task.PostWaitTimeSeconds;
         }
-        protected void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
             switch (riskName)
             {
@@ -230,7 +287,7 @@ namespace FinalProject
         {
             Console.WriteLine("\nPlease enter the task description.");
         }
-        protected void DisplayRequestTaskTypeMessage()
+        protected virtual void DisplayRequestTaskTypeMessage()
         {
             Console.WriteLine("\nPlease enter the task type.");
         }
@@ -241,7 +298,7 @@ namespace FinalProject
         protected void DisplayRequestTaskType()
         {
             DisplayRequestTaskTypeMessage();
-            Dictionary<int, Tuple<TaskType,String>> optionMap = new() { {1, new(TaskType.Task,"Task")},{ 2, new(TaskType.Benchmark,"Benchmark")}, { 3, new(TaskType.GoNoGo,"Go/No Go")}, { 4, new(TaskType.Mitigation, "Mitigation")}};
+            Dictionary<int, Tuple<TaskType, String>> optionMap = ITaskTypeUtiltities.typeOptionMap();
             int option = 0;
             String response;
             while (option<1)
@@ -271,7 +328,7 @@ namespace FinalProject
             Display(false, true, -1);
             DisplayRequestTaskType();
         }
-        protected void DisplayRequestTaskStateMessage()
+        protected virtual void DisplayRequestTaskStateMessage()
         {
             Console.WriteLine("\nPlease enter the task state.");
         }
@@ -282,7 +339,7 @@ namespace FinalProject
         protected void DisplayRequestTaskState()
         {
             DisplayRequestTaskStateMessage();
-            Dictionary<int, Tuple<TaskState, String>> optionMap = new() { { 1, new(TaskState.Template, "Template") }, { 2, new(TaskState.Assigned, "Assigned") }, { 3, new(TaskState.Scheduled, "Scheduled") }, { 4, new(TaskState.Implemented, "Implemented") } };
+            Dictionary<int, Tuple<TaskState, String>> optionMap = ITaskStateUtiltities.stateOptionMap();
             int option = 0;
             String response;
             while (option < 1)
@@ -312,7 +369,7 @@ namespace FinalProject
             Display(false, true, -1);
             DisplayRequestTaskState();
         }
-        protected void DisplayRequestCommandMessage()
+        protected virtual void DisplayRequestCommandMessage()
         {
             Console.WriteLine("\nPlease enter the task command.");
         }
@@ -341,7 +398,7 @@ namespace FinalProject
             }
             if (setSeverity) DisplayRequestCommand();
         }
-        protected void DisplayRequestAssignedRolesMessage()
+        protected virtual void DisplayRequestAssignedRolesMessage()
         {
             Console.WriteLine("\nPlease enter the task list of comma separated assigned roles.");
         }
@@ -370,7 +427,7 @@ namespace FinalProject
             }
             if (setSeverity) DisplayRequestAssignedRoles();
         }
-        protected void DisplayRequestRequiredPreRequisiteTasksMessage()
+        protected virtual void DisplayRequestRequiredPreRequisiteTasksMessage()
         {
             Console.WriteLine("\nPlease enter the task comma separated list of required pre-requisite tasks.");
         }
@@ -399,7 +456,7 @@ namespace FinalProject
             }
             if (setSeverity) DisplayRequestRequiredPreRequisiteTasks();
         }
-        protected void DisplayRequestPreWaitTimeSecondsMessage()
+        protected virtual void DisplayRequestPreWaitTimeSecondsMessage()
         {
             Console.WriteLine("\nPlease enter the task pre-wait time in seconds.");
         }
@@ -431,16 +488,10 @@ namespace FinalProject
         }
         internal void RequestPreWaitTimeSeconds()
         {
-            Boolean setSeverity = true;
             this.DisplaySetPreWaitTimeSecondsMessage();
-            if (HasPreWaitTimeSeconds())
-            {
-                Display(false, true, -1);
-                this.DisplayRequestPreWaitTimeSeconds();
-            }
-            if (setSeverity) DisplayRequestPreWaitTimeSeconds();
+            DisplayRequestPreWaitTimeSeconds();
         }
-        protected void DisplayRequestDurationSecondsMessage()
+        protected virtual void DisplayRequestDurationSecondsMessage()
         {
             Console.WriteLine("\nPlease enter the task duration in seconds.");
         }
@@ -473,16 +524,10 @@ namespace FinalProject
         }
         internal void RequestDurationSeconds()
         {
-            Boolean setSeverity = true;
             this.DisplaySetDurationSecondsMessage();
-            if (HasDurationSeconds())
-            {
-                Display(false, true, -1);
-                this.DisplayRequestDurationSeconds();
-            }
-            if (setSeverity) DisplayRequestDurationSeconds();
+            this.DisplayRequestDurationSeconds();
         }
-        protected void DisplayRequestPostWaitTimeSecondsMessage()
+        protected virtual void DisplayRequestPostWaitTimeSecondsMessage()
         {
             Console.WriteLine("\nPlease enter the task post-wait time in seconds.");
         }
@@ -515,16 +560,10 @@ namespace FinalProject
         }
         internal void RequestPostWaitTimeSeconds()
         {
-            Boolean setSeverity = true;
             this.DisplaySetPostWaitTimeSecondsMessage();
-            if (HasPostWaitTimeSeconds())
-            {
-                Display(false, true, -1);
-                this.DisplayRequestPostWaitTimeSeconds();
-            }
-            if (setSeverity) DisplayRequestPostWaitTimeSeconds();
+            this.DisplayRequestPostWaitTimeSeconds();
         }
-        internal Task CreateCopy(String newName)
+        internal virtual Task CreateCopy(String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
             Task result = new(this);
@@ -533,8 +572,8 @@ namespace FinalProject
         }
         internal override void Display(int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = new() { { TaskType.Task, "Task" }, { TaskType.Benchmark, "Benchmark" }, { TaskType.GoNoGo, "Go/No Go" }, { TaskType.Mitigation, "Mitigation" } };
-            Dictionary<TaskState, String> stateMap = new() { { TaskState.Template, "Template" }, { TaskState.Assigned, "Assigned" }, { TaskState.Scheduled, "Scheduled" }, { TaskState.Implemented, "Implemented" } };
+            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
+            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             base.Display(option);
             if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
             else Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
@@ -553,7 +592,7 @@ namespace FinalProject
             foreach (String preRequisite in RequiredPreRequisiteTasks)
             {
                 if (option >= 0) Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                else Console.WriteLine(String.Format("\tPreRequisite{0}:  {1}", counter, preRequisite));
+                else Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
                 counter++;
             }
             if (option >= 0) Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
@@ -565,8 +604,8 @@ namespace FinalProject
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = new() { { TaskType.Task, "Task" }, { TaskType.Benchmark, "Benchmark" }, { TaskType.GoNoGo, "Go/No Go" }, { TaskType.Mitigation, "Mitigation" } };
-            Dictionary<TaskState, String> stateMap = new() { { TaskState.Template, "Template" }, { TaskState.Assigned, "Assigned" }, { TaskState.Scheduled, "Scheduled" }, { TaskState.Implemented, "Implemented" } };
+            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
+            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             if (name) { base.Display(option); }
             if (name && description)
             {
@@ -605,7 +644,7 @@ namespace FinalProject
                     counter = 1;
                     foreach (String preRequisite in RequiredPreRequisiteTasks)
                     {
-                        Console.WriteLine(String.Format("\tPreRequisite{0}:  {1}", counter, preRequisite));
+                        Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
                         counter++;
                     }
                     Console.WriteLine(String.Format("\tPre-Wait:  {0} Seconds", PreWaitTimeSeconds));
@@ -650,7 +689,7 @@ namespace FinalProject
                     counter = 1;
                     foreach (String preRequisite in RequiredPreRequisiteTasks)
                     {
-                        Console.WriteLine(String.Format("\tPreRequisite{0}:  {1}", counter, preRequisite));
+                        Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
                         counter++;
                     }
                     Console.WriteLine(String.Format("\tPre-Wait:  {0} Seconds", PreWaitTimeSeconds));
@@ -723,15 +762,19 @@ namespace FinalProject
                     return new TemplateTask();
             }
         }
-        internal static Task CreateTask(TaskType type, TaskState state, String taskName, String taskDescription)
+        internal static Task CreateTask(TaskType type, TaskState state, String taskName, String taskDescription, Risks risks)
         {
+            Task result;
             switch (type)
             {
                 case TaskType.Task:
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateTask(taskName, taskDescription);
+                            result = new TemplateTask(false);
+                            result.Name = taskName;
+                            result.Description= taskDescription;
+                            return result;
                         case TaskState.Scheduled:
                             return new ScheduledTask(taskName, taskDescription);
                         case TaskState.Assigned:
@@ -739,7 +782,10 @@ namespace FinalProject
                         case TaskState.Implemented:
                             return new ImplementedTask(taskName, taskDescription);
                         default:
-                            return new TemplateTask(taskName, taskDescription);
+                            result = new TemplateTask(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                     }
                 case TaskType.Benchmark:
                     switch (state)
@@ -773,7 +819,10 @@ namespace FinalProject
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateMitigation(taskName, taskDescription);
+                            result = new TemplateMitigation(risks, false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         case TaskState.Scheduled:
                             return new ScheduledMitigation(taskName, taskDescription);
                         case TaskState.Assigned:
@@ -781,10 +830,16 @@ namespace FinalProject
                         case TaskState.Implemented:
                             return new ImplementedMitigation(taskName, taskDescription);
                         default:
-                            return new TemplateMitigation(taskName, taskDescription);
+                            result = new TemplateMitigation(risks, false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                     }
                 default:
-                    return new TemplateTask(taskName, taskDescription);
+                    result = new TemplateTask(false);
+                    result.Name = taskName;
+                    result.Description = taskDescription;
+                    return result;
             }
         }
     }

@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonPlan), typeDiscriminator: "Plan")]
     internal class JsonPlan : JsonDescribedObject
     {
         protected Plan Plan { get; set; }
@@ -727,9 +731,7 @@ namespace FinalProject
         internal void AddTemplateTask()
         {
             Console.WriteLine($"\nAdd a template task ({GetNameForMenus()})");
-            //TemplateTask templateTask = new TemplateTask(true);
-            /*TODO AddTemplateTask*/
-            TemplateTask templateTask = new TemplateTask();
+            TemplateTask templateTask = new TemplateTask(true);
             if (Tasks.Keys.Contains(templateTask.Key))
             {
                 Console.WriteLine($"{templateTask.Name.Value} already defined.");
@@ -746,37 +748,192 @@ namespace FinalProject
                 Tasks.Add(templateTask.Key, templateTask);
             }
         }
+        internal TemplateTask SelectTemplateTask(Boolean ensureResult = false)
+        {
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateTask).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            if (templateTasks.Count == 0)
+            {
+                if (ensureResult)
+                {
+                    AddTemplateTask();
+                    foreach (String key in Tasks.Keys) { if (typeof(TemplateTask).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+                    return (TemplateTask)templateTasks.First().Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else if (Tasks.Count == 1) return (TemplateTask)templateTasks.First().Value;
+            else
+            {
+                int option = 0;
+                Dictionary<int, Task> optionMap = new();
+                while (option < 1)
+                {
+                    int counter = 1;
+                    optionMap = new();
+                    foreach (String key in templateTasks.Keys)
+                    {
+                        templateTasks[key].Display(counter);
+                        optionMap.Add(counter, templateTasks[key]);
+                        counter++;
+                    }
+                    Console.Write("Select a template task");
+                    String response = IApplication.READ_RESPONSE();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.Keys.Contains(option)) option = -1;
+                }
+                return (TemplateTask)optionMap[option];
+            }
+        }
         internal void CopyTemplateTask()
         {
-            /*TODO - CopyTemplateTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nCopy a template task ({GetNameForMenus()})");
+            TemplateTask risk = SelectTemplateTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                TemplateTask newrisk = new TemplateTask(risk);
+                newrisk.Name = "";
+                newrisk.RequestName();
+                if (Tasks.Keys.Contains(newrisk.Key))
+                {
+                    Console.WriteLine($"{newrisk.Name.Value} already defined.");
+                    Console.Write("overwrite (y/n)");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        Tasks.Remove(newrisk.Key);
+                        Tasks.Add(newrisk.Key, newrisk);
+                    }
+                }
+                else
+                {
+                    Tasks.Add(newrisk.Key, newrisk);
+                }
+            }
         }
         internal void EditTemplateTask()
         {
-            /*TODO - EditTemplateTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nEdit a template task ({GetNameForMenus()})");
+            TemplateTask risk = SelectTemplateTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Console.Write("\nrename (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Name = "";
+                    risk.RequestName();
+                }
+                Console.Write("\nchange description (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Description = "";
+                    risk.RequestDescription();
+                }
+                /*TODO special handling as this needs to change the class*/
+                Console.Write("\nchange task type (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskType();
+                }
+                /*TODO special handling as this needs to change the class*/
+                Console.Write("\nchange task state (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskState();
+                }
+                Console.Write("\nchange command (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Command = "";
+                    risk.RequestCommand();
+                }
+                Console.Write("\nchange assugned roles (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.AssignedRoles.Clear();
+                    risk.RequestAssignedRoles();
+                }
+                Console.Write("\nchange required pre-requisite tasks (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequiredPreRequisiteTasks.Clear();
+                    risk.RequestRequiredPreRequisiteTasks();
+                }
+                Console.Write("\nchange pre-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PreWaitTimeSeconds = -2;
+                    risk.RequestPreWaitTimeSeconds();
+                }
+                Console.Write("\nchange duration (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.DurationSeconds = -2;
+                    risk.RequestDurationSeconds();
+                }
+                Console.Write("\nchange post-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PostWaitTimeSeconds = -2;
+                    risk.RequestPostWaitTimeSeconds();
+                }
+            }
         }
         internal void RemoveTemplateTask()
         {
-            /*TODO - RemoveTemplateTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nRemove a template task ({GetNameForMenus()})");
+            TemplateTask risk = SelectTemplateTask();
+            if (risk is not null) Tasks.Remove(risk.Key);
         }
         internal void ListTemplateTasks()
         {
-            /*TODO - ListTemplateTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateTask).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            Console.WriteLine($"\nDisplay template tasks ({GetNameForMenus()})\n");
+            foreach (String key in templateTasks.Keys)
+            {
+                ((TemplateTask)Tasks[key]).Display();
+            }
         }
         internal void ExportTemplateTasks()
         {
-            Tasks.Export();
-            /*TODO - ExportTemplateTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateTask).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            templateTasks.Export();
         }
         internal void ImportTemplateTasks()
         {
-            Tasks.Import();
-            /*TODO - ImportTemplateTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            templateTasks.Import();
+            foreach (String key in templateTasks.Keys)
+            {
+                /*TODO - fix import collisions*/
+                if (typeof(TemplateTask).IsInstanceOfType(templateTasks[key])) Tasks.Add(key, Tasks[key]);
+            }
         }
         internal void AddTemplateBenchmarkTask()
         {
@@ -885,9 +1042,7 @@ namespace FinalProject
         internal void AddTemplateMitigationTask()
         {
             Console.WriteLine($"\nAdd a template mitigation task ({GetNameForMenus()})");
-            //TemplateMitigation templateTask = new TemplateMitigation(true);
-            /*TODO AddTemplateMitigationTask*/
-            TemplateMitigation templateTask = new TemplateMitigation();
+            TemplateMitigation templateTask = new TemplateMitigation(Risks, true);
             if (Tasks.Keys.Contains(templateTask.Key))
             {
                 Console.WriteLine($"{templateTask.Name.Value} already defined.");

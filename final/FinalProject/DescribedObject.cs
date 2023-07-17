@@ -5,6 +5,14 @@ using System.Xml.Linq;
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonDescribedObject), typeDiscriminator: "DescribedObject")]
+    [JsonDerivedType(typeof(JsonDescribedObjectDictionary<>), typeDiscriminator: "DescribedObjectDictionary")]
+    [JsonDerivedType(typeof(JsonPlan), typeDiscriminator: "Plan")]
+    [JsonDerivedType(typeof(JsonRisk), typeDiscriminator: "Risk")]
+    [JsonDerivedType(typeof(JsonTask), typeDiscriminator: "Task")]
     public class JsonDescribedObject : JsonNamedObject
     {
         internal DescribedObject _describedObject

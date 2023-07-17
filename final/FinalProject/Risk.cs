@@ -2,6 +2,10 @@
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonRisk), typeDiscriminator: "Risk")]
     internal class JsonRisk : JsonDescribedObject
     {
         protected Risk Risk { get; set; }
@@ -186,7 +190,7 @@ namespace FinalProject
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
-            if (name) { base.Display(option); }
+            if (name) { base.Display(name, description, option); }
             if (name && description)
             {
                 if (option >= 0)

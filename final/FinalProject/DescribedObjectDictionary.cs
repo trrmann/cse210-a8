@@ -4,6 +4,10 @@ using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
+    //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
+    [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+    //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonDescribedObjectDictionary<>), typeDiscriminator: "DescribedObjectDictionary")]
     internal class JsonDescribedObjectDictionary<JNO> : JsonDescribedObject where JNO : JsonNamedObject
     {
         protected DescribedObjectDictionary<NamedObject> DescribedObjectDictionary { get; set; }
