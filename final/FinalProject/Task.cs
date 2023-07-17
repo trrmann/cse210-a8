@@ -12,6 +12,7 @@ namespace FinalProject
     [JsonDerivedType(typeof(JsonMitigation), typeDiscriminator: "Mitigation")]
     [JsonDerivedType(typeof(JsonTemplateTask), typeDiscriminator: "TemplateTask")]
     [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
+    [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
     internal class JsonTask : JsonDescribedObject
     {
         protected Task Task { get; set; }
@@ -98,6 +99,10 @@ namespace FinalProject
         }
         public static implicit operator JsonTask(Task task)
         {
+            if (typeof(TemplateBenchmark).IsInstanceOfType(task))
+            {
+                return new JsonTemplateBenchmark((TemplateBenchmark)task);
+            };
             if (typeof(Benchmark).IsInstanceOfType(task))
             {
                 return new JsonBenchmark((Benchmark)task);
@@ -122,6 +127,12 @@ namespace FinalProject
         }
         public static implicit operator Task(JsonTask task)
         {
+            if (typeof(JsonTemplateBenchmark).IsInstanceOfType(task))
+            {
+                JsonTemplateBenchmark jsonTemplateBenchmark = (JsonTemplateBenchmark)task;
+                TemplateBenchmark templateBenchmark = new TemplateBenchmark(jsonTemplateBenchmark);
+                return templateBenchmark;
+            };
             if (typeof(JsonBenchmark).IsInstanceOfType(task))
             {
                 JsonBenchmark jsonBenchmark = (JsonBenchmark)task;
@@ -791,7 +802,10 @@ namespace FinalProject
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateBenchmark(taskName, taskDescription);
+                            result = new TemplateBenchmark(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         case TaskState.Scheduled:
                             return new ScheduledBenchmark(taskName, taskDescription);
                         case TaskState.Assigned:
@@ -799,7 +813,10 @@ namespace FinalProject
                         case TaskState.Implemented:
                             return new ImplementedBenchmark(taskName, taskDescription);
                         default:
-                            return new TemplateBenchmark(taskName, taskDescription);
+                            result = new TemplateBenchmark(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                     }
                 case TaskType.GoNoGo:
                     switch (state)
