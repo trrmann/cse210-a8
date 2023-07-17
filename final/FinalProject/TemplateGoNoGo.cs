@@ -1,8 +1,8 @@
 ﻿namespace FinalProject
 {
-    public class TemplateGoNoGo : TemplateTask
+    public class TemplateGoNoGo : TemplateBenchmark
     {
-        protected GoNoGo GoNoGo { get; set; }
+        protected GoNoGo GoNoGo { get; set; } = new();
         public TemplateGoNoGo(String taskName, String taskDescription)
         {
             Init(taskName, taskDescription);

@@ -1,6 +1,6 @@
 ﻿namespace FinalProject
 {
-    public class ImplementedGoNoGo : ImplementedTask
+    public class ImplementedGoNoGo : ImplementedBenchmark
     {
         protected GoNoGo GoNoGo { get; set; }
         public ImplementedGoNoGo(String taskName, String taskDescription)

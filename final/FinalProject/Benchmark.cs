@@ -6,6 +6,7 @@ namespace FinalProject
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
     [JsonDerivedType(typeof(JsonBenchmark), typeDiscriminator: "Benchmark")]
+    [JsonDerivedType(typeof(JsonGoNoGo), typeDiscriminator: "GoNoGo")]
     internal class JsonBenchmark : JsonTask
     {
         protected Benchmark Benchmark { get; set; }

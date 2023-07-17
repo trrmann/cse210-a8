@@ -113,7 +113,7 @@ namespace FinalProject
     }
     public class TemplateBenchmark : TemplateTask
     {
-        protected Benchmark Benchmark { get; set; }
+        protected Benchmark Benchmark { get; set; } = new();
         internal List<String> ReportToPeople { get { return Benchmark.ReportToPeople; } set { Benchmark.ReportToPeople = value; } }
         internal List<String> ReportToTeams { get { return Benchmark.ReportToTeams; } set { Benchmark.ReportToTeams = value; } }
         public TemplateBenchmark()

@@ -938,9 +938,7 @@ namespace FinalProject
         internal void AddTemplateBenchmarkTask()
         {
             Console.WriteLine($"\nAdd a template benchmark task ({GetNameForMenus()})");
-            //TemplateBenchmark templateTask = new TemplateBenchmark(true);
-            /*TODO AddTemplateBenchmarkTask*/
-            TemplateBenchmark templateTask = new TemplateBenchmark();
+            TemplateBenchmark templateTask = new TemplateBenchmark(true);
             if (Tasks.Keys.Contains(templateTask.Key))
             {
                 Console.WriteLine($"{templateTask.Name.Value} already defined.");
@@ -957,35 +955,192 @@ namespace FinalProject
                 Tasks.Add(templateTask.Key, templateTask);
             }
         }
+        internal TemplateBenchmark SelectTemplateBenchmarkTask(Boolean ensureResult = false)
+        {
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateBenchmark).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            if (templateTasks.Count == 0)
+            {
+                if (ensureResult)
+                {
+                    AddTemplateBenchmarkTask();
+                    foreach (String key in Tasks.Keys) { if (typeof(TemplateBenchmark).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+                    return (TemplateBenchmark)templateTasks.First().Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else if (Tasks.Count == 1) return (TemplateBenchmark)templateTasks.First().Value;
+            else
+            {
+                int option = 0;
+                Dictionary<int, Task> optionMap = new();
+                while (option < 1)
+                {
+                    int counter = 1;
+                    optionMap = new();
+                    foreach (String key in templateTasks.Keys)
+                    {
+                        templateTasks[key].Display(counter);
+                        optionMap.Add(counter, templateTasks[key]);
+                        counter++;
+                    }
+                    Console.Write("Select a template task");
+                    String response = IApplication.READ_RESPONSE();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.Keys.Contains(option)) option = -1;
+                }
+                return (TemplateBenchmark)optionMap[option];
+            }
+        }
         internal void CopyTemplateBenchmarkTask()
         {
-            /*TODO - CopyTemplateBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nCopy a template task ({GetNameForMenus()})");
+            TemplateBenchmark risk = SelectTemplateBenchmarkTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                TemplateBenchmark newrisk = new TemplateBenchmark(risk);
+                newrisk.Name = "";
+                newrisk.RequestName();
+                if (Tasks.Keys.Contains(newrisk.Key))
+                {
+                    Console.WriteLine($"{newrisk.Name.Value} already defined.");
+                    Console.Write("overwrite (y/n)");
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        Tasks.Remove(newrisk.Key);
+                        Tasks.Add(newrisk.Key, newrisk);
+                    }
+                }
+                else
+                {
+                    Tasks.Add(newrisk.Key, newrisk);
+                }
+            }
         }
         internal void EditTemplateBenchmarkTask()
         {
-            /*TODO - EditTemplateBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nEdit a template task ({GetNameForMenus()})");
+            TemplateBenchmark risk = SelectTemplateBenchmarkTask();
+            if (risk is not null)
+            {
+                Console.WriteLine();
+                risk.Display();
+                Console.Write("\nrename (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Name = "";
+                    risk.RequestName();
+                }
+                Console.Write("\nchange description (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Description = "";
+                    risk.RequestDescription();
+                }
+                /*TODO special handling as this needs to change the class*/
+                Console.Write("\nchange task type (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskType();
+                }
+                /*TODO special handling as this needs to change the class*/
+                Console.Write("\nchange task state (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequestTaskState();
+                }
+                Console.Write("\nchange command (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.Command = "";
+                    risk.RequestCommand();
+                }
+                Console.Write("\nchange assugned roles (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.AssignedRoles.Clear();
+                    risk.RequestAssignedRoles();
+                }
+                Console.Write("\nchange required pre-requisite tasks (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.RequiredPreRequisiteTasks.Clear();
+                    risk.RequestRequiredPreRequisiteTasks();
+                }
+                Console.Write("\nchange pre-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PreWaitTimeSeconds = -2;
+                    risk.RequestPreWaitTimeSeconds();
+                }
+                Console.Write("\nchange duration (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.DurationSeconds = -2;
+                    risk.RequestDurationSeconds();
+                }
+                Console.Write("\nchange post-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    risk.PostWaitTimeSeconds = -2;
+                    risk.RequestPostWaitTimeSeconds();
+                }
+            }
         }
         internal void RemoveTemplateBenchmarkTask()
         {
-            /*TODO - RemoveTemplateBenchmarkTask*/
-            throw new NotImplementedException();
+            Console.WriteLine($"\nRemove a template task ({GetNameForMenus()})");
+            TemplateBenchmark risk = SelectTemplateBenchmarkTask();
+            if (risk is not null) Tasks.Remove(risk.Key);
         }
         internal void ListTemplateBenchmarkTasks()
         {
-            /*TODO - ListTemplateBenchmarkTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateBenchmark).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            Console.WriteLine($"\nDisplay template tasks ({GetNameForMenus()})\n");
+            foreach (String key in templateTasks.Keys)
+            {
+                ((TemplateBenchmark)Tasks[key]).Display();
+            }
         }
         internal void ExportTemplateBenchmarkTasks()
         {
-            /*TODO - ExportTemplateBenchmarkTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            foreach (String key in Tasks.Keys) { if (typeof(TemplateBenchmark).IsInstanceOfType(Tasks[key])) templateTasks.Add(key, Tasks[key]); }
+            templateTasks.Export();
         }
         internal void ImportTemplateBenchmarkTasks()
         {
-            /*TODO - ImportTemplateBenchmarkTasks*/
-            throw new NotImplementedException();
+            Tasks templateTasks = new();
+            templateTasks.Import();
+            foreach (String key in templateTasks.Keys)
+            {
+                /*TODO - fix import collisions*/
+                if (typeof(TemplateBenchmark).IsInstanceOfType(templateTasks[key])) Tasks.Add(key, Tasks[key]);
+            }
         }
         internal void AddTemplateGoNoGoTask()
         {

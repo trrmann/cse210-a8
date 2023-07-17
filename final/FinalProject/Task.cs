@@ -13,6 +13,7 @@ namespace FinalProject
     [JsonDerivedType(typeof(JsonTemplateTask), typeDiscriminator: "TemplateTask")]
     [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
     [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
+    [JsonDerivedType(typeof(JsonGoNoGo), typeDiscriminator: "GoNoGo")]
     internal class JsonTask : JsonDescribedObject
     {
         protected Task Task { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace FinalProject
 {
-    public class ScheduledGoNoGo : ScheduledTask
+    public class ScheduledGoNoGo : ScheduledBenchmark
     {
         protected GoNoGo GoNoGo { get; set; }
         public ScheduledGoNoGo(String taskName, String taskDescription)
