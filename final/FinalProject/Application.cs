@@ -7,7 +7,6 @@ namespace FinalProject
     {
         private Boolean Running { get; set; }
         private Plan Plan { get; set; }
-        private BackoutPlan BackoutPlan {  get; set; }
         private String CurrentMenuName { get; set; }
         private Dictionary<String, Dictionary<int, Tuple<Boolean, Tuple<Tuple<String, Func<String>>, Tuple<String, Action>>>>> MenuDictionary { get { return new() {
                 { "MainMenu", new(){

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net.NetworkInformation;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
@@ -102,6 +103,7 @@ namespace FinalProject
     }
     public class TemplateTask : Task
     {
+        internal static new string ObjectNameDisplay { get; } = "template task";
         public TemplateTask()
         {
             Init();
@@ -219,86 +221,40 @@ namespace FinalProject
             Name = task.Name;
             Description = task.Description;
         }
-        protected override void DisplaySetNameMessage()
+        protected override void DisplaySetNameMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} name");
+        protected override void DisplaySetDescriptionMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} Description");
+        protected override void DisplayRequestNameMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} name.");
+        protected override void DisplayRequestDescriptionMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} description.");
+        protected override void DisplayRequestTaskTypeMessage() => base.DisplayRequestTaskTypeMessage();
+        protected override void DisplaySetTaskTypeMessage() => base.DisplaySetTaskTypeMessage();
+        protected override void DisplayRequestTaskStateMessage() => base.DisplayRequestTaskStateMessage();
+        protected override void DisplaySetTaskStateMessage() => base.DisplaySetTaskStateMessage();
+        protected override void DisplayRequestCommandMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} command.");
+        protected override void DisplaySetCommandMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} command");
+        protected override void DisplayRequestAssignedRolesMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} list of comma separated assigned roles.");
+        protected override void DisplaySetAssignedRolesMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} assigned roles");
+        protected override void DisplayRequestRequiredPreRequisiteTasksMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} comma separated list of required pre-requisite tasks.");
+        protected override void DisplaySetRequiredPreRequisiteTasksMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} required pre-requisite tasks");
+        protected override void DisplayRequestPreWaitTimeSecondsMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} pre-wait time in seconds.");
+        protected override void DisplaySetPreWaitTimeSecondsMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} pre-wait time seconds");
+        protected override void DisplayRequestDurationSecondsMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} duration in seconds.");
+        protected override void DisplaySetDurationSecondsMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} duration in seconds");
+        protected override void DisplayRequestPostWaitTimeSecondsMessage() => Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} post-wait time in seconds.");
+        protected override void DisplaySetPostWaitTimeSecondsMessage() => Console.WriteLine($"\nSet {ObjectNameDisplay} post-wait time seconds");
+        internal override void DisplayAddMessage(Plan plan) => Console.WriteLine($"\nAdd a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        internal override void DisplayAlreadyDefined(string value)
         {
-            Console.WriteLine("\nSet template task name");
+            Console.WriteLine($"{value} already defined.");
+            Console.Write("overwrite (y/n)");
         }
-        protected override void DisplaySetDescriptionMessage()
-        {
-            Console.WriteLine("\nSet template task Description");
-        }
-        protected override void DisplayRequestNameMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task name.");
-        }
-        protected override void DisplayRequestDescriptionMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task description.");
-        }
-        protected override void DisplayRequestTaskTypeMessage()
-        {
-            base.DisplayRequestTaskTypeMessage();
-        }
-        protected override void DisplaySetTaskTypeMessage()
-        {
-            base.DisplaySetTaskTypeMessage();
-        }
-        protected override void DisplayRequestTaskStateMessage()
-        {
-            base.DisplayRequestTaskStateMessage();
-        }
-        protected override void DisplaySetTaskStateMessage()
-        {
-            base.DisplaySetTaskStateMessage();
-        }
-        protected override void DisplayRequestCommandMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task command.");
-        }
-        protected override void DisplaySetCommandMessage()
-        {
-            Console.WriteLine("\nSet template task command");
-        }
-        protected override void DisplayRequestAssignedRolesMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task list of comma separated assigned roles.");
-        }
-        protected override void DisplaySetAssignedRolesMessage()
-        {
-            Console.WriteLine("\nSet template task assigned roles");
-        }
-        protected override void DisplayRequestRequiredPreRequisiteTasksMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task comma separated list of required pre-requisite tasks.");
-        }
-        protected override void DisplaySetRequiredPreRequisiteTasksMessage()
-        {
-            Console.WriteLine("\nSet template task required pre-requisite tasks");
-        }
-        protected override void DisplayRequestPreWaitTimeSecondsMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task pre-wait time in seconds.");
-        }
-        protected override void DisplaySetPreWaitTimeSecondsMessage()
-        {
-            Console.WriteLine("\nSet template task pre-wait time seconds");
-        }
-        protected override void DisplayRequestDurationSecondsMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task duration in seconds.");
-        }
-        protected override void DisplaySetDurationSecondsMessage()
-        {
-            Console.WriteLine("\nSet template task duration in seconds");
-        }
-        protected override void DisplayRequestPostWaitTimeSecondsMessage()
-        {
-            Console.WriteLine("\nPlease enter the template task post-wait time in seconds.");
-        }
-        protected override void DisplaySetPostWaitTimeSecondsMessage()
-        {
-            Console.WriteLine("\nSet template task post-wait time seconds");
-        }
+        internal override void DisplaySelectMessage() => Console.Write($"Select a {ObjectNameDisplay}");
+        internal override void DisplayCopyMessage(Plan plan) => Console.WriteLine($"\nCopy a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        internal override void DisplayEditMessage(Plan plan) => Console.WriteLine($"\nEdit a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        internal override void DisplayRemoveMessage(Plan plan) => Console.WriteLine($"\nRemove a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        internal override void DisplayListMessage(Plan plan) => Console.WriteLine($"\nDisplay {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        internal override void DisplayExportMessage(Plan plan) => Console.WriteLine($"\nExport {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        internal override void DisplayImportMessage(Plan plan) => Console.WriteLine($"\nImport {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        internal override void Edit(Task task, BackoutPlan plan, Risks risks) => base.Edit(task, plan, risks);
         internal override TemplateTask CreateCopy(String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
@@ -306,71 +262,7 @@ namespace FinalProject
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }
-        internal override void Display(int option = -1)
-        {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            base.Display(option);
-        }
-        internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
-        {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            if (name) { base.Display(option); }
-            if (name && description)
-            {
-                if (option >= 0)
-                {
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-                    Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
-                    int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-                    Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-                }
-                else
-                {
-                }
-            }
-            else if (description)
-            {
-                if (option >= 0)
-                {
-                    Console.WriteLine(String.Format("   {0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("   {0}", stateMap[TaskState]));
-                    Console.WriteLine(String.Format("   Command:  {0}", Command));
-                    int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("   Role {0}:  {1}", counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("   PreRequisite {0}:  {1}", counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("   Pre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("   Duration:  {0} Seconds", DurationSeconds));
-                    Console.WriteLine(String.Format("   Post-Wait:  {0} Seconds", PostWaitTimeSeconds));
-                }
-                else
-                {
-                }
-            }
-        }
+        internal override void Display(int option = -1) => base.Display(option);
+        internal override void Display(Boolean name = true, Boolean description = true, int option = -1) => base.Display(name, description, option);
     }
 }

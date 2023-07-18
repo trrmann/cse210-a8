@@ -68,12 +68,12 @@ namespace FinalProject
         /**
         internal static JsonDictionaryNamedObject<JsonTask> Convert(Tasks value)
         {
-            Dictionary<String, JsonTask> result = new();
+            Dictionary<String, JsonTask> tasks = new();
             foreach (String key in value.Keys)
             {
-                result.Add(key, value[key]);
+                tasks.Add(key, value[key]);
             }
-            return new(result);
+            return new(tasks);
         }
         /**/
     }
@@ -83,10 +83,130 @@ namespace FinalProject
         {
             return new(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds);
         }
-
-        internal void Export()
+        internal void Add<TaskType>(Plan plan) where TaskType : Task, new()
         {
-            JsonTasks risks = new(this);
+            TaskType instance = new();
+            instance.DisplayAddMessage(plan);
+            TaskType templateTask = instance.Create<TaskType>(plan.BackoutPlan, plan.Risks, true);
+            if (Keys.Contains(templateTask.Key))
+            {
+                instance.DisplayAlreadyDefined(templateTask.Name.Value);
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    Remove(templateTask.Key);
+                    Add(templateTask.Key, templateTask);
+                }
+            }
+            else
+            {
+                Add(templateTask.Key, templateTask);
+            }
+        }
+        internal TaskType SelectTask<TaskType>(Plan plan, Boolean ensureResult = false) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            if (Count == 0)
+            {
+                if (ensureResult)
+                {
+                    Add<TaskType>(plan);
+                    return (TaskType)this.First().Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else if (Count == 1) return (TaskType)this.First().Value;
+            else
+            {
+                int option = 0;
+                Dictionary<int, TaskType> optionMap = new();
+                while (option < 1)
+                {
+                    int counter = 1;
+                    optionMap = new();
+                    foreach (String key in Keys)
+                    {
+                        this[key].Display(counter);
+                        optionMap.Add(counter, (TaskType)this[key]);
+                        counter++;
+                    }
+                    instance.DisplaySelectMessage();
+                    String response = IApplication.READ_RESPONSE();
+                    try
+                    {
+                        option = int.Parse(response);
+                    }
+                    catch
+                    {
+                        option = -1;
+                    }
+                    if (!optionMap.Keys.Contains(option)) option = -1;
+                }
+                return optionMap[option];
+            }
+        }
+        internal void Copy<TaskType>(Plan plan) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            instance.DisplayCopyMessage(plan);
+            TaskType task = SelectTask<TaskType>(plan);
+            if (task is not null)
+            {
+                Console.WriteLine();
+                task.Display();
+                TaskType newTask = instance.Create(task);
+                newTask.Name = "";
+                newTask.RequestName();
+                if (Keys.Contains(newTask.Key))
+                {
+                    instance.DisplayAlreadyDefined(newTask.Name.Value);
+                    String response = IApplication.READ_RESPONSE().ToLower();
+                    if (IApplication.YES_RESPONSE.Contains(response))
+                    {
+                        Remove(newTask.Key);
+                        Add(newTask.Key, newTask);
+                    }
+                }
+                else
+                {
+                    Add(newTask.Key, newTask);
+                }
+            }
+        }
+        internal void Edit<TaskType>(Plan plan) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            instance.DisplayEditMessage(plan);
+            TaskType task = SelectTask<TaskType>(plan);
+            instance.Edit(task, plan.BackoutPlan, plan.Risks);
+
+        }
+        internal void RemoveTask<TaskType>(Plan plan) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            instance.DisplayRemoveMessage(plan);
+            TaskType task = SelectTask<TaskType>(plan);
+            if (task is not null) Remove(task.Key);
+        }
+        internal void Display<TaskType>(Plan plan) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            instance.DisplayListMessage(plan);
+            foreach (String key in Keys)
+            {
+                this[key].Display();
+            }
+        }
+        internal void Export<TaskType>(Plan plan) where TaskType : Task, new()
+        {
+            TaskType instance = new();
+            instance.DisplayExportMessage(plan);
+            Tasks tasks = new();
+            foreach (String key in Keys) { if (typeof(TaskType).IsInstanceOfType(this[key])) tasks.Add(key, this[key]); }
+            JsonTasks jsonTasks = new(tasks);
             JsonSerializerOptions options = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -95,17 +215,18 @@ namespace FinalProject
                 IncludeFields = true,
                 MaxDepth = 5
             };
-            String json = JsonSerializer.Serialize(risks, options);
-            Console.Write("Enter the filename to write to");
+            String jsonText = JsonSerializer.Serialize(jsonTasks, options);
+            instance.DisplayRequestFilenameWriteMessage();
             String fileName = IApplication.READ_RESPONSE();
-            File.WriteAllText(fileName, json);
+            File.WriteAllText(fileName, jsonText);
         }
-
-        internal Tasks Import()
+        internal void Import<TaskType>(Plan plan) where TaskType : Task, new()
         {
-            Console.Write("Enter the filename to read from");
+            TaskType instance = new();
+            instance.DisplayImportMessage(plan);
+            instance.DisplayRequestFilenameReadMessage();
             String fileName = IApplication.READ_RESPONSE();
-            String json = File.ReadAllText(fileName);
+            String jsonText = File.ReadAllText(fileName);
             JsonSerializerOptions options = new JsonSerializerOptions
             {
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
@@ -113,10 +234,14 @@ namespace FinalProject
                 IncludeFields = true,
                 MaxDepth = 5
             };
-            JsonTasks risks = JsonSerializer.Deserialize<JsonTasks>(json, options);
-            Tasks result = (Tasks)risks;
+            JsonTasks jsonTasks = JsonSerializer.Deserialize<JsonTasks>(jsonText, options);
+            Tasks tasks = (Tasks)jsonTasks;
             /* TODO convert classes to be correct listed types*/
-            return result;
+            foreach (String key in tasks.Keys)
+            {
+                /*TODO - fix import collisions*/
+                if (typeof(TemplateTask).IsInstanceOfType(tasks[key])) Add(key, tasks[key]);
+            }
         }
     }
 }

@@ -105,6 +105,7 @@ namespace FinalProject
     }
     public class TemplateMitigation : TemplateTask
     {
+        internal static new string ObjectNameDisplay { get; } = "template mitigation task";
         internal Mitigation Mitigation { get; set; } = new();
         internal Risk Risk { get { return Mitigation.Risk; } set { Mitigation.Risk = value; } }
         public TemplateMitigation()
@@ -242,19 +243,19 @@ namespace FinalProject
         }
         protected override void DisplaySetNameMessage()
         {
-            Console.WriteLine("\nSet template mitigation task name");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} name");
         }
         protected override void DisplaySetDescriptionMessage()
         {
-            Console.WriteLine("\nSet template mitigation task Description");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} Description");
         }
         protected override void DisplayRequestNameMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task name.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} name.");
         }
         protected override void DisplayRequestDescriptionMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task description.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} description.");
         }
         protected override void DisplayRequestTaskTypeMessage()
         {
@@ -274,59 +275,59 @@ namespace FinalProject
         }
         protected override void DisplayRequestCommandMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task command.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} command.");
         }
         protected override void DisplaySetCommandMessage()
         {
-            Console.WriteLine("\nSet template mitigation task command");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} command");
         }
         protected override void DisplayRequestAssignedRolesMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task list of comma separated assigned roles.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} list of comma separated assigned roles.");
         }
         protected override void DisplaySetAssignedRolesMessage()
         {
-            Console.WriteLine("\nSet template mitigation task assigned roles");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} assigned roles");
         }
         protected override void DisplayRequestRequiredPreRequisiteTasksMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task comma separated list of required pre-requisite tasks.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} comma separated list of required pre-requisite tasks.");
         }
         protected override void DisplaySetRequiredPreRequisiteTasksMessage()
         {
-            Console.WriteLine("\nSet template mitigation task required pre-requisite tasks");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} required pre-requisite tasks");
         }
         protected override void DisplayRequestPreWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task pre-wait time in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} pre-wait time in seconds.");
         }
         protected override void DisplaySetPreWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nSet template mitigation task pre-wait time seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} pre-wait time seconds");
         }
         protected override void DisplayRequestDurationSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task duration in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} duration in seconds.");
         }
         protected override void DisplaySetDurationSecondsMessage()
         {
-            Console.WriteLine("\nSet template mitigation task duration in seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} duration in seconds");
         }
         protected override void DisplayRequestPostWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the template mitigation task post-wait time in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} post-wait time in seconds.");
         }
         protected override void DisplaySetPostWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nSet template mitigation task post-wait time seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} post-wait time seconds");
         }
         protected virtual void DisplayRequestRiskMessage()
         {
-            Console.WriteLine("\nPlease select the template mitigation task risk.");
+            Console.WriteLine($"\nPlease select the {ObjectNameDisplay}.");
         }
         protected virtual void DisplaySetRiskMessage()
         {
-            Console.WriteLine("\nSet teamplate mitigation task risk");
+            Console.WriteLine($"\nSet {ObjectNameDisplay}");
         }
         protected void DisplayRequestRisk(Risks risks)
         {
@@ -339,6 +340,57 @@ namespace FinalProject
         internal void RequestRisk(Risks risks)
         {
             Mitigation.RequestRisk(risks);
+        }
+        internal override void DisplayAddMessage(Plan plan)
+        {
+            Console.WriteLine($"\nAdd a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        }
+        internal override void DisplayAlreadyDefined(string value)
+        {
+            Console.WriteLine($"{value} already defined.");
+            Console.Write("overwrite (y/n)");
+        }
+        internal override void DisplaySelectMessage()
+        {
+            Console.Write($"Select a {ObjectNameDisplay}");
+        }
+        internal override void DisplayCopyMessage(Plan plan)
+        {
+            Console.WriteLine($"\nCopy a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        }
+        internal override void DisplayEditMessage(Plan plan)
+        {
+            Console.WriteLine($"\nEdit a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        }
+        internal override void DisplayRemoveMessage(Plan plan)
+        {
+            Console.WriteLine($"\nRemove a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        }
+        internal override void DisplayListMessage(Plan plan)
+        {
+            Console.WriteLine($"\nDisplay {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        }
+        internal override void DisplayExportMessage(Plan plan)
+        {
+            Console.WriteLine($"\nExport {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        }
+        internal override void DisplayImportMessage(Plan plan)
+        {
+            Console.WriteLine($"\nImport {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
+        }
+        internal override void Edit(Task task, BackoutPlan plan, Risks risks)
+        {
+            if (task is not null)
+            {
+                base.Edit(task,plan,risks);
+                Console.Write("\nchange risk (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    ((TemplateMitigation)task).Risk = new();
+                    ((TemplateMitigation)task).RequestRisk(risks);
+                }
+            }
         }
         internal override TemplateMitigation CreateCopy(String newName)
         {

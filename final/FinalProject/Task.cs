@@ -167,6 +167,7 @@ namespace FinalProject
     }
     public class Task : DescribedObject
     {
+        internal static string ObjectNameDisplay { get; } = "task";
         internal TaskType TaskType { get; set; } = TaskType.Task;
         internal TaskState TaskState { get; set; } = TaskState.Template;
         internal String Command { get; set; } = "";
@@ -285,27 +286,27 @@ namespace FinalProject
         }
         protected override void DisplaySetNameMessage()
         {
-            Console.WriteLine("\nSet task name");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} name");
         }
         protected override void DisplaySetDescriptionMessage()
         {
-            Console.WriteLine("\nSet task Description");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} Description");
         }
         protected override void DisplayRequestNameMessage()
         {
-            Console.WriteLine("\nPlease enter the task name.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} name.");
         }
         protected override void DisplayRequestDescriptionMessage()
         {
-            Console.WriteLine("\nPlease enter the task description.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} description.");
         }
         protected virtual void DisplayRequestTaskTypeMessage()
         {
-            Console.WriteLine("\nPlease enter the task type.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} type.");
         }
         protected virtual void DisplaySetTaskTypeMessage()
         {
-            Console.WriteLine("\nSet task type");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} type");
         }
         protected void DisplayRequestTaskType()
         {
@@ -319,7 +320,7 @@ namespace FinalProject
                 {
                     Console.WriteLine($"{key})  {optionMap[key].Item2}");
                 }
-                Console.Write("Select the task type");
+                Console.Write($"Select the {ObjectNameDisplay} type");
                 response = IApplication.READ_RESPONSE();
                 try
                 {
@@ -342,11 +343,11 @@ namespace FinalProject
         }
         protected virtual void DisplayRequestTaskStateMessage()
         {
-            Console.WriteLine("\nPlease enter the task state.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} state.");
         }
         protected virtual void DisplaySetTaskStateMessage()
         {
-            Console.WriteLine("\nSet task state");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} state");
         }
         protected void DisplayRequestTaskState()
         {
@@ -360,7 +361,7 @@ namespace FinalProject
                 {
                     Console.WriteLine($"{key})  {optionMap[key].Item2}");
                 }
-                Console.Write("Select the task state");
+                Console.Write($"Select the {ObjectNameDisplay} state");
                 response = IApplication.READ_RESPONSE();
                 try
                 {
@@ -383,11 +384,11 @@ namespace FinalProject
         }
         protected virtual void DisplayRequestCommandMessage()
         {
-            Console.WriteLine("\nPlease enter the task command.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} command.");
         }
         protected virtual void DisplaySetCommandMessage()
         {
-            Console.WriteLine("\nSet task command");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} command");
         }
         protected void DisplayRequestCommand()
         {
@@ -405,18 +406,18 @@ namespace FinalProject
             if (HasCommand())
             {
                 Display(false, true, -1);
-                this.DisplayRequestCommand();
+                DisplayAlreadyDefined(Command);
                 if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setSeverity = false;
             }
             if (setSeverity) DisplayRequestCommand();
         }
         protected virtual void DisplayRequestAssignedRolesMessage()
         {
-            Console.WriteLine("\nPlease enter the task list of comma separated assigned roles.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} list of comma separated assigned roles.");
         }
         protected virtual void DisplaySetAssignedRolesMessage()
         {
-            Console.WriteLine("\nSet task assigned roles");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} assigned roles");
         }
         protected void DisplayRequestAssignedRoles()
         {
@@ -434,18 +435,18 @@ namespace FinalProject
             if (HasAssignedRoles())
             {
                 Display(false, true, -1);
-                this.DisplayRequestAssignedRoles();
+                DisplayAlreadyDefined(String.Join(", ",AssignedRoles));
                 if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setSeverity = false;
             }
             if (setSeverity) DisplayRequestAssignedRoles();
         }
         protected virtual void DisplayRequestRequiredPreRequisiteTasksMessage()
         {
-            Console.WriteLine("\nPlease enter the task comma separated list of required pre-requisite tasks.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} comma separated list of required pre-requisite tasks.");
         }
         protected virtual void DisplaySetRequiredPreRequisiteTasksMessage()
         {
-            Console.WriteLine("\nSet task required pre-requisite tasks");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} required pre-requisite tasks");
         }
         protected void DisplayRequestRequiredPreRequisiteTasks()
         {
@@ -463,18 +464,18 @@ namespace FinalProject
             if (HasRequiredPreRequisiteTasks())
             {
                 Display(false, true, -1);
-                this.DisplayRequestRequiredPreRequisiteTasks();
+                DisplayAlreadyDefined(String.Join(", ",RequiredPreRequisiteTasks));
                 if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setSeverity = false;
             }
             if (setSeverity) DisplayRequestRequiredPreRequisiteTasks();
         }
         protected virtual void DisplayRequestPreWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the task pre-wait time in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} pre-wait time in seconds.");
         }
         protected virtual void DisplaySetPreWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nSet task pre-wait time seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} pre-wait time seconds");
         }
         protected void DisplayRequestPreWaitTimeSeconds()
         {
@@ -505,11 +506,11 @@ namespace FinalProject
         }
         protected virtual void DisplayRequestDurationSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the task duration in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} duration in seconds.");
         }
         protected virtual void DisplaySetDurationSecondsMessage()
         {
-            Console.WriteLine("\nSet task duration in seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} duration in seconds");
         }
         protected void DisplayRequestDurationSeconds()
         {
@@ -541,11 +542,11 @@ namespace FinalProject
         }
         protected virtual void DisplayRequestPostWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nPlease enter the task post-wait time in seconds.");
+            Console.WriteLine($"\nPlease enter the {ObjectNameDisplay} post-wait time in seconds.");
         }
         protected virtual void DisplaySetPostWaitTimeSecondsMessage()
         {
-            Console.WriteLine("\nSet task post-wait time seconds");
+            Console.WriteLine($"\nSet {ObjectNameDisplay} post-wait time seconds");
         }
         protected void DisplayRequestPostWaitTimeSeconds()
         {
@@ -574,6 +575,179 @@ namespace FinalProject
         {
             this.DisplaySetPostWaitTimeSecondsMessage();
             this.DisplayRequestPostWaitTimeSeconds();
+        }
+        internal virtual void DisplayAddMessage(Plan plan)
+        {
+            Console.WriteLine($"\nAdd a {ObjectNameDisplay} ({plan.GetNameForMenus()})");
+        }
+        internal virtual void DisplayAlreadyDefined(string value)
+        {
+            Console.WriteLine($"{value} already defined.");
+            Console.Write("overwrite (y/n)");
+        }
+        internal virtual void DisplaySelectMessage()
+        {
+            Console.Write($"Select a {ObjectNameDisplay}");
+        }
+        internal virtual void DisplayCopyMessage(Plan plan)
+        {
+            Console.WriteLine($"\nCopy a Task ({plan.GetNameForMenus()})");
+        }
+        internal virtual void DisplayEditMessage(Plan plan)
+        {
+            Console.WriteLine($"\nEdit a Task ({plan.GetNameForMenus()})");
+        }
+        internal virtual void DisplayRemoveMessage(Plan plan)
+        {
+            Console.WriteLine($"\nRemove a Task ({plan.GetNameForMenus()})");
+        }
+        internal virtual void DisplayListMessage(Plan plan)
+        {
+            Console.WriteLine($"\nDisplay Taskss ({plan.GetNameForMenus()})\n");
+        }
+        internal virtual void DisplayExportMessage(Plan plan)
+        {
+            Console.WriteLine($"\nExport Tasks ({plan.GetNameForMenus()})\n");
+        }
+        internal virtual void DisplayImportMessage(Plan plan)
+        {
+            Console.WriteLine($"\nImport Tasks ({plan.GetNameForMenus()})\n");
+        }
+        internal virtual void Edit(Task task, BackoutPlan plan, Risks risks)
+        {
+            if (task is not null)
+            {
+                Console.WriteLine();
+                task.Display();
+                Console.Write("\nrename (y/n)");
+                String response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.Name = "";
+                    task.RequestName();
+                }
+                Console.Write("\nchange description (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.Description = "";
+                    task.RequestDescription();
+                }
+                Console.Write("\nchange task type (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.RequestTaskType();
+                }
+                Console.Write("\nchange task state (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.RequestTaskState();
+                }
+                Console.Write("\nchange command (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.Command = "";
+                    task.RequestCommand();
+                }
+                Console.Write("\nchange assugned roles (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.AssignedRoles.Clear();
+                    task.RequestAssignedRoles();
+                }
+                Console.Write("\nchange required pre-requisite jsonText (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.RequiredPreRequisiteTasks.Clear();
+                    task.RequestRequiredPreRequisiteTasks();
+                }
+                Console.Write("\nchange pre-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.PreWaitTimeSeconds = -2;
+                    task.RequestPreWaitTimeSeconds();
+                }
+                Console.Write("\nchange duration (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.DurationSeconds = -2;
+                    task.RequestDurationSeconds();
+                }
+                Console.Write("\nchange post-wait time (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    task.PostWaitTimeSeconds = -2;
+                    task.RequestPostWaitTimeSeconds();
+                }
+            }
+        }
+        internal void DisplayRequestFilenameWriteMessage()
+        {
+            Console.Write("Enter the filename to write to");
+        }
+        internal void DisplayRequestFilenameReadMessage()
+        {
+            Console.Write("Enter the filename to read from");
+        }
+        internal TaskType Create<TaskType>(BackoutPlan plan, Risks risks, Boolean interactive = false) where TaskType : Task
+        {
+            switch (typeof(TaskType).FullName)
+            {
+                case "FinalProject.TemplateMitigation":
+                    return (TaskType)(Task)new TemplateMitigation(risks, interactive);
+                case "FinalProject.TemplateGoNoGo":
+                    return (TaskType)(Task)new TemplateGoNoGo(plan, interactive);
+                case "FinalProject.TemplateBenchmark":
+                    return (TaskType)(Task)new TemplateBenchmark(interactive);
+                case "FinalProject.TemplateTask":
+                    return (TaskType)(Task)new TemplateTask(interactive);
+                case "FinalProject.Mitigation":
+                    return (TaskType)(Task)new Mitigation(risks, interactive);
+                case "FinalProject.GoNoGo":
+                    return (TaskType)(Task)new GoNoGo(plan, interactive);
+                case "FinalProject.Benchmark":
+                    return (TaskType)(Task)new Benchmark(interactive);
+                case "FinalProject.Task":
+                    return (TaskType)new Task(interactive);
+                default:
+                    //String naem = typeof(Task).FullName;
+                    //Console.WriteLine(Name);
+                    return (TaskType)new Task(interactive);
+            }
+        }
+        internal TaskType Create<TaskType>(TaskType task) where TaskType : Task
+        {
+            switch(typeof(TaskType).FullName)
+            {
+                case "FinalProject.TemplateMitigation":
+                    return (TaskType)(Task)new TemplateMitigation((TemplateMitigation)(Task)task);
+                case "FinalProject.TemplateGoNoGo":
+                    return (TaskType)(Task)new TemplateGoNoGo((TemplateGoNoGo)(Task)task);
+                case "FinalProject.TemplateBenchmark":
+                    return (TaskType)(Task)new TemplateBenchmark((TemplateBenchmark)(Task)task);
+                case "FinalProject.TemplateTask":
+                    return (TaskType)(Task)new TemplateTask((TemplateTask)(Task)task);
+                case "FinalProject.Mitigation":
+                    return (TaskType)(Task)new Mitigation((Mitigation)(Task)task);
+                case "FinalProject.GoNoGo":
+                    return (TaskType)(Task)new GoNoGo((GoNoGo)(Task)task);
+                case "FinalProject.Benchmark":
+                    return (TaskType)(Task)new Benchmark((Benchmark)(Task)task);
+                case "FinalProject.Task":
+                    return (TaskType)new Task(task);
+                default:
+                    //String naem = typeof(Task).FullName;
+                    //Console.WriteLine(Name);
+                    return (TaskType)new Task(task);
+            }
         }
         internal virtual Task CreateCopy(String newName)
         {
@@ -788,7 +962,10 @@ namespace FinalProject
                             result.Description= taskDescription;
                             return result;
                         case TaskState.Scheduled:
-                            return new ScheduledTask(taskName, taskDescription);
+                            result = new ScheduledTask(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         case TaskState.Assigned:
                             return new AssignedTask(taskName, taskDescription);
                         case TaskState.Implemented:
@@ -823,7 +1000,10 @@ namespace FinalProject
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateGoNoGo(taskName, taskDescription);
+                            result = new TemplateGoNoGo(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         case TaskState.Scheduled:
                             return new ScheduledGoNoGo(taskName, taskDescription);
                         case TaskState.Assigned:
@@ -831,7 +1011,10 @@ namespace FinalProject
                         case TaskState.Implemented:
                             return new ImplementedGoNoGo(taskName, taskDescription);
                         default:
-                            return new TemplateGoNoGo(taskName, taskDescription);
+                            result = new TemplateGoNoGo(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                     }
                 case TaskType.Mitigation:
                     switch (state)
