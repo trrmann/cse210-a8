@@ -412,6 +412,7 @@ namespace FinalProject
         {
             if (task is not null)
             {
+                base.Edit(task, plan, risks);
                 Console.Write("\nchange start date time (y/n)");
                 String response = IApplication.READ_RESPONSE().ToLower();
                 if (IApplication.YES_RESPONSE.Contains(response))
@@ -426,7 +427,6 @@ namespace FinalProject
                     ((ScheduledTask)task).AssignmentOwnerName = "";
                     ((ScheduledTask)task).RequestAssignmentOwnerName();
                 }
-                base.Edit(task, plan, risks);
                 Console.Write("\nchange risk (y/n)");
                 response = IApplication.READ_RESPONSE().ToLower();
                 if (IApplication.YES_RESPONSE.Contains(response))

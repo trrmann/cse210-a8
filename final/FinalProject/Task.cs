@@ -965,7 +965,10 @@ namespace FinalProject
                             result.Description = taskDescription;
                             return result;
                         case TaskState.Scheduled:
-                            return new ScheduledBenchmark(taskName, taskDescription);
+                            result = new ScheduledBenchmark(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         default:
                             result = new TemplateBenchmark(false);
                             result.Name = taskName;
