@@ -897,8 +897,6 @@ namespace FinalProject
                             return new ScheduledTask();
                         case TaskState.Assigned:
                             return new AssignedTask();
-                        case TaskState.Implemented:
-                            return new ImplementedTask();
                         default:
                             return new TemplateTask();
                     }
@@ -911,8 +909,6 @@ namespace FinalProject
                             return new ScheduledBenchmark();
                         case TaskState.Assigned:
                             return new AssignedBenchmark();
-                        case TaskState.Implemented:
-                            return new ImplementedBenchmark();
                         default:
                             return new TemplateBenchmark();
                     }
@@ -925,8 +921,6 @@ namespace FinalProject
                             return new ScheduledGoNoGo();
                         case TaskState.Assigned:
                             return new AssignedGoNoGo();
-                        case TaskState.Implemented:
-                            return new ImplementedGoNoGo();
                         default:
                             return new TemplateGoNoGo();
                     }
@@ -939,8 +933,6 @@ namespace FinalProject
                             return new ScheduledMitigation();
                         case TaskState.Assigned:
                             return new AssignedMitigation();
-                        case TaskState.Implemented:
-                            return new ImplementedMitigation();
                         default:
                             return new TemplateMitigation();
                     }
@@ -968,8 +960,6 @@ namespace FinalProject
                             return result;
                         case TaskState.Assigned:
                             return new AssignedTask(taskName, taskDescription);
-                        case TaskState.Implemented:
-                            return new ImplementedTask(taskName, taskDescription);
                         default:
                             result = new TemplateTask(false);
                             result.Name = taskName;
@@ -988,8 +978,6 @@ namespace FinalProject
                             return new ScheduledBenchmark(taskName, taskDescription);
                         case TaskState.Assigned:
                             return new AssignedBenchmark(taskName, taskDescription);
-                        case TaskState.Implemented:
-                            return new ImplementedBenchmark(taskName, taskDescription);
                         default:
                             result = new TemplateBenchmark(false);
                             result.Name = taskName;
@@ -1008,8 +996,6 @@ namespace FinalProject
                             return new ScheduledGoNoGo(taskName, taskDescription);
                         case TaskState.Assigned:
                             return new AssignedGoNoGo(taskName, taskDescription);
-                        case TaskState.Implemented:
-                            return new ImplementedGoNoGo(taskName, taskDescription);
                         default:
                             result = new TemplateGoNoGo(false);
                             result.Name = taskName;
@@ -1028,8 +1014,6 @@ namespace FinalProject
                             return new ScheduledMitigation(taskName, taskDescription);
                         case TaskState.Assigned:
                             return new AssignedMitigation(taskName, taskDescription);
-                        case TaskState.Implemented:
-                            return new ImplementedMitigation(taskName, taskDescription);
                         default:
                             result = new TemplateMitigation(risks, false);
                             result.Name = taskName;

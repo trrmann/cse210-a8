@@ -4,8 +4,7 @@
     {
         Template,
         Scheduled,
-        Assigned,
-        Implemented
+        Assigned
     }
     public interface ITaskStateUtiltities
     {
@@ -26,8 +25,7 @@
             {
                 { TaskState.Template, "Template" },
                 { TaskState.Assigned, "Assigned" },
-                { TaskState.Scheduled, "Scheduled" },
-                { TaskState.Implemented, "Implemented" }
+                { TaskState.Scheduled, "Scheduled" }
             };
         }
     }

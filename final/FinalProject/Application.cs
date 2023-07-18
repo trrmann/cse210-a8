@@ -35,8 +35,7 @@ namespace FinalProject
                     { 1, new(true, new(new("1)  Manage Template Tasks", null), new("TemplateTasksMenu", null))) },
                     { 2, new(true, new(new("2)  Manage Assigned Tasks", null), new("AssignedTasksMenu", null))) },
                     { 3, new(true, new(new("3)  Manage Scheduled Tasks", null), new("ScheduledTasksMenu", null))) },
-                    { 4, new(true, new(new("4)  Manage Implemented Tasks", null), new("ImplementedTasksMenu", null))) },
-                    { 5, new(true, new(new("5)  Manage Tasks", null), new("TasksMenu", null))) },
+                    { 4, new(true, new(new("4)  Manage Tasks", null), new("TasksMenu", null))) },
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
@@ -220,63 +219,6 @@ namespace FinalProject
                     { 5, new(true, new(new("5)  List Scheduled Mitigation Tasks", null), new("", Plan.ListScheduledMitigationTasks))) },
                     { 6, new(true, new(new("6)  Export Scheduled Mitigation Tasks", null), new("", Plan.ExportScheduledMitigationTasks))) },
                     { 7, new(true, new(new("7)  Import Scheduled Mitigation Tasks", null), new("", Plan.ImportScheduledMitigationTasks))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "ImplementedTasksMenu", new(){
-                    { 0, new(false, new(new("\nImplemented Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Manage Implemented Tasks", null), new("ImplementedRegularTasksMenu", null))) },
-                    { 2, new(true, new(new("2)  Manage Implemented Benchmark Tasks", null), new("ImplementedBenchmarkTasksMenu", null))) },
-                    { 3, new(true, new(new("3)  Manage Implemented Go / No Go Tasks", null), new("ImplementedGoNoGoTasksMenu", null))) },
-                    { 4, new(true, new(new("4)  Manage Implemented Mitigation Tasks", null), new("ImplementedMitigationTasksMenu", null))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "ImplementedRegularTasksMenu", new(){
-                    { 0, new(false, new(new("\nImplemented Regular Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Implemented Task", null), new("", Plan.AddImplementedTask))) },
-                    { 2, new(true, new(new("2)  Copy Implemented Task", null), new("", Plan.CopyImplementedTask))) },
-                    { 3, new(true, new(new("3)  Edit Implemented Task", null), new("", Plan.EditImplementedTask))) },
-                    { 4, new(true, new(new("4)  Remove Implemented Task", null), new("", Plan.RemoveImplementedTask))) },
-                    { 5, new(true, new(new("5)  List Implemented Tasks", null), new("", Plan.ListImplementedTasks))) },
-                    { 6, new(true, new(new("6)  Export Implemented Tasks", null), new("", Plan.ExportImplementedTasks))) },
-                    { 7, new(true, new(new("7)  Import Implemented Tasks", null), new("", Plan.ImportImplementedTasks))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "ImplementedBenchmarkTasksMenu", new(){
-                    { 0, new(false, new(new("\nImplemented Benchmark Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Implemented Benchmark Task", null), new("", Plan.AddImplementedBenchmarkTask))) },
-                    { 2, new(true, new(new("2)  Copy Implemented Benchmark Task", null), new("", Plan.CopyImplementedBenchmarkTask))) },
-                    { 3, new(true, new(new("3)  Edit Implemented Benchmark Task", null), new("", Plan.EditImplementedBenchmarkTask))) },
-                    { 4, new(true, new(new("4)  Remove Implemented Benchmark Task", null), new("", Plan.RemoveImplementedBenchmarkTask))) },
-                    { 5, new(true, new(new("5)  List Implemented Benchmark Tasks", null), new("", Plan.ListImplementedBenchmarkTasks))) },
-                    { 6, new(true, new(new("6)  Export Implemented Benchmark Tasks", null), new("", Plan.ExportImplementedBenchmarkTasks))) },
-                    { 7, new(true, new(new("7)  Import Implemented Benchmark Tasks", null), new("", Plan.ImportImplementedBenchmarkTasks))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "ImplementedGoNoGoTasksMenu", new(){
-                    { 0, new(false, new(new("\nImplemented GoNoGo Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Implemented GoNoGo Task", null), new("", Plan.AddImplementedGoNoGoTask))) },
-                    { 2, new(true, new(new("2)  Copy Implemented GoNoGo Task", null), new("", Plan.CopyImplementedGoNoGoTask))) },
-                    { 3, new(true, new(new("3)  Edit Implemented GoNoGo Task", null), new("", Plan.EditImplementedGoNoGoTask))) },
-                    { 4, new(true, new(new("4)  Remove Implemented GoNoGo Task", null), new("", Plan.RemoveImplementedGoNoGoTask))) },
-                    { 5, new(true, new(new("5)  List Implemented GoNoGo Tasks", null), new("", Plan.ListImplementedGoNoGoTasks))) },
-                    { 6, new(true, new(new("6)  Export Implemented GoNoGo Tasks", null), new("", Plan.ExportImplementedGoNoGoTasks))) },
-                    { 7, new(true, new(new("7)  Import Implemented GoNoGo Tasks", null), new("", Plan.ImportImplementedGoNoGoTasks))) },
-                    { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
-                    { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
-                },
-                { "ImplementedMitigationTasksMenu", new(){
-                    { 0, new(false, new(new("\nImplemented Mitigation Task Management Menu ({0})", Plan.GetNameForMenus), new("", null))) },
-                    { 1, new(true, new(new("1)  Add Implemented Mitigation Task", null), new("", Plan.AddImplementedMitigationTask))) },
-                    { 2, new(true, new(new("2)  Copy Implemented Mitigation Task", null), new("", Plan.CopyImplementedMitigationTask))) },
-                    { 3, new(true, new(new("3)  Edit Implemented Mitigation Task", null), new("", Plan.EditImplementedMitigationTask))) },
-                    { 4, new(true, new(new("4)  Remove Implemented Mitigation Task", null), new("", Plan.RemoveImplementedMitigationTask))) },
-                    { 5, new(true, new(new("5)  List Implemented Mitigation Tasks", null), new("", Plan.ListImplementedMitigationTasks))) },
-                    { 6, new(true, new(new("6)  Export Implemented Mitigation Tasks", null), new("", Plan.ExportImplementedMitigationTasks))) },
-                    { 7, new(true, new(new("7)  Import Implemented Mitigation Tasks", null), new("", Plan.ImportImplementedMitigationTasks))) },
                     { 8, new(true, new(new("8)  Return to Main Menu", null), new("MainMenu", null))) },
                     { 9, new(true, new(new("9)  Quit", null), new("", Exit))) } }
                 },
