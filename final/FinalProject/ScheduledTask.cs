@@ -110,6 +110,7 @@ namespace FinalProject
         internal static new string ObjectNameDisplay { get; } = "scheduled task";
         internal static DateTime NonDate { get; } = new DateTime(1,1,1,0,0,0,0,1);
         internal DateTime ScheduledStart { get; set; } = NonDate;
+        protected String AssignmentOwnerName { get; set; }
         public ScheduledTask()
         {
             Init();

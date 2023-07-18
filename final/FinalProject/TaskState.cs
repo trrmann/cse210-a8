@@ -3,8 +3,7 @@
     public enum TaskState
     {
         Template,
-        Scheduled,
-        Assigned
+        Scheduled
     }
     public interface ITaskStateUtiltities
     {
@@ -24,7 +23,6 @@
             return new()
             {
                 { TaskState.Template, "Template" },
-                { TaskState.Assigned, "Assigned" },
                 { TaskState.Scheduled, "Scheduled" }
             };
         }

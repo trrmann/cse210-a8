@@ -319,17 +319,12 @@ namespace FinalProject
                 Console.WriteLine(String.Join('\\', parts));
             }
         }
-        internal void PlanRollback()
-        {
-            /*TODO - PlanRollback*/
-            throw new NotImplementedException();
-        }
-        internal void Estimate()
-        {
-            /*TODO - Estimate*/
-            throw new NotImplementedException();
-        }
         internal void Allocate()
+        {
+            /*TODO - Allocate*/
+            throw new NotImplementedException();
+        }
+        internal void Deallocate()
         {
             /*TODO - Allocate*/
             throw new NotImplementedException();
@@ -381,34 +376,6 @@ namespace FinalProject
         internal void ListTemplateMitigationTasks() => Tasks.Display<TemplateMitigation>(this);
         internal void ExportTemplateMitigationTasks() => Tasks.Export<TemplateMitigation>(this);
         internal void ImportTemplateMitigationTasks() => Tasks.Import<TemplateMitigation>(this);
-        internal void AddAssignedTask() => Tasks.Add<AssignedTask>(this);
-        internal void CopyAssignedTask() => Tasks.Copy<AssignedTask>(this);
-        internal void EditAssignedTask() => Tasks.Edit<AssignedTask>(this);
-        internal void RemoveAssignedTask() => Tasks.RemoveTask<AssignedTask>(this);
-        internal void ListAssignedTasks() => Tasks.Display<AssignedTask>(this);
-        internal void ExportAssignedTasks() => Tasks.Export<AssignedTask>(this);
-        internal void ImportAssignedTasks() => Tasks.Import<AssignedTask>(this);
-        internal void AddAssignedBenchmarkTask() => Tasks.Add<AssignedBenchmark>(this);
-        internal void CopyAssignedBenchmarkTask() => Tasks.Copy<AssignedBenchmark>(this);
-        internal void EditAssignedBenchmarkTask() => Tasks.Edit<AssignedBenchmark>(this);
-        internal void RemoveAssignedBenchmarkTask() => Tasks.RemoveTask<AssignedBenchmark>(this);
-        internal void ListAssignedBenchmarkTasks() => Tasks.Display<AssignedBenchmark>(this);
-        internal void ExportAssignedBenchmarkTasks() => Tasks.Export<AssignedBenchmark>(this);
-        internal void ImportAssignedBenchmarkTasks() => Tasks.Import<AssignedBenchmark>(this);
-        internal void AddAssignedGoNoGoTask() => Tasks.Add<AssignedGoNoGo>(this);
-        internal void CopyAssignedGoNoGoTask() => Tasks.Copy<AssignedGoNoGo>(this);
-        internal void EditAssignedGoNoGoTask() => Tasks.Edit<AssignedGoNoGo>(this);
-        internal void RemoveAssignedGoNoGoTask() => Tasks.RemoveTask<AssignedGoNoGo>(this);
-        internal void ListAssignedGoNoGoTasks() => Tasks.Display<AssignedGoNoGo>(this);
-        internal void ExportAssignedGoNoGoTasks() => Tasks.Export<AssignedGoNoGo>(this);
-        internal void ImportAssignedGoNoGoTasks() => Tasks.Import<AssignedGoNoGo>(this);
-        internal void AddAssignedMitigationTask() => Tasks.Add<AssignedMitigation>(this);
-        internal void CopyAssignedMitigationTask() => Tasks.Copy<AssignedMitigation>(this);
-        internal void EditAssignedMitigationTask() => Tasks.Edit<AssignedMitigation>(this);
-        internal void RemoveAssignedMitigationTask() => Tasks.RemoveTask<AssignedMitigation>(this);
-        internal void ListAssignedMitigationTasks() => Tasks.Display<AssignedMitigation>(this);
-        internal void ExportAssignedMitigationTasks() => Tasks.Export<AssignedMitigation>(this);
-        internal void ImportAssignedMitigationTasks() => Tasks.Import<AssignedMitigation>(this);
         internal void AddScheduledTask() => Tasks.Add<ScheduledTask>(this);
         internal void CopyScheduledTask() => Tasks.Copy<ScheduledTask>(this);
         internal void EditScheduledTask() => Tasks.Edit<ScheduledTask>(this);
