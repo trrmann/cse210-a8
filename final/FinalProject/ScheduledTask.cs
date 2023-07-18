@@ -73,12 +73,16 @@ namespace FinalProject
         [JsonRequired]
         [JsonPropertyName("ScheduledStart")]
         public DateTime ScheduledStart { get { return ScheduledTask.ScheduledStart; } set { ScheduledTask.ScheduledStart = value; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("AssignmentOwnerName")]
+        public String AssignmentOwnerName { get { return ScheduledTask.AssignmentOwnerName; } set { ScheduledTask.AssignmentOwnerName = value; } }
         public JsonScheduledTask()
         {
             ScheduledTask = new();
         }
         [JsonConstructor]
-        public JsonScheduledTask(JsonNamedObject NamedObject, String Description, TaskType ScheduledTaskType, TaskState ScheduledTaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart) : base(NamedObject, Description, ScheduledTaskType, ScheduledTaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds)
+        public JsonScheduledTask(JsonNamedObject NamedObject, String Description, TaskType ScheduledTaskType, TaskState ScheduledTaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName) : base(NamedObject, Description, ScheduledTaskType, ScheduledTaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds)
         {
             this.NamedObject = NamedObject;
             this.Description = Description;
@@ -91,6 +95,7 @@ namespace FinalProject
             this.DurationSeconds = DurationSeconds;
             this.PostWaitTimeSeconds = PostWaitTimeSeconds;
             this.ScheduledStart = ScheduledStart;
+            this.AssignmentOwnerName = AssignmentOwnerName;
         }
         public JsonScheduledTask(ScheduledTask ScheduledTask) : base((JsonNamedObject)ScheduledTask, ScheduledTask.Description, ScheduledTask.TaskType, ScheduledTask.TaskState, ScheduledTask.Command, ScheduledTask.AssignedRoles, ScheduledTask.RequiredPreRequisiteTasks, ScheduledTask.PreWaitTimeSeconds, ScheduledTask.DurationSeconds, ScheduledTask.PostWaitTimeSeconds)
         {
@@ -110,7 +115,7 @@ namespace FinalProject
         internal static new string ObjectNameDisplay { get; } = "scheduled task";
         internal static DateTime NonDate { get; } = new DateTime(1,1,1,0,0,0,0,1);
         internal DateTime ScheduledStart { get; set; } = NonDate;
-        protected String AssignmentOwnerName { get; set; }
+        internal String AssignmentOwnerName { get; set; } = "";
         public ScheduledTask()
         {
             Init();
@@ -119,21 +124,21 @@ namespace FinalProject
         {
             Init(interactive);
         }
-        public ScheduledTask(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        public ScheduledTask(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
-        public ScheduledTask(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        public ScheduledTask(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
-        public ScheduledTask(DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        public ScheduledTask(DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
-        public ScheduledTask(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        public ScheduledTask(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
         public ScheduledTask(ScheduledTask task, Boolean interactive = false)
         {
@@ -145,17 +150,17 @@ namespace FinalProject
         }
         protected override void Init(Boolean interactive = false)
         {
-            Init("", NameType.Thing, "", TaskType.Task, TaskState.Template, "", new(), new(), 0, 0, 0, new(), interactive);
+            Init("", NameType.Thing, "", TaskType.Task, TaskState.Template, "", new(), new(), 0, 0, 0, new(), "", interactive);
         }
-        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
-        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, interactive);
+            Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
         }
-        protected override void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
             base.Init(Name, Description, interactive);
             if (interactive)
@@ -171,6 +176,7 @@ namespace FinalProject
                 this.TaskType = TaskType.Task;
                 this.TaskState = TaskState.Template;
                 this.ScheduledStart = ScheduledStart;
+                this.AssignmentOwnerName = AssignmentOwnerName;
                 RequestCommand();
                 RequestAssignedRoles();
                 RequestRequiredPreRequisiteTasks();
@@ -178,6 +184,7 @@ namespace FinalProject
                 RequestDurationSeconds();
                 RequestPostWaitTimeSeconds();
                 RequestScheduledStart();
+                RequestAssignmentOwnerName();
             }
             else
             {
@@ -190,6 +197,7 @@ namespace FinalProject
                 this.DurationSeconds = DurationSeconds;
                 this.PostWaitTimeSeconds = PostWaitTimeSeconds;
                 this.ScheduledStart = ScheduledStart;
+                this.AssignmentOwnerName = AssignmentOwnerName;
             }
         }
         protected void Init(ScheduledTask task, Boolean interactive = false)
@@ -206,8 +214,9 @@ namespace FinalProject
             DurationSeconds = task.DurationSeconds;
             PostWaitTimeSeconds = task.PostWaitTimeSeconds;
             ScheduledStart = task.ScheduledStart;
+            AssignmentOwnerName = task.AssignmentOwnerName;
         }
-        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, Boolean interactive = false)
+        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
             switch (riskName)
             {
@@ -225,6 +234,7 @@ namespace FinalProject
                     this.DurationSeconds = DurationSeconds;
                     this.PostWaitTimeSeconds = PostWaitTimeSeconds;
                     this.ScheduledStart = ScheduledStart;
+                    this.AssignmentOwnerName = AssignmentOwnerName;
                     break;
             }
         }
@@ -268,7 +278,7 @@ namespace FinalProject
         internal override void DisplayImportMessage(Plan plan) => Console.WriteLine($"\nImport {ObjectNameDisplay}s ({plan.GetNameForMenus()})\n");
         protected virtual void DisplayRequestScheduledStartMessage()
         {
-            Console.WriteLine($"\nPlease enter the start date time of the tast.");
+            Console.WriteLine($"\nPlease enter the start date time of the task.");
         }
         protected virtual void DisplaySetScheduledStartMessage()
         {
@@ -312,6 +322,35 @@ namespace FinalProject
             }
             if (setDate) DisplayRequestScheduledStart();
         }
+        protected virtual void DisplayRequestAssignmentOwnerNameMessage()
+        {
+            Console.WriteLine($"\nPlease enter the name of the preson or team assigned to perform this task.");
+        }
+        protected virtual void DisplaySetAssignmentOwnerNameMessage()
+        {
+            Console.WriteLine($"\nSet {ObjectNameDisplay} assignment.");
+        }
+        protected void DisplayRequestAssignmentOwnerName()
+        {
+            DisplayRequestAssignmentOwnerNameMessage();
+            AssignmentOwnerName = IApplication.READ_RESPONSE();
+        }
+        protected Boolean HasAssignmentOwnerName()
+        {
+            return (AssignmentOwnerName != "");
+        }
+        internal void RequestAssignmentOwnerName()
+        {
+            Boolean setDate = true;
+            this.DisplaySetAssignmentOwnerNameMessage();
+            if (HasAssignmentOwnerName())
+            {
+                Display(false, true, -1);
+                DisplayAlreadyDefined(AssignmentOwnerName);
+                if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setDate = false;
+            }
+            if (setDate) DisplayRequestAssignmentOwnerName();
+        }
         internal override void Edit(Task task, BackoutPlan plan, Risks risks)
         {
             if (task is not null)
@@ -323,6 +362,13 @@ namespace FinalProject
                 {
                     ((ScheduledTask)task).ScheduledStart = NonDate;
                     ((ScheduledTask)task).RequestScheduledStart();
+                }
+                Console.Write("\nchange assignment (y/n)");
+                response = IApplication.READ_RESPONSE().ToLower();
+                if (IApplication.YES_RESPONSE.Contains(response))
+                {
+                    ((ScheduledTask)task).AssignmentOwnerName = "";
+                    ((ScheduledTask)task).RequestAssignmentOwnerName();
                 }
             }
         }

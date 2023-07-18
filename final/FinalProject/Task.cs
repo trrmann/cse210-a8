@@ -997,7 +997,10 @@ namespace FinalProject
                             result.Description = taskDescription;
                             return result;
                         case TaskState.Scheduled:
-                            return new ScheduledMitigation(taskName, taskDescription);
+                            result = new ScheduledMitigation(risks, false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         default:
                             result = new TemplateMitigation(risks, false);
                             result.Name = taskName;
