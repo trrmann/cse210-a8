@@ -11,6 +11,7 @@ namespace FinalProject
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
     [JsonDerivedType(typeof(JsonPlan), typeDiscriminator: "Plan")]
+    [JsonDerivedType(typeof(JsonBackoutPlan), typeDiscriminator: "BackoutPlan")]
     internal class JsonPlan : JsonDescribedObject
     {
         protected Plan Plan { get; set; }
@@ -55,7 +56,13 @@ namespace FinalProject
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("BackoutPlan")]
-        public JsonBackoutPlan BackoutPlan { get { return Plan.BackoutPlan; } set { Plan.BackoutPlan = value; } }
+        public JsonBackoutPlan BackoutPlan {
+            get {
+                if (Plan is null) return null; 
+                return Plan.BackoutPlan;
+            } set {
+                if (Plan is not null) Plan.BackoutPlan = value;
+            } }
         public JsonPlan() : base()
         {
             Plan = new(false, false);
@@ -222,6 +229,7 @@ namespace FinalProject
             Console.WriteLine($"{Description}");
             ListRisks();
             ListTasks();
+            if (BackoutPlan is not null) DisplayBackOut();
         }
         internal void Load()
         {
@@ -233,7 +241,7 @@ namespace FinalProject
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 IncludeFields = true,
-                MaxDepth = 10
+                MaxDepth = 20
             };
             JsonPlan plan = JsonSerializer.Deserialize<JsonPlan>(json, options);
             Plan result = (Plan)plan;
@@ -248,7 +256,7 @@ namespace FinalProject
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 IncludeFields = true,
-                MaxDepth = 10
+                MaxDepth = 20
             };
             String json = JsonSerializer.Serialize(plan, options);
             Console.Write("Enter the filename to write to");
@@ -423,5 +431,78 @@ namespace FinalProject
         internal void ListScheduledMitigationTasks() => Tasks.Display<ScheduledMitigation>(this);
         internal void ExportScheduledMitigationTasks() => Tasks.Export<ScheduledMitigation>(this);
         internal void ImportScheduledMitigationTasks() => Tasks.Import<ScheduledMitigation>(this);
+        internal void DisplayBackOut()
+        {
+            Console.WriteLine($"\nDisplay Backout Plan ({GetNameForMenus()})");
+            Console.WriteLine($"{Description}");
+            ListRisksBackOut();
+            ListTasksBackOut();
+        }
+        internal void AllocateBackOut()
+        {
+            /*TODO - AllocateBackOut*/
+            throw new NotImplementedException();
+        }
+        internal void DeallocateBackOut()
+        {
+            /*TODO - DeallocateBackOut*/
+            throw new NotImplementedException();
+        }
+        internal void AddRiskBackOut() => BackoutPlan.Risks.Add(this);
+        internal void CopyRiskBackOut() => BackoutPlan.Risks.Copy(this);
+        internal void EditRiskBackOut() => BackoutPlan.Risks.Edit(this);
+        internal void RemoveRiskBackOut() => BackoutPlan.Risks.Remove(this);
+        internal void ListRisksBackOut() => BackoutPlan.Risks.Display(this);
+        internal void ExportRisksBackOut() => BackoutPlan.Risks.Export(this);
+        internal void ImportRisksBackOut() => BackoutPlan.Risks = BackoutPlan.Risks.Import(this);
+        internal void AddTaskBackOut() => BackoutPlan.Tasks.Add<Task>(this);
+        internal void CopyTaskBackOut() => BackoutPlan.Tasks.Copy<Task>(this);
+        internal void EditTaskBackOut() => BackoutPlan.Tasks.Edit<Task>(this);
+        internal void RemoveTaskBackOut() => BackoutPlan.Tasks.RemoveTask<Task>(this);
+        internal void ListTasksBackOut() => BackoutPlan.Tasks.Display<Task>(this);
+        internal void ExportTasksBackOut() => BackoutPlan.Tasks.Export<Task>(this);
+        internal void ImportTasksBackOut() => BackoutPlan.Tasks.Import<Task>(this);
+        internal void AddTemplateTaskBackOut() => BackoutPlan.Tasks.Add<TemplateTask>(this);
+        internal void CopyTemplateTaskBackOut() => BackoutPlan.Tasks.Copy<TemplateTask>(this);
+        internal void EditTemplateTaskBackOut() => BackoutPlan.Tasks.Edit<TemplateTask>(this);
+        internal void RemoveTemplateTaskBackOut() => BackoutPlan.Tasks.RemoveTask<TemplateTask>(this);
+        internal void ListTemplateTasksBackOut() => BackoutPlan.Tasks.Display<TemplateTask>(this);
+        internal void ExportTemplateTasksBackOut() => BackoutPlan.Tasks.Export<TemplateTask>(this);
+        internal void ImportTemplateTasksBackOut() => BackoutPlan.Tasks.Import<TemplateTask>(this);
+        internal void AddTemplateBenchmarkTaskBackOut() => BackoutPlan.Tasks.Add<TemplateBenchmark>(this);
+        internal void CopyTemplateBenchmarkTaskBackOut() => BackoutPlan.Tasks.Copy<TemplateBenchmark>(this);
+        internal void EditTemplateBenchmarkTaskBackOut() => BackoutPlan.Tasks.Edit<TemplateBenchmark>(this);
+        internal void RemoveTemplateBenchmarkTaskBackOut() => BackoutPlan.Tasks.RemoveTask<TemplateBenchmark>(this);
+        internal void ListTemplateBenchmarkTasksBackOut() => BackoutPlan.Tasks.Display<TemplateBenchmark>(this);
+        internal void ExportTemplateBenchmarkTasksBackOut() => BackoutPlan.Tasks.Export<TemplateBenchmark>(this);
+        internal void ImportTemplateBenchmarkTasksBackOut() => BackoutPlan.Tasks.Import<TemplateBenchmark>(this);
+        internal void AddTemplateMitigationTaskBackOut() => BackoutPlan.Tasks.Add<TemplateMitigation>(this);
+        internal void CopyTemplateMitigationTaskBackOut() => BackoutPlan.Tasks.Copy<TemplateMitigation>(this);
+        internal void EditTemplateMitigationTaskBackOut() => BackoutPlan.Tasks.Edit<TemplateMitigation>(this);
+        internal void RemoveTemplateMitigationTaskBackOut() => BackoutPlan.Tasks.RemoveTask<TemplateMitigation>(this);
+        internal void ListTemplateMitigationTasksBackOut() => BackoutPlan.Tasks.Display<TemplateMitigation>(this);
+        internal void ExportTemplateMitigationTasksBackOut() => BackoutPlan.Tasks.Export<TemplateMitigation>(this);
+        internal void ImportTemplateMitigationTasksBackOut() => BackoutPlan.Tasks.Import<TemplateMitigation>(this);
+        internal void AddScheduledTaskBackOut() => BackoutPlan.Tasks.Add<ScheduledTask>(this);
+        internal void CopyScheduledTaskBackOut() => BackoutPlan.Tasks.Copy<ScheduledTask>(this);
+        internal void EditScheduledTaskBackOut() => BackoutPlan.Tasks.Edit<ScheduledTask>(this);
+        internal void RemoveScheduledTaskBackOut() => BackoutPlan.Tasks.RemoveTask<ScheduledTask>(this);
+        internal void ListScheduledTasksBackOut() => BackoutPlan.Tasks.Display<ScheduledTask>(this);
+        internal void ExportScheduledTasksBackOut() => BackoutPlan.Tasks.Export<ScheduledTask>(this);
+        internal void ImportScheduledTasksBackOut() => BackoutPlan.Tasks.Import<ScheduledTask>(this);
+        internal void AddScheduledBenchmarkTaskBackOut() => BackoutPlan.Tasks.Add<ScheduledBenchmark>(this);
+        internal void CopyScheduledBenchmarkTaskBackOut() => BackoutPlan.Tasks.Copy<ScheduledBenchmark>(this);
+        internal void EditScheduledBenchmarkTaskBackOut() => BackoutPlan.Tasks.Edit<ScheduledBenchmark>(this);
+        internal void RemoveScheduledBenchmarkTaskBackOut() => BackoutPlan.Tasks.RemoveTask<ScheduledBenchmark>(this);
+        internal void ListScheduledBenchmarkTasksBackOut() => BackoutPlan.Tasks.Display<ScheduledBenchmark>(this);
+        internal void ExportScheduledBenchmarkTasksBackOut() => BackoutPlan.Tasks.Export<ScheduledBenchmark>(this);
+        internal void ImportScheduledBenchmarkTasksBackOut() => BackoutPlan.Tasks.Import<ScheduledBenchmark>(this);
+        internal void AddScheduledMitigationTaskBackOut() => BackoutPlan.Tasks.Add<ScheduledMitigation>(this);
+        internal void CopyScheduledMitigationTaskBackOut() => BackoutPlan.Tasks.Copy<ScheduledMitigation>(this);
+        internal void EditScheduledMitigationTaskBackOut() => BackoutPlan.Tasks.Edit<ScheduledMitigation>(this);
+        internal void RemoveScheduledMitigationTaskBackOut() => BackoutPlan.Tasks.RemoveTask<ScheduledMitigation>(this);
+        internal void ListScheduledMitigationTasksBackOut() => BackoutPlan.Tasks.Display<ScheduledMitigation>(this);
+        internal void ExportScheduledMitigationTasksBackOut() => BackoutPlan.Tasks.Export<ScheduledMitigation>(this);
+        internal void ImportScheduledMitigationTasksBackOut() => BackoutPlan.Tasks.Import<ScheduledMitigation>(this);
     }
 }

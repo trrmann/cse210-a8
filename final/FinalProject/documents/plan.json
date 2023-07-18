@@ -1,0 +1,315 @@
+{
+  "$type": "Plan",
+  "NamedObject": {
+    "$type": "NamedObject",
+    "Name": {
+      "NameType": 3,
+      "Name": "plan A"
+    }
+  },
+  "Description": "plan A",
+  "Manager": {
+    "NameType": 3,
+    "Name": "plan a"
+  },
+  "Tasks": {
+    "task": {
+      "$type": "Task",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "task"
+        }
+      },
+      "Description": "task template",
+      "TaskType": 0,
+      "TaskState": 0,
+      "Command": "task template",
+      "AssignedRoles": [
+        "task template"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "task template"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "taskTemplateBenchmark": {
+      "$type": "Task",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "task template benchmark"
+        }
+      },
+      "Description": "task template benchmark",
+      "TaskType": 1,
+      "TaskState": 0,
+      "Command": "task template benchmark",
+      "AssignedRoles": [
+        "task template benchmark"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "task template benchmark"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "templateTask": {
+      "$type": "TemplateTask",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "template task"
+        }
+      },
+      "Description": "template task",
+      "TemplateTaskType": 0,
+      "TemplateTaskState": 0,
+      "Command": "template task",
+      "AssignedRoles": [
+        "template task"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "template task"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "TaskType": 0,
+      "TaskState": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "templateBenchmarkTask": {
+      "$type": "TemplateBenchmark",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "template benchmark task"
+        }
+      },
+      "Description": "template benchmark task",
+      "TemplateBenchmarkType": 1,
+      "TemplateBenchmarkState": 0,
+      "Command": "template benchmark task",
+      "AssignedRoles": [
+        "template benchmark task"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "template benchmark task"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "ReportToPeople": [
+        "template benchmark task"
+      ],
+      "ReportToTeams": [
+        "template benchmark task"
+      ],
+      "TemplateTaskType": 1,
+      "TemplateTaskState": 0,
+      "TaskType": 1,
+      "TaskState": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "templateGo/NoGoTask": {
+      "$type": "TemplateBenchmark",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "template go / no go task"
+        }
+      },
+      "Description": "template go / no go task",
+      "TemplateBenchmarkType": 2,
+      "TemplateBenchmarkState": 0,
+      "Command": "template go / no go task",
+      "AssignedRoles": [
+        "template go / no go task"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "template go / no go task"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "ReportToPeople": [
+        "template go / no go task"
+      ],
+      "ReportToTeams": [
+        "template go / no go task"
+      ],
+      "TemplateTaskType": 2,
+      "TemplateTaskState": 0,
+      "TaskType": 2,
+      "TaskState": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "templateMitigationTask": {
+      "$type": "TemplateMitigation",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "template mitigation task"
+        }
+      },
+      "Description": "template mitigation task",
+      "TemplateMitigationType": 3,
+      "TemplateMitigationState": 0,
+      "Command": "template mitigation task",
+      "AssignedRoles": [
+        "template mitigation task"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "template mitigation task"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "Risk": {
+        "$type": "Risk",
+        "NamedObject": {
+          "$type": "NamedObject",
+          "Name": {
+            "NameType": 3,
+            "Name": "template mitigation task risk"
+          }
+        },
+        "Description": "template mitigation task risk",
+        "Severity": "low",
+        "Name": {
+          "NameType": 3,
+          "Name": ""
+        }
+      },
+      "TemplateTaskType": 3,
+      "TemplateTaskState": 0,
+      "TaskType": 3,
+      "TaskState": 0,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "scheduledTask": {
+      "$type": "TemplateTask",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "scheduled task"
+        }
+      },
+      "Description": "scheduled task",
+      "TemplateTaskType": 0,
+      "TemplateTaskState": 1,
+      "Command": "scheduled task",
+      "AssignedRoles": [
+        "scheduled task"
+      ],
+      "RequiredPreRequisiteTasks": [
+        "scheduled task"
+      ],
+      "PreWaitTimeSeconds": 0,
+      "DurationSeconds": 300,
+      "PostWaitTimeSeconds": 0,
+      "TaskType": 0,
+      "TaskState": 1,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    }
+  },
+  "Risks": {
+    "templateMitigationTaskRisk": {
+      "$type": "Risk",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": "template mitigation task risk"
+        }
+      },
+      "Description": "template mitigation task risk",
+      "Severity": "low",
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    }
+  },
+  "BackoutPlan": {
+    "$type": "BackoutPlan",
+    "NamedObject": {
+      "$type": "NamedObject",
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "Description": "",
+    "Manager": {
+      "NameType": 0,
+      "Name": ""
+    },
+    "Tasks": {},
+    "Risks": {},
+    "BackoutPlan": {
+      "$type": "BackoutPlan",
+      "NamedObject": {
+        "$type": "NamedObject",
+        "Name": {
+          "NameType": 3,
+          "Name": ""
+        }
+      },
+      "Description": "",
+      "Manager": {
+        "NameType": 0,
+        "Name": ""
+      },
+      "Tasks": {},
+      "Risks": {},
+      "BackoutPlan": null,
+      "Name": {
+        "NameType": 3,
+        "Name": ""
+      }
+    },
+    "Name": {
+      "NameType": 3,
+      "Name": ""
+    }
+  },
+  "Name": {
+    "NameType": 3,
+    "Name": ""
+  }
+}

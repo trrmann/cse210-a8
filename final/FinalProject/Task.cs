@@ -8,12 +8,14 @@ namespace FinalProject
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
     [JsonDerivedType(typeof(JsonTask), typeDiscriminator: "Task")]
-    [JsonDerivedType(typeof(JsonBenchmark), typeDiscriminator: "Benchmark")]
     [JsonDerivedType(typeof(JsonMitigation), typeDiscriminator: "Mitigation")]
+    [JsonDerivedType(typeof(JsonBenchmark), typeDiscriminator: "Benchmark")]
+    [JsonDerivedType(typeof(JsonGoNoGo), typeDiscriminator: "GoNoGo")]
+    [JsonDerivedType(typeof(JsonScheduledTask), typeDiscriminator: "ScheduledTask")]
     [JsonDerivedType(typeof(JsonTemplateTask), typeDiscriminator: "TemplateTask")]
     [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
     [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
-    [JsonDerivedType(typeof(JsonGoNoGo), typeDiscriminator: "GoNoGo")]
+    [JsonDerivedType(typeof(JsonTemplateGoNoGo), typeDiscriminator: "TemplateGoNoGo")]
     internal class JsonTask : JsonDescribedObject
     {
         protected Task Task { get; set; }
@@ -100,6 +102,26 @@ namespace FinalProject
         }
         public static implicit operator JsonTask(Task task)
         {
+            if (typeof(ScheduledGoNoGo).IsInstanceOfType(task))
+            {
+                return new JsonScheduledGoNoGo((ScheduledGoNoGo)task);
+            };
+            if (typeof(ScheduledBenchmark).IsInstanceOfType(task))
+            {
+                return new JsonScheduledBenchmark((ScheduledBenchmark)task);
+            };
+            if (typeof(ScheduledMitigation).IsInstanceOfType(task))
+            {
+                return new JsonScheduledMitigation((ScheduledMitigation)task);
+            };
+            if (typeof(ScheduledTask).IsInstanceOfType(task))
+            {
+                return new JsonScheduledTask((ScheduledTask)task);
+            };
+            if (typeof(TemplateGoNoGo).IsInstanceOfType(task))
+            {
+                return new JsonTemplateGoNoGo((TemplateGoNoGo)task);
+            };
             if (typeof(TemplateBenchmark).IsInstanceOfType(task))
             {
                 return new JsonTemplateBenchmark((TemplateBenchmark)task);
@@ -128,6 +150,36 @@ namespace FinalProject
         }
         public static implicit operator Task(JsonTask task)
         {
+            if (typeof(JsonScheduledGoNoGo).IsInstanceOfType(task))
+            {
+                JsonScheduledGoNoGo jsonScheduledBenchmark = (JsonScheduledGoNoGo)task;
+                ScheduledGoNoGo templateBenchmark = new ScheduledGoNoGo(jsonScheduledBenchmark);
+                return templateBenchmark;
+            };
+            if (typeof(JsonScheduledBenchmark).IsInstanceOfType(task))
+            {
+                JsonScheduledBenchmark jsonScheduledBenchmark = (JsonScheduledBenchmark)task;
+                ScheduledBenchmark templateBenchmark = new ScheduledBenchmark(jsonScheduledBenchmark);
+                return templateBenchmark;
+            };
+            if (typeof(JsonScheduledMitigation).IsInstanceOfType(task))
+            {
+                JsonScheduledMitigation jsonScheduledMitigation = (JsonScheduledMitigation)task;
+                ScheduledMitigation templateMitigation = new ScheduledMitigation(jsonScheduledMitigation);
+                return templateMitigation;
+            };
+            if (typeof(JsonScheduledTask).IsInstanceOfType(task))
+            {
+                JsonScheduledTask jsonScheduledTask = (JsonScheduledTask)task;
+                ScheduledTask templateTask = new ScheduledTask(jsonScheduledTask);
+                return templateTask;
+            };
+            if (typeof(JsonTemplateGoNoGo).IsInstanceOfType(task))
+            {
+                JsonTemplateGoNoGo jsonTemplateBenchmark = (JsonTemplateGoNoGo)task;
+                TemplateGoNoGo templateBenchmark = new TemplateGoNoGo(jsonTemplateBenchmark);
+                return templateBenchmark;
+            };
             if (typeof(JsonTemplateBenchmark).IsInstanceOfType(task))
             {
                 JsonTemplateBenchmark jsonTemplateBenchmark = (JsonTemplateBenchmark)task;
@@ -229,8 +281,11 @@ namespace FinalProject
                 this.PreWaitTimeSeconds = PreWaitTimeSeconds;
                 this.DurationSeconds = DurationSeconds;
                 this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                RequestTaskType();
-                RequestTaskState();
+                if (TaskType == TaskType.Task && TaskState == TaskState.Template)
+                {
+                    RequestTaskType();
+                    RequestTaskState();
+                }
                 RequestCommand();
                 RequestAssignedRoles();
                 RequestRequiredPreRequisiteTasks();
@@ -240,14 +295,14 @@ namespace FinalProject
             }
             else
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
                 this.Command = Command;
                 this.AssignedRoles = AssignedRoles;
                 this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
                 this.PreWaitTimeSeconds = PreWaitTimeSeconds;
                 this.DurationSeconds = DurationSeconds;
                 this.PostWaitTimeSeconds = PostWaitTimeSeconds;
+                this.TaskType = TaskType;
+                this.TaskState = TaskState;
             }
         }
         protected virtual void Init(Task task, Boolean interactive = false)
@@ -338,7 +393,7 @@ namespace FinalProject
         internal void RequestTaskType()
         {
             this.DisplaySetTaskTypeMessage();
-            Display(false, true, -1);
+            //Display(false, true, -1);
             DisplayRequestTaskType();
         }
         protected virtual void DisplayRequestTaskStateMessage()
@@ -379,7 +434,7 @@ namespace FinalProject
         internal void RequestTaskState()
         {
             this.DisplaySetTaskStateMessage();
-            Display(false, true, -1);
+            //Display(false, true, -1);
             DisplayRequestTaskState();
         }
         protected virtual void DisplayRequestCommandMessage()
@@ -701,6 +756,14 @@ namespace FinalProject
         {
             switch (typeof(TaskType).FullName)
             {
+                case "FinalProject.ScheduledMitigation":
+                    return (TaskType)(Task)new ScheduledMitigation(risks, interactive);
+                case "FinalProject.ScheduledGoNoGo":
+                    return (TaskType)(Task)new ScheduledGoNoGo(plan, interactive);
+                case "FinalProject.ScheduledBenchmark":
+                    return (TaskType)(Task)new ScheduledBenchmark(interactive);
+                case "FinalProject.ScheduledTask":
+                    return (TaskType)(Task)new ScheduledTask(interactive);
                 case "FinalProject.TemplateMitigation":
                     return (TaskType)(Task)new TemplateMitigation(risks, interactive);
                 case "FinalProject.TemplateGoNoGo":
@@ -727,6 +790,14 @@ namespace FinalProject
         {
             switch(typeof(TaskType).FullName)
             {
+                case "FinalProject.ScheduledMitigation":
+                    return (TaskType)(Task)new ScheduledMitigation((ScheduledMitigation)(Task)task);
+                case "FinalProject.ScheduledGoNoGo":
+                    return (TaskType)(Task)new ScheduledGoNoGo((ScheduledGoNoGo)(Task)task);
+                case "FinalProject.ScheduledBenchmark":
+                    return (TaskType)(Task)new ScheduledBenchmark((ScheduledBenchmark)(Task)task);
+                case "FinalProject.ScheduledTask":
+                    return (TaskType)(Task)new ScheduledTask((ScheduledTask)(Task)task);
                 case "FinalProject.TemplateMitigation":
                     return (TaskType)(Task)new TemplateMitigation((TemplateMitigation)(Task)task);
                 case "FinalProject.TemplateGoNoGo":
@@ -761,11 +832,11 @@ namespace FinalProject
             Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
             Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             base.Display(option);
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-            else Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
+            if (option >= 0) Console.WriteLine(String.Format("Type:  {0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
+            else Console.WriteLine(String.Format("\tType:  {0}", typeMap[TaskType]));
             if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-            else Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
+            else Console.WriteLine(String.Format("\tState:  {0}", stateMap[TaskState]));
+            if (option >= 0) Console.WriteLine(String.Format("State:  {0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
             else Console.WriteLine(String.Format("\tCommand:  {0}", Command));
             int counter = 1;
             foreach(String role in AssignedRoles)
@@ -790,15 +861,15 @@ namespace FinalProject
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
+            base.Display(name, description, option);
             Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
             Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            if (name) { base.Display(option); }
             if (name && description)
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
+                    Console.WriteLine(String.Format("{0}   Type:  {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
+                    Console.WriteLine(String.Format("{0}   State:  {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
                     Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
                     int counter = 1;
                     foreach (String role in AssignedRoles)
@@ -818,8 +889,8 @@ namespace FinalProject
                 }
                 else
                 {
-                    Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
+                    Console.WriteLine(String.Format("\tType:  {0}", typeMap[TaskType]));
+                    Console.WriteLine(String.Format("\tState:  {0}", stateMap[TaskState]));
                     Console.WriteLine(String.Format("\tCommand:  {0}", Command));
                     int counter = 1;
                     foreach (String role in AssignedRoles)
@@ -842,8 +913,8 @@ namespace FinalProject
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("   {0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("   {0}", stateMap[TaskState]));
+                    Console.WriteLine(String.Format("   Type:  {0}", typeMap[TaskType]));
+                    Console.WriteLine(String.Format("   State:  {0}", stateMap[TaskState]));
                     Console.WriteLine(String.Format("   Command:  {0}", Command));
                     int counter = 1;
                     foreach (String role in AssignedRoles)
@@ -863,8 +934,8 @@ namespace FinalProject
                 }
                 else
                 {
-                    Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
+                    Console.WriteLine(String.Format("\tType:  {0}", typeMap[TaskType]));
+                    Console.WriteLine(String.Format("\tState:  {0}", stateMap[TaskState]));
                     Console.WriteLine(String.Format("\tCommand:  {0}", Command));
                     int counter = 1;
                     foreach (String role in AssignedRoles)

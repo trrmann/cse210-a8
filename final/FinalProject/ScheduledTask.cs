@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
@@ -6,8 +7,6 @@ namespace FinalProject
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
     [JsonDerivedType(typeof(JsonScheduledTask), typeDiscriminator: "ScheduledTask")]
-    [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
-    [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
     internal class JsonScheduledTask : JsonTemplateTask
     {
         protected ScheduledTask ScheduledTask { get; set; }
@@ -162,42 +161,22 @@ namespace FinalProject
         }
         protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, Boolean interactive = false)
         {
-            base.Init(Name, Description, interactive);
+            base.Init(Name, Description, TaskType.Task, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
             if (interactive)
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.TaskType = TaskType.Task;
-                this.TaskState = TaskState.Template;
                 this.ScheduledStart = ScheduledStart;
                 this.AssignmentOwnerName = AssignmentOwnerName;
-                RequestCommand();
-                RequestAssignedRoles();
-                RequestRequiredPreRequisiteTasks();
-                RequestPreWaitTimeSeconds();
-                RequestDurationSeconds();
-                RequestPostWaitTimeSeconds();
                 RequestScheduledStart();
                 RequestAssignmentOwnerName();
+                this.TaskType = TaskType.Task;
+                this.TaskState = TaskState.Scheduled;
             }
             else
             {
-                this.TaskType = TaskType.Task;
-                this.TaskState = TaskState.Template;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
                 this.ScheduledStart = ScheduledStart;
                 this.AssignmentOwnerName = AssignmentOwnerName;
+                this.TaskType = TaskType.Task;
+                this.TaskState = TaskState.Scheduled;
             }
         }
         protected void Init(ScheduledTask task, Boolean interactive = false)
@@ -206,7 +185,7 @@ namespace FinalProject
             Name = task.Name;
             Description = task.Description;
             this.TaskType = TaskType.Task;
-            this.TaskState = TaskState.Template;
+            this.TaskState = TaskState.Scheduled;
             Command = task.Command;
             AssignedRoles = task.AssignedRoles;
             RequiredPreRequisiteTasks = task.RequiredPreRequisiteTasks;
@@ -226,7 +205,7 @@ namespace FinalProject
                 default:
                     base.Init(riskName, riskDescription, interactive);
                     this.TaskType = TaskType.Task;
-                    this.TaskState = TaskState.Template;
+                    this.TaskState = TaskState.Scheduled;
                     this.Command = Command;
                     this.AssignedRoles = AssignedRoles;
                     this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
@@ -294,11 +273,11 @@ namespace FinalProject
                 try
                 {
                     ScheduledStart = DateTime.Parse(response);
-                    valid = false;
+                    valid = true;
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Please use the date format of Dow, DD Mon CCYY HH:MM:SS TZN, where HH is 24 hour clock");
+                    Console.WriteLine("Please use the date format of Dow, DD Mon CCYY HH:MM:SS, where HH is 24 hour clock");
                 }
                 catch
                 {
@@ -308,7 +287,7 @@ namespace FinalProject
         }
         protected Boolean HasScheduledStart()
         {
-            return (ScheduledStart.CompareTo(NonDate) != 0);
+            return (String.Compare(ScheduledStart.ToLongDateString() + ScheduledStart.ToLongTimeString(), NonDate.ToLongDateString() + NonDate.ToLongTimeString()) != 0);
         }
         internal void RequestScheduledStart()
         {
@@ -316,7 +295,6 @@ namespace FinalProject
             this.DisplaySetScheduledStartMessage();
             if (HasScheduledStart())
             {
-                Display(false, true, -1);
                 DisplayAlreadyDefined(ScheduledStart.ToString());
                 if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setDate = false;
             }
@@ -379,7 +357,44 @@ namespace FinalProject
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }
-        internal override void Display(int option = -1) => base.Display(option);
-        internal override void Display(Boolean name = true, Boolean description = true, int option = -1) => base.Display(name, description, option);
+        internal override void Display(int option = -1)
+        {
+            base.Display(option);
+            if (option >= 0) Console.WriteLine(String.Format("{0}   Start Date Time:  {1}", new string(' ', option.ToString().Length), ScheduledStart));
+            else Console.WriteLine(String.Format("\tStart Date Time:  {0}", ScheduledStart));
+
+            if (option >= 0) Console.WriteLine(String.Format("{0}   Assigned to:  {1}", new string(' ', option.ToString().Length), AssignmentOwnerName));
+            else Console.WriteLine(String.Format("\tAssigned to:  {0}", AssignmentOwnerName));
+        }
+        internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
+        {
+            base.Display(name, description, option);
+            if (name && description)
+            {
+                if (option >= 0)
+                {
+                    Console.WriteLine(String.Format("{0}   Start Date Time:  {1}", new string(' ', option.ToString().Length), ScheduledStart));
+                    Console.WriteLine(String.Format("{0}   Assigned to:  {1}", new string(' ', option.ToString().Length), AssignmentOwnerName));
+                }
+                else
+                {
+                    Console.WriteLine(String.Format("\tStart Date Time:  {0}", ScheduledStart));
+                    Console.WriteLine(String.Format("\tAssigned to:  {0}", AssignmentOwnerName));
+                }
+            }
+            else if (description)
+            {
+                if (option >= 0)
+                {
+                    Console.WriteLine(String.Format("   Start Date Time:  {0}", ScheduledStart));
+                    Console.WriteLine(String.Format("   Assigned to:  {0}", AssignmentOwnerName));
+                }
+                else
+                {
+                    Console.WriteLine(String.Format("\tStart Date Time:  {0}", ScheduledStart));
+                    Console.WriteLine(String.Format("\tAssigned to:  {0}", AssignmentOwnerName));
+                }
+            }
+        }
     }
 }

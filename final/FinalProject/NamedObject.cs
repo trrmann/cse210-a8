@@ -18,8 +18,10 @@ namespace FinalProject
         public JsonName Name
         {
             get {
+                if(_namedObject is null) _namedObject = new();
                 return _namedObject.Name;
             } set {
+                if (_namedObject is null) _namedObject = new();
                 _namedObject.Name = value;
             }
         }

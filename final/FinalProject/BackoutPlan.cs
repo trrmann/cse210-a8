@@ -5,7 +5,7 @@ namespace FinalProject
     //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
-    [JsonDerivedType(typeof(JsonPlan), typeDiscriminator: "Plan")]
+    [JsonDerivedType(typeof(JsonBackoutPlan), typeDiscriminator: "BackoutPlan")]
     internal class JsonBackoutPlan : JsonPlan
     {
         protected new BackoutPlan BackoutPlan { get; set; }
@@ -34,7 +34,14 @@ namespace FinalProject
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("Description")]
-        public new String Description { get { return BackoutPlan.Description; } set { BackoutPlan.Description = value; } }
+        public new String Description {
+            get {
+                if(BackoutPlan is null) BackoutPlan = new();
+                return BackoutPlan.Description;
+            } set {
+                if (BackoutPlan is null) BackoutPlan = new();
+                BackoutPlan.Description = value;
+            } }
         [JsonInclude]
         [JsonRequired]
         [JsonPropertyName("Manager")]

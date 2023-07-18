@@ -9,6 +9,7 @@ namespace FinalProject
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
     [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
+    [JsonDerivedType(typeof(JsonTemplateGoNoGo), typeDiscriminator: "TemplateGoNoGo")]
     internal class JsonTemplateBenchmark : JsonTemplateTask
     {
         protected TemplateBenchmark TemplateBenchmark { get; set; }
@@ -114,7 +115,7 @@ namespace FinalProject
     public class TemplateBenchmark : TemplateTask
     {
         internal static new string ObjectNameDisplay { get; } = "template benchmark task";
-        protected Benchmark Benchmark { get; set; } = new();
+        protected Benchmark Benchmark { get; set; } = new(false);
         internal List<String> ReportToPeople { get { return Benchmark.ReportToPeople; } set { Benchmark.ReportToPeople = value; } }
         internal List<String> ReportToTeams { get { return Benchmark.ReportToTeams; } set { Benchmark.ReportToTeams = value; } }
         public TemplateBenchmark()
@@ -163,43 +164,23 @@ namespace FinalProject
         }
         protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            base.Init(Name, Description, interactive);
-            Benchmark = new Benchmark(interactive);
+            base.Init(Name, Description, TaskType.Benchmark, TaskState.Template, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Benchmark = new Benchmark(false);
             if (interactive)
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.TaskType = TaskType.Benchmark;
-                this.TaskState = TaskState.Template;
                 this.ReportToPeople = ReportToPeople;
                 this.ReportToTeams = ReportToTeams;
-                RequestCommand();
-                RequestAssignedRoles();
-                RequestRequiredPreRequisiteTasks();
-                RequestPreWaitTimeSeconds();
-                RequestDurationSeconds();
-                RequestPostWaitTimeSeconds();
                 RequestReportToPeople();
                 RequestReportToTeams();
+                this.TaskType = TaskType.Benchmark;
+                this.TaskState = TaskState.Template;
             }
             else
             {
-                this.TaskType = TaskType.Benchmark;
-                this.TaskState = TaskState.Template;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
                 this.ReportToPeople = ReportToPeople;
                 this.ReportToTeams = ReportToTeams;
+                this.TaskType = TaskType.Benchmark;
+                this.TaskState = TaskState.Template;
             }
         }
         protected void Init(TemplateBenchmark task, Boolean interactive = false)
@@ -333,17 +314,27 @@ namespace FinalProject
         {
             Console.WriteLine($"\nSet {ObjectNameDisplay} report to people");
         }
-        protected void DisplayRequestReportToPeople()
+        internal void DisplayRequestReportToPeople()
         {
-            Benchmark.DisplayRequestReportToPeople();
+            DisplayRequestReportToPeopleMessage();
+            String response = IApplication.READ_RESPONSE();
+            ReportToPeople = new List<String>(response.Split(','));
         }
-        protected Boolean HasReportToPeople()
+        internal Boolean HasReportToPeople()
         {
-            return Benchmark.HasReportToPeople();
+            return (ReportToPeople.Count > 0);
         }
         internal void RequestReportToPeople()
         {
-            Benchmark.RequestReportToPeople();
+            Boolean setRisk = true;
+            this.DisplaySetReportToPeopleMessage();
+            if (HasReportToPeople())
+            {
+                Display(false, true, -1);
+                DisplayAlreadyDefined(String.Join(", ", ReportToPeople));
+                if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setRisk = false;
+            }
+            if (setRisk) DisplayRequestReportToPeople();
         }
         protected virtual void DisplayRequestReportToTeamsMessage()
         {
@@ -353,17 +344,27 @@ namespace FinalProject
         {
             Console.WriteLine($"\nSet {ObjectNameDisplay} report to teams");
         }
-        protected void DisplayRequestReportToTeams()
+        internal void DisplayRequestReportToTeams()
         {
-            Benchmark.DisplayRequestReportToTeams();
+            DisplayRequestReportToTeamsMessage();
+            String response = IApplication.READ_RESPONSE();
+            ReportToTeams = new List<String>(response.Split(','));
         }
-        protected Boolean HasReportToTeams()
+        internal Boolean HasReportToTeams()
         {
-            return Benchmark.HasReportToTeams();
+            return (ReportToTeams.Count > 0);
         }
         internal void RequestReportToTeams()
         {
-            Benchmark.RequestReportToTeams();
+            Boolean setRisk = true;
+            this.DisplaySetReportToTeamsMessage();
+            if (HasReportToTeams())
+            {
+                Display(false, true, -1);
+                DisplayAlreadyDefined(String.Join(", ", ReportToTeams));
+                if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower())) setRisk = false;
+            }
+            if (setRisk) DisplayRequestReportToTeams();
         }
         internal override void DisplayAddMessage(Plan plan)
         {
@@ -432,87 +433,39 @@ namespace FinalProject
         }
         internal override void Display(int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             base.Display(option);
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-            else Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-            else Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
-            else Console.WriteLine(String.Format("\tCommand:  {0}", Command));
             int counter = 1;
-            foreach (String role in AssignedRoles)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                else Console.WriteLine(String.Format("\tRole {0}:  {1}", counter, role));
-                counter++;
-            }
-            counter = 1;
-            foreach (String preRequisite in RequiredPreRequisiteTasks)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                else Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
-                counter++;
-            }
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-            else Console.WriteLine(String.Format("\tDuration:  {0} Seconds", DurationSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPost-Wait:  {0} Seconds", PostWaitTimeSeconds));
-            counter = 1;
             foreach (String reportToPerson in ReportToPeople)
             {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   {1} Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
-                else Console.WriteLine(String.Format("\t{0} Report to:  {1}", counter, reportToPerson));
+                if (option >= 0) Console.WriteLine(String.Format("{0}   {1}) Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
+                else Console.WriteLine(String.Format("\t{0}) Report to:  {1}", counter, reportToPerson));
                 counter++;
             }
             counter = 1;
             foreach (String reportToTeam in ReportToTeams)
             {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   {1} Report to team:  {2}", new string(' ', option.ToString().Length), counter, reportToTeam));
-                else Console.WriteLine(String.Format("\t{0} Report to team:  {1}", counter, reportToTeam));
+                if (option >= 0) Console.WriteLine(String.Format("{0}   {1}) Report to team:  {2}", new string(' ', option.ToString().Length), counter, reportToTeam));
+                else Console.WriteLine(String.Format("\t{0}) Report to team:  {1}", counter, reportToTeam));
                 counter++;
             }
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            if (name) { base.Display(option); }
+            base.Display(name, description, option);
             if (name && description)
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-                    Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
                     int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-                    Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-                    counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
-                        Console.WriteLine(String.Format("{0}   {1} Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
+                        Console.WriteLine(String.Format("{0}   {1}) Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
                         counter++;
                     }
                     counter = 1;
                     foreach (String reportToTeam in ReportToTeams)
                     {
-                        Console.WriteLine(String.Format("{0}   {1} Report to team:  {2}", new string(' ', option.ToString().Length), counter, reportToTeam));
+                        Console.WriteLine(String.Format("{0}   {1}) Report to team:  {2}", new string(' ', option.ToString().Length), counter, reportToTeam));
                         counter++;
                     }
                 }
@@ -521,13 +474,13 @@ namespace FinalProject
                     int counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
-                        Console.WriteLine(String.Format("\t{0} Report to:  {1}", counter, reportToPerson));
+                        Console.WriteLine(String.Format("\t{0}) Report to:  {1}", counter, reportToPerson));
                         counter++;
                     }
                     counter = 1;
                     foreach (String reportToTeam in ReportToTeams)
                     {
-                        Console.WriteLine(String.Format("\t{0} Report to team:  {1}", counter, reportToTeam));
+                        Console.WriteLine(String.Format("\t{0}) Report to team:  {1}", counter, reportToTeam));
                         counter++;
                     }
                 }
@@ -536,34 +489,16 @@ namespace FinalProject
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("   {0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("   {0}", stateMap[TaskState]));
-                    Console.WriteLine(String.Format("   Command:  {0}", Command));
                     int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("   Role {0}:  {1}", counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("   PreRequisite {0}:  {1}", counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("   Pre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("   Duration:  {0} Seconds", DurationSeconds));
-                    Console.WriteLine(String.Format("   Post-Wait:  {0} Seconds", PostWaitTimeSeconds));
-                    counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
-                        Console.WriteLine(String.Format("   {0} Report to:  {1}", counter, reportToPerson));
+                        Console.WriteLine(String.Format("   {0}) Report to:  {1}", counter, reportToPerson));
                         counter++;
                     }
                     counter = 1;
                     foreach (String reportToTeam in ReportToTeams)
                     {
-                        Console.WriteLine(String.Format("   {0} Report to team:  {1}", counter, reportToTeam));
+                        Console.WriteLine(String.Format("   {0}) Report to team:  {1}", counter, reportToTeam));
                         counter++;
                     }
                 }
@@ -572,13 +507,13 @@ namespace FinalProject
                     int counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
-                        Console.WriteLine(String.Format("\t{0} Report to:  {1}", counter, reportToPerson));
+                        Console.WriteLine(String.Format("\t{0}) Report to:  {1}", counter, reportToPerson));
                         counter++;
                     }
                     counter = 1;
                     foreach (String reportToTeam in ReportToTeams)
                     {
-                        Console.WriteLine(String.Format("\t{0} Report to team:  {1}", counter, reportToTeam));
+                        Console.WriteLine(String.Format("\t{0}) Report to team:  {1}", counter, reportToTeam));
                         counter++;
                     }
                 }

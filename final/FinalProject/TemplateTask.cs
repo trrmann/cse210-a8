@@ -6,9 +6,11 @@ namespace FinalProject
     //[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     //[JsonDerivedType(typeof(WeatherForecastWithCity))]
+    [JsonDerivedType(typeof(JsonScheduledTask), typeDiscriminator: "ScheduledTask")]
     [JsonDerivedType(typeof(JsonTemplateTask), typeDiscriminator: "TemplateTask")]
     [JsonDerivedType(typeof(JsonTemplateMitigation), typeDiscriminator: "TemplateMitigation")]
     [JsonDerivedType(typeof(JsonTemplateBenchmark), typeDiscriminator: "TemplateBenchmark")]
+    [JsonDerivedType(typeof(JsonTemplateGoNoGo), typeDiscriminator: "TemplateGoNoGo")]
     internal class JsonTemplateTask : JsonTask
     {
         protected TemplateTask TemplateTask { get; set; }
@@ -172,14 +174,14 @@ namespace FinalProject
             }
             else
             {
-                this.TaskType = TaskType.Task;
-                this.TaskState = TaskState.Template;
                 this.Command = Command;
                 this.AssignedRoles = AssignedRoles;
                 this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
                 this.PreWaitTimeSeconds = PreWaitTimeSeconds;
                 this.DurationSeconds = DurationSeconds;
                 this.PostWaitTimeSeconds = PostWaitTimeSeconds;
+                this.TaskType = TaskType.Task;
+                this.TaskState = TaskState.Template;
             }
         }
         protected void Init(TemplateTask task, Boolean interactive = false)

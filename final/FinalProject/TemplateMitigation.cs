@@ -106,7 +106,7 @@ namespace FinalProject
     public class TemplateMitigation : TemplateTask
     {
         internal static new string ObjectNameDisplay { get; } = "template mitigation task";
-        internal Mitigation Mitigation { get; set; } = new();
+        internal Mitigation Mitigation { get; set; } = new (new Risks(), false);
         internal Risk Risk { get { return Mitigation.Risk; } set { Mitigation.Risk = value; } }
         public TemplateMitigation()
         {
@@ -116,17 +116,17 @@ namespace FinalProject
         {
             Init(risks, interactive);
         }
-        public TemplateMitigation(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(Risks Risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(Risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
         public TemplateMitigation(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
             Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        public TemplateMitigation(DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(Risks Risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(Risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
         public TemplateMitigation(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
@@ -152,52 +152,29 @@ namespace FinalProject
 
         protected virtual void Init(Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, risks, Risk, interactive);
+            Init(risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
 
-        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
-        {
-            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
-        }
-        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(Risks Risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
             Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risks Risks, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(Risks Risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            base.Init(Name, Description, interactive);
+            base.Init(Name, Description, TaskType.Mitigation, TaskState.Template, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Mitigation = new Mitigation(Risks, false);
             if (interactive)
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
+                this.Risk = Risk;
+                RequestRisk(Risks);
                 this.TaskType = TaskType.Mitigation;
                 this.TaskState = TaskState.Template;
-                this.Risk = Risk;
-                RequestCommand();
-                RequestAssignedRoles();
-                RequestRequiredPreRequisiteTasks();
-                RequestPreWaitTimeSeconds();
-                RequestDurationSeconds();
-                RequestPostWaitTimeSeconds();
-                RequestRisk(Risks);
             }
             else
             {
+                this.Risk = Risk;
                 this.TaskType = TaskType.Mitigation;
                 this.TaskState = TaskState.Template;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.Risk = Risk;
             }
         }
         protected void Init(TemplateMitigation task, Boolean interactive = false)
@@ -401,99 +378,33 @@ namespace FinalProject
         }
         internal override void Display(int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             base.Display(option);
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-            else Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-            else Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
-            else Console.WriteLine(String.Format("\tCommand:  {0}", Command));
-            int counter = 1;
-            foreach (String role in AssignedRoles)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                else Console.WriteLine(String.Format("\tRole {0}:  {1}", counter, role));
-                counter++;
-            }
-            counter = 1;
-            foreach (String preRequisite in RequiredPreRequisiteTasks)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                else Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
-                counter++;
-            }
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-            else Console.WriteLine(String.Format("\tDuration:  {0} Seconds", DurationSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPost-Wait:  {0} Seconds", PostWaitTimeSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Risk:  {1}", new string(' ', option.ToString().Length), Risk.Name));
-            else Console.WriteLine(String.Format("\tRisk:  {0}", Risk.Name));
+            if (option >= 0) Console.WriteLine(String.Format("{0}   Risk Name:  {1}", new string(' ', option.ToString().Length), Risk.Name.Value));
+            else Console.WriteLine(String.Format("\tRisk Name:  {0}", Risk.Name.Value));
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            if (name) { base.Display(option); }
+            base.Display(name, description, option);
             if (name && description)
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-                    Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
-                    int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-                    Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-                    Console.WriteLine(String.Format("{0}   Risk:  {1}", new string(' ', option.ToString().Length), Risk.Name));
+                    Console.WriteLine(String.Format("{0}   Risk Name:  {1}", new string(' ', option.ToString().Length), Risk.Name.Value));
                 }
                 else
                 {
-                    Console.WriteLine(String.Format("\tRisk:  {0}", Risk.Name.Value));
+                    Console.WriteLine(String.Format("\tRisk Name:  {0}", Risk.Name.Value));
                 }
             }
             else if (description)
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("   {0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("   {0}", stateMap[TaskState]));
-                    Console.WriteLine(String.Format("   Command:  {0}", Command));
-                    int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("   Role {0}:  {1}", counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("   PreRequisite {0}:  {1}", counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("   Pre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("   Duration:  {0} Seconds", DurationSeconds));
-                    Console.WriteLine(String.Format("   Post-Wait:  {0} Seconds", PostWaitTimeSeconds));
-                    Console.WriteLine(String.Format("   Risk:  {0}", Risk.Name));
+                    Console.WriteLine(String.Format("   Risk Name:  {0}", Risk.Name.Value));
                 }
                 else
                 {
-                    Console.WriteLine(String.Format("\tRisk:  {0}", Risk.Name.Value));
+                    Console.WriteLine(String.Format("\tRisk Name:  {0}", Risk.Name.Value));
                 }
             }
         }

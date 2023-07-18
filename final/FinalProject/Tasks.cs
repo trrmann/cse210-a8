@@ -213,7 +213,7 @@ namespace FinalProject
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 IncludeFields = true,
-                MaxDepth = 5
+                MaxDepth = 10
             };
             String jsonText = JsonSerializer.Serialize(jsonTasks, options);
             instance.DisplayRequestFilenameWriteMessage();
@@ -232,7 +232,7 @@ namespace FinalProject
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 IncludeFields = true,
-                MaxDepth = 5
+                MaxDepth = 10
             };
             JsonTasks jsonTasks = JsonSerializer.Deserialize<JsonTasks>(jsonText, options);
             Tasks tasks = (Tasks)jsonTasks;
