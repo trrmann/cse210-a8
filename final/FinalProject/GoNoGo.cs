@@ -383,7 +383,8 @@ namespace FinalProject
             while(option < 1)
             {
                 counter = 1;
-                optionMap=new();
+                optionMap=new();         
+                Console.WriteLine("\n0) Add a new task to the backout plan.");
                 foreach(String key in backoutPlanTasks.Keys)
                 {
                     optionMap.Add(counter, backoutPlanTasks[key]);
@@ -398,6 +399,12 @@ namespace FinalProject
                 } catch
                 {
                     option = -1;
+                }
+                if (option == 0)
+                {
+                    Task task = new(true);
+                    backoutPlanTasks.Add(task.Key, task);
+                    optionMap.Add(0, task);
                 }
                 if (!optionMap.Keys.Contains(option)) option = -1;
             }

@@ -196,7 +196,7 @@ namespace FinalProject
             } }
         internal void Run()
         {
-            Plan = new();
+            Plan = new(false,false);
             Running = true;
             CurrentMenuName = "MainMenu";
             while (Running)

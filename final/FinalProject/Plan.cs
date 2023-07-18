@@ -1,4 +1,5 @@
 ﻿using FinalProject;
+using System.Data.SqlTypes;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -30,7 +31,7 @@ namespace FinalProject
                 }
                 else
                 {
-                    Plan = new();
+                    Plan = new(false, false);
                     Plan.Name = value.Name;
                 }
             }
@@ -51,18 +52,23 @@ namespace FinalProject
         [JsonRequired]
         [JsonPropertyName("Risks")]
         public JsonRisks Risks { get { return Plan.Risks; } set { Plan.Risks = value; } }
+        [JsonInclude]
+        [JsonRequired]
+        [JsonPropertyName("BackoutPlan")]
+        public JsonBackoutPlan BackoutPlan { get { return Plan.BackoutPlan; } set { Plan.BackoutPlan = value; } }
         public JsonPlan() : base()
         {
-            this.Plan = new();
+            Plan = new(false, false);
         }
         [JsonConstructor]
-        public JsonPlan(JsonNamedObject NamedObject, String Description, JsonName Manager, JsonTasks Tasks, JsonRisks Risks) : base()
+        public JsonPlan(JsonNamedObject NamedObject, String Description, JsonName Manager, JsonTasks Tasks, JsonRisks Risks, JsonBackoutPlan BackoutPlan) : base()
         {
             this.NamedObject = NamedObject;
             this.Description = Description;
             this.Manager = Manager;
             this.Tasks = Tasks;
             this.Risks = Risks;
+            this.BackoutPlan = BackoutPlan;
         }
         public JsonPlan(Plan Plan) : base()
         {
@@ -79,41 +85,54 @@ namespace FinalProject
     }
     public class Plan : DescribedObject
     {
-        public Plan() {
-            Init();
+        internal Name Manager { get; set; }
+        internal Tasks Tasks { get; set; }
+        internal Risks Risks { get; set; }
+        internal BackoutPlan BackoutPlan { get; set; }
+        public Plan(Boolean interactive = false)
+        {
+            Init(false, interactive);
+        }
+        public Plan(Boolean backup = false, Boolean interactive = false) {
+            Init(backup, interactive);
         }
         public Plan(Plan plan)
         {
             Init(plan);
         }
-        public Plan(String Name, String Description, String Manager, Tasks Tasks, Risks Risks)
+        public Plan(String Name, String Description, String Manager, Tasks Tasks, Risks Risks, BackoutPlan BackoutPlan)
         {
-            Init(Name, Description, Manager, Tasks, Risks);
+            Init(Name, Description, Manager, Tasks, Risks, BackoutPlan);
         }
-        protected void Init()
+        protected void Init(Boolean backup = false, Boolean interactive = false)
         {
-            Init("", "", "", new(), new());
+            if(backup)
+            {
+                Init("", "", "", new(), new(), null);
+            }
+            else
+            {
+                Init("", "", "", new(), new(), new BackoutPlan());
+            }
         }
         protected void Init(Plan plan)
         {
-            Init(plan.Name, plan.Description, plan.Manager, plan.Tasks, plan.Risks);
+            Init(plan.Name, plan.Description, plan.Manager, plan.Tasks, plan.Risks, plan.BackoutPlan);
         }
-        protected void Init(String Name, String Description, String Manager, Tasks Tasks, Risks Risks)
+        protected void Init(String Name, String Description, String Manager, Tasks Tasks, Risks Risks, BackoutPlan BackoutPlan)
         {
-            Init(new Name(Name, NameType.Thing), Description, new Name(Manager, NameType.Person), Tasks, Risks);
+            Init(new Name(Name, NameType.Thing), Description, new Name(Manager, NameType.Person), Tasks, Risks, BackoutPlan);
         }
-        protected void Init(Name Name, String Description, Name Manager, Tasks Tasks, Risks Risks)
+        protected void Init(Name Name, String Description, Name Manager, Tasks Tasks, Risks Risks, BackoutPlan BackoutPlan)
         {
             this.Name = Name;
             this.Description = Description;
             this.Manager = Manager;
             this.Tasks = Tasks;
             this.Risks = Risks;
+            this.BackoutPlan = BackoutPlan;
+            if(BackoutPlan is not null) BackoutPlan.Init(Name, Description, Manager, new(), new(), null);
         }
-        internal Name Manager { get; set; }
-        internal Tasks Tasks { get; set; }
-        internal Risks Risks { get; set; }
-        internal BackoutPlan BackoutPlan { get; set; }
 
         private void DisplayName(int option = -1)
         {
