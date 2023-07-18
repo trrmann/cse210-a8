@@ -984,7 +984,10 @@ namespace FinalProject
                             result.Description = taskDescription;
                             return result;
                         case TaskState.Scheduled:
-                            return new ScheduledGoNoGo(taskName, taskDescription);
+                            result = new ScheduledGoNoGo(false);
+                            result.Name = taskName;
+                            result.Description = taskDescription;
+                            return result;
                         default:
                             result = new TemplateGoNoGo(false);
                             result.Name = taskName;
