@@ -170,49 +170,23 @@ namespace FinalProject
         }
         protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            base.Init(Name, Description, interactive);
-            Benchmark = new Benchmark(interactive);
+            base.Init(Name, Description, TaskType.Benchmark, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
+            Benchmark = new Benchmark(false);
             if (interactive)
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.TaskType = TaskType.Benchmark;
-                this.TaskState = TaskState.Template;
-                this.ScheduledStart = ScheduledStart;
-                this.AssignmentOwnerName = AssignmentOwnerName;
                 this.ReportToPeople = ReportToPeople;
                 this.ReportToTeams = ReportToTeams;
-                RequestCommand();
-                RequestAssignedRoles();
-                RequestRequiredPreRequisiteTasks();
-                RequestPreWaitTimeSeconds();
-                RequestDurationSeconds();
-                RequestPostWaitTimeSeconds();
-                RequestScheduledStart();
-                RequestAssignmentOwnerName();
                 RequestReportToPeople();
                 RequestReportToTeams();
+                this.TaskType = TaskType.Benchmark;
+                this.TaskState = TaskState.Scheduled;
             }
             else
             {
-                this.TaskType = TaskType.Benchmark;
-                this.TaskState = TaskState.Template;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.ScheduledStart = ScheduledStart;
-                this.AssignmentOwnerName = AssignmentOwnerName;
                 this.ReportToPeople = ReportToPeople;
                 this.ReportToTeams = ReportToTeams;
+                this.TaskType = TaskType.Benchmark;
+                this.TaskState = TaskState.Scheduled;
             }
         }
         protected void Init(ScheduledBenchmark task, Boolean interactive = false)
@@ -440,22 +414,8 @@ namespace FinalProject
             if (task is not null)
             {
                 base.Edit(task, plan, risks);
-                Console.Write("\nchange start date time (y/n)");
-                String response = IApplication.READ_RESPONSE().ToLower();
-                if (IApplication.YES_RESPONSE.Contains(response))
-                {
-                    ((ScheduledTask)task).ScheduledStart = NonDate;
-                    ((ScheduledTask)task).RequestScheduledStart();
-                }
-                Console.Write("\nchange assignment (y/n)");
-                response = IApplication.READ_RESPONSE().ToLower();
-                if (IApplication.YES_RESPONSE.Contains(response))
-                {
-                    ((ScheduledTask)task).AssignmentOwnerName = "";
-                    ((ScheduledTask)task).RequestAssignmentOwnerName();
-                }
                 Console.Write("\nchange report to people (y/n)");
-                response = IApplication.READ_RESPONSE().ToLower();
+                String response = IApplication.READ_RESPONSE().ToLower();
                 if (IApplication.YES_RESPONSE.Contains(response))
                 {
                     ((ScheduledBenchmark)task).ReportToPeople = new();
@@ -479,36 +439,8 @@ namespace FinalProject
         }
         internal override void Display(int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
             base.Display(option);
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-            else Console.WriteLine(String.Format("\t{0}", typeMap[TaskType]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-            else Console.WriteLine(String.Format("\t{0}", stateMap[TaskState]));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
-            else Console.WriteLine(String.Format("\tCommand:  {0}", Command));
             int counter = 1;
-            foreach (String role in AssignedRoles)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                else Console.WriteLine(String.Format("\tRole {0}:  {1}", counter, role));
-                counter++;
-            }
-            counter = 1;
-            foreach (String preRequisite in RequiredPreRequisiteTasks)
-            {
-                if (option >= 0) Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                else Console.WriteLine(String.Format("\tPreRequisite {0}:  {1}", counter, preRequisite));
-                counter++;
-            }
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-            else Console.WriteLine(String.Format("\tDuration:  {0} Seconds", DurationSeconds));
-            if (option >= 0) Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-            else Console.WriteLine(String.Format("\tPost-Wait:  {0} Seconds", PostWaitTimeSeconds));
-            counter = 1;
             foreach (String reportToPerson in ReportToPeople)
             {
                 if (option >= 0) Console.WriteLine(String.Format("{0}   {1} Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
@@ -525,32 +457,12 @@ namespace FinalProject
         }
         internal override void Display(Boolean name = true, Boolean description = true, int option = -1)
         {
-            Dictionary<TaskType, String> typeMap = ITaskTypeUtiltities.typeNameMap();
-            Dictionary<TaskState, String> stateMap = ITaskStateUtiltities.stateNameMap();
-            if (name) { base.Display(option); }
+            base.Display(name, description, option);
             if (name && description)
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), typeMap[TaskType]));
-                    Console.WriteLine(String.Format("{0}   {1}", new string(' ', option.ToString().Length), stateMap[TaskState]));
-                    Console.WriteLine(String.Format("{0}   Command:  {1}", new string(' ', option.ToString().Length), Command));
                     int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("{0}   Role {1}:  {2}", new string(' ', option.ToString().Length), counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("{0}   PreRequisite {1}:  {2}", new string(' ', option.ToString().Length), counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("{0}   Pre-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("{0}   Duration:  {1} Seconds", new string(' ', option.ToString().Length), DurationSeconds));
-                    Console.WriteLine(String.Format("{0}   Post-Wait:  {1} Seconds", new string(' ', option.ToString().Length), PostWaitTimeSeconds));
-                    counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
                         Console.WriteLine(String.Format("{0}   {1} Report to:  {2}", new string(' ', option.ToString().Length), counter, reportToPerson));
@@ -583,25 +495,7 @@ namespace FinalProject
             {
                 if (option >= 0)
                 {
-                    Console.WriteLine(String.Format("   {0}", typeMap[TaskType]));
-                    Console.WriteLine(String.Format("   {0}", stateMap[TaskState]));
-                    Console.WriteLine(String.Format("   Command:  {0}", Command));
                     int counter = 1;
-                    foreach (String role in AssignedRoles)
-                    {
-                        Console.WriteLine(String.Format("   Role {0}:  {1}", counter, role));
-                        counter++;
-                    }
-                    counter = 1;
-                    foreach (String preRequisite in RequiredPreRequisiteTasks)
-                    {
-                        Console.WriteLine(String.Format("   PreRequisite {0}:  {1}", counter, preRequisite));
-                        counter++;
-                    }
-                    Console.WriteLine(String.Format("   Pre-Wait:  {0} Seconds", PreWaitTimeSeconds));
-                    Console.WriteLine(String.Format("   Duration:  {0} Seconds", DurationSeconds));
-                    Console.WriteLine(String.Format("   Post-Wait:  {0} Seconds", PostWaitTimeSeconds));
-                    counter = 1;
                     foreach (String reportToPerson in ReportToPeople)
                     {
                         Console.WriteLine(String.Format("   {0} Report to:  {1}", counter, reportToPerson));

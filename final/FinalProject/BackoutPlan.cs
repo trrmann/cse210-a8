@@ -77,7 +77,8 @@ namespace FinalProject
         }
         public static implicit operator BackoutPlan(JsonBackoutPlan plan)
         {
-            return plan.BackoutPlan;
+            if(plan is null ) return null;
+            else return plan.BackoutPlan;
         }
     }
     public class BackoutPlan : Plan
