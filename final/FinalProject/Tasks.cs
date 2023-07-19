@@ -65,23 +65,12 @@ namespace FinalProject
         {
             return tasks._tasks;
         }
-        /**
-        internal static JsonDictionaryNamedObject<JsonTask> Convert(Tasks value)
-        {
-            Dictionary<String, JsonTask> tasks = new();
-            foreach (String key in value.Keys)
-            {
-                tasks.Add(key, value[key]);
-            }
-            return new(tasks);
-        }
-        /**/
     }
     public class Tasks : Dictionary<String, Task>
     {
-        internal Task CreateTask(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds)
+        internal Task CreateTask(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds)
         {
-            return new(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds);
+            return new(plan, risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds);
         }
         internal void Add<TaskType>(Plan plan) where TaskType : Task, new()
         {
@@ -103,22 +92,33 @@ namespace FinalProject
                 Add(templateTask.Key, templateTask);
             }
         }
+        internal static Tasks Filter<TaskType>(Tasks tasks) where TaskType : Task, new()
+        {
+            Tasks result = new();
+            foreach(String key in tasks.Keys)
+            {
+                if (typeof(TaskType).IsInstanceOfType(tasks[key])) result.Add(key, tasks[key]);
+            }
+            return result;
+        }
         internal TaskType SelectTask<TaskType>(Plan plan, Boolean ensureResult = false) where TaskType : Task, new()
         {
+            Tasks tasks = Filter<TaskType>(this);
             TaskType instance = new();
-            if (Count == 0)
+            if (tasks.Count == 0)
             {
                 if (ensureResult)
                 {
                     Add<TaskType>(plan);
-                    return (TaskType)this.First().Value;
+                    tasks = Filter<TaskType>(this);
+                    return (TaskType)tasks.First().Value;
                 }
                 else
                 {
                     return null;
                 }
             }
-            else if (Count == 1) return (TaskType)this.First().Value;
+            else if (tasks.Count == 1) return (TaskType)tasks.First().Value;
             else
             {
                 int option = 0;
@@ -127,10 +127,10 @@ namespace FinalProject
                 {
                     int counter = 1;
                     optionMap = new();
-                    foreach (String key in Keys)
+                    foreach (String key in tasks.Keys)
                     {
-                        this[key].Display(counter);
-                        optionMap.Add(counter, (TaskType)this[key]);
+                        tasks[key].Display(counter);
+                        optionMap.Add(counter, (TaskType)tasks[key]);
                         counter++;
                     }
                     instance.DisplaySelectMessage();
@@ -157,7 +157,7 @@ namespace FinalProject
             {
                 Console.WriteLine();
                 task.Display();
-                TaskType newTask = instance.Create(task);
+                TaskType newTask = instance.Create(plan.BackoutPlan, plan.Risks, task);
                 newTask.Name = "";
                 newTask.RequestName();
                 if (Keys.Contains(newTask.Key))
@@ -193,19 +193,19 @@ namespace FinalProject
         }
         internal void Display<TaskType>(Plan plan) where TaskType : Task, new()
         {
+            Tasks tasks = Filter<TaskType>(this);
             TaskType instance = new();
             instance.DisplayListMessage(plan);
-            foreach (String key in Keys)
+            foreach (String key in tasks.Keys)
             {
-                this[key].Display();
+                tasks[key].Display();
             }
         }
         internal void Export<TaskType>(Plan plan) where TaskType : Task, new()
         {
             TaskType instance = new();
             instance.DisplayExportMessage(plan);
-            Tasks tasks = new();
-            foreach (String key in Keys) { if (typeof(TaskType).IsInstanceOfType(this[key])) tasks.Add(key, this[key]); }
+            Tasks tasks = Filter<TaskType>(this);
             JsonTasks jsonTasks = new(tasks);
             JsonSerializerOptions options = new JsonSerializerOptions
             {
@@ -235,12 +235,25 @@ namespace FinalProject
                 MaxDepth = 10
             };
             JsonTasks jsonTasks = JsonSerializer.Deserialize<JsonTasks>(jsonText, options);
-            Tasks tasks = (Tasks)jsonTasks;
+            Tasks tasks = Filter<TaskType>((Tasks)jsonTasks);
             /* TODO convert classes to be correct listed types*/
             foreach (String key in tasks.Keys)
             {
-                /*TODO - fix import collisions*/
-                if (typeof(TemplateTask).IsInstanceOfType(tasks[key])) Add(key, tasks[key]);
+                if(Keys.Contains(key))
+                {
+                    Console.WriteLine($"The key for {tasks[key].Name.Value} already exists.");
+                    Console.Write("Overwrite (y/n)");
+                    //instance.DisplayAlreadyDefined(tasks[key].Name.Value);
+                    if (!IApplication.YES_RESPONSE.Contains(IApplication.READ_RESPONSE().ToLower()))
+                    {
+                        Remove(key);
+                        Add(key, tasks[key]);
+                    }
+                }
+                else
+                {
+                    Add(key, tasks[key]);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Numerics;
+using System.Text.Json.Serialization;
 
 namespace FinalProject
 {
@@ -128,50 +129,50 @@ namespace FinalProject
         {
             Init();
         }
-        public ScheduledBenchmark(Boolean interactive)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, Boolean interactive)
         {
-            Init(interactive);
+            Init(plan, risks, interactive);
         }
-        public ScheduledBenchmark(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
         }
-        public ScheduledBenchmark(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
         }
-        public ScheduledBenchmark(DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
         }
-        public ScheduledBenchmark(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
         }
-        public ScheduledBenchmark(ScheduledBenchmark task, Boolean interactive = false)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, ScheduledBenchmark task, Boolean interactive = false)
         {
-            Init(task, interactive);
+            Init(plan, risks, task, interactive);
         }
-        public ScheduledBenchmark(ScheduledBenchmark task)
+        public ScheduledBenchmark(BackoutPlan plan, Risks risks, ScheduledBenchmark task)
         {
-            Init(task);
+            Init(plan, risks, task);
         }
-        protected override void Init(Boolean interactive = false)
+        protected override void Init(BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
-            Init("", NameType.Thing, "", TaskType.Benchmark, TaskState.Template, "", new(), new(), 0, 0, 0, new(), "", new(), new(), interactive);
+            Init(plan, risks, "", NameType.Thing, "", TaskType.Benchmark, TaskState.Template, "", new(), new(), 0, 0, 0, new(), "", new(), new(), interactive);
         }
-        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, false, interactive);
         }
-        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
-            Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
+            Init(plan, risks, Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
         }
-        protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean useTaskCreate, Boolean interactive )
         {
-            base.Init(Name, Description, TaskType.Benchmark, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, interactive);
-            Benchmark = new Benchmark(false);
+            base.Init(plan, risks, Name, Description, TaskType.Benchmark, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, useTaskCreate, interactive);
+            Benchmark = new Benchmark(plan, risks, false);
             if (interactive)
             {
                 this.ReportToPeople = ReportToPeople;
@@ -189,9 +190,9 @@ namespace FinalProject
                 this.TaskState = TaskState.Scheduled;
             }
         }
-        protected void Init(ScheduledBenchmark task, Boolean interactive = false)
+        protected void Init(BackoutPlan plan, Risks risks, ScheduledBenchmark task, Boolean interactive = false)
         {
-            base.Init(task, interactive);
+            base.Init(plan, risks, task, interactive);
             Name = task.Name;
             Description = task.Description;
             this.TaskType = TaskType.Benchmark;
@@ -207,12 +208,12 @@ namespace FinalProject
             ReportToPeople = task.ReportToPeople;
             ReportToTeams = task.ReportToTeams;
         }
-        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Boolean interactive = false)
         {
             switch (riskName)
             {
                 case "":
-                    Init(interactive);
+                    Init(plan, risks, interactive);
                     break;
                 default:
                     base.Init(riskName, riskDescription, interactive);
@@ -231,7 +232,7 @@ namespace FinalProject
                     break;
             }
         }
-        protected void Init(ScheduledBenchmark task)
+        protected void Init(BackoutPlan plan, Risks risks, ScheduledBenchmark task)
         {
             Name = task.Name;
             Description = task.Description;
@@ -430,10 +431,10 @@ namespace FinalProject
                 }
             }
         }
-        internal override ScheduledBenchmark CreateCopy(String newName)
+        internal override ScheduledBenchmark CreateCopy(BackoutPlan plan, Risks risks, String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
-            ScheduledBenchmark result = new(this);
+            ScheduledBenchmark result = new(plan, risks, this);
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }

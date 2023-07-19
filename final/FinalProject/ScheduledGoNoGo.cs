@@ -27,7 +27,7 @@ namespace FinalProject
                 }
                 else
                 {
-                    ScheduledGoNoGo = new(new BackoutPlan());
+                    ScheduledGoNoGo = new(new(), new());
                     ScheduledGoNoGo.Name = value.Name;
                 }
             }
@@ -90,7 +90,7 @@ namespace FinalProject
         public JsonTask BackOutPlanStartStepOnNoGo { get { return ScheduledGoNoGo.BackOutPlanStartStepOnNoGo; } set { ScheduledGoNoGo.BackOutPlanStartStepOnNoGo = value; } }
         public JsonScheduledGoNoGo()
         {
-            ScheduledGoNoGo = new(new BackoutPlan());
+            ScheduledGoNoGo = new(new(), new());
         }
         [JsonConstructor]
         public JsonScheduledGoNoGo(JsonNamedObject NamedObject, String Description, TaskType ScheduledGoNoGoType, TaskState ScheduledGoNoGoState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, JsonTask BackOutPlanStartStepOnNoGo) : base(NamedObject, Description, ScheduledGoNoGoType, ScheduledGoNoGoState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams)
@@ -127,76 +127,60 @@ namespace FinalProject
     public class ScheduledGoNoGo : ScheduledBenchmark
     {
         internal static new string ObjectNameDisplay { get; } = "scheduled go / no go task";
-        protected GoNoGo GoNoGo { get; set; } = new();
+        protected GoNoGo GoNoGo { get; set; } = new(new(), new());
         internal Task BackOutPlanStartStepOnNoGo { get { return GoNoGo.BackOutPlanStartStepOnNoGo; } set { GoNoGo.BackOutPlanStartStepOnNoGo = value; } }
         public ScheduledGoNoGo()
         {
             Init();
         }
-        public ScheduledGoNoGo(BackoutPlan plan)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks)
         {
-            Init(plan);
+            Init(plan, risks);
         }
-        public ScheduledGoNoGo(Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
-            Init(interactive);
+            Init(plan, risks, interactive);
         }
-        public ScheduledGoNoGo(BackoutPlan plan, Boolean interactive)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            Init(plan, interactive);
+            Init(plan, risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
         }
-        public ScheduledGoNoGo(BackoutPlan plan, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            Init(plan, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
+            Init(plan, risks, riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
         }
-        public ScheduledGoNoGo(BackoutPlan plan, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            Init(plan, riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
+            Init(plan, risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
         }
-        public ScheduledGoNoGo(BackoutPlan plan, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            Init(plan, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
+            Init(plan, risks, name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
         }
-        public ScheduledGoNoGo(BackoutPlan plan, Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, ScheduledGoNoGo task, Boolean interactive = false)
         {
-            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
+            Init(plan, risks, task, interactive);
         }
-        public ScheduledGoNoGo(ScheduledGoNoGo task, Boolean interactive = false)
+        public ScheduledGoNoGo(BackoutPlan plan, Risks risks, ScheduledGoNoGo task)
         {
-            Init(task, interactive);
+            Init(plan, risks, task);
         }
-        public ScheduledGoNoGo(ScheduledGoNoGo task)
+        protected override void Init(BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
-            Init(task);
+            Init(plan, risks, "", NameType.Thing, "", TaskType.Benchmark, TaskState.Template, "", new(), new(), 0, 0, 0, new(), "", new(), new(), new(), interactive);
         }
-        protected override void Init(Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            if (!interactive)
-            {
-                Init(new BackoutPlan(), interactive);
-            }
-            else
-            {
-                //TODO fix no backout plan available
-                throw new NotImplementedException();
-            }
+            Init(plan, risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, false, interactive);
         }
-        protected virtual void Init(BackoutPlan plan, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
-            Init(plan, "", NameType.Thing, "", TaskType.Benchmark, TaskState.Template, "", new(), new(), 0, 0, 0, new(), "", new(), new(), new(), interactive);
+            Init(plan, risks, Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
         }
-        protected virtual void Init(BackoutPlan plan, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean useTaskCreate , Boolean interactive )
         {
-            Init(plan, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
-        }
-        protected virtual void Init(BackoutPlan plan, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
-        {
-            Init(plan, Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, BackOutPlanStartStepOnNoGo, interactive);
-        }
-        protected virtual void Init(BackoutPlan plan, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
-        {
-            base.Init(Name, Description, TaskType.GoNoGo, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, interactive);
-            GoNoGo = new GoNoGo(false);
+            base.Init(plan, risks, Name, Description, TaskType.GoNoGo, TaskState.Scheduled, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, ScheduledStart, AssignmentOwnerName, ReportToPeople, ReportToTeams, useTaskCreate , interactive);
+            GoNoGo = new GoNoGo(plan, risks, false);
             if (interactive)
             {
                 this.BackOutPlanStartStepOnNoGo = BackOutPlanStartStepOnNoGo;
@@ -211,9 +195,9 @@ namespace FinalProject
                 this.TaskState = TaskState.Scheduled;
             }
         }
-        protected void Init(ScheduledGoNoGo task, Boolean interactive = false)
+        protected void Init(BackoutPlan plan, Risks risks, ScheduledGoNoGo task, Boolean interactive = false)
         {
-            base.Init(task, interactive);
+            base.Init(plan, risks, task, interactive);
             Name = task.Name;
             Description = task.Description;
             this.TaskType = TaskType.Benchmark;
@@ -230,7 +214,7 @@ namespace FinalProject
             ReportToTeams = task.ReportToTeams;
             BackOutPlanStartStepOnNoGo = task.BackOutPlanStartStepOnNoGo;
         }
-        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, DateTime ScheduledStart, String AssignmentOwnerName, List<String> ReportToPeople, List<String> ReportToTeams, Task BackOutPlanStartStepOnNoGo, Boolean interactive = false)
         {
             switch (riskName)
             {
@@ -255,7 +239,7 @@ namespace FinalProject
                     break;
             }
         }
-        protected void Init(ScheduledGoNoGo task)
+        protected void Init(BackoutPlan plan, Risks risks, ScheduledGoNoGo task)
         {
             Name = task.Name;
             Description = task.Description;
@@ -443,10 +427,10 @@ namespace FinalProject
                 }
             }
         }
-        internal override ScheduledGoNoGo CreateCopy(String newName)
+        internal override ScheduledGoNoGo CreateCopy(BackoutPlan plan, Risks risks, String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
-            ScheduledGoNoGo result = new(this);
+            ScheduledGoNoGo result = new(plan, risks, this);
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }

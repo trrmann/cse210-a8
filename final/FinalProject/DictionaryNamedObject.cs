@@ -82,17 +82,5 @@ namespace FinalProject
         {
             Console.WriteLine("\nImport Objects");
         }
-        internal virtual void Export(Dictionary<String, NO> namedObjects)
-        {
-            DisplayNameObjectExportMessage();
-            /*TODO - Export*/
-            throw new NotImplementedException();
-        }
-        internal virtual void Import(Dictionary<String, NO> namedObjects)
-        {
-            DisplayNameObjectImportMessage();
-            /*TODO - Import*/
-            throw new NotImplementedException();
-        }
     }
 }

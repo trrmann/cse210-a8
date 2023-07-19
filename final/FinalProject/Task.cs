@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Numerics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -153,61 +155,61 @@ namespace FinalProject
             if (typeof(JsonScheduledGoNoGo).IsInstanceOfType(task))
             {
                 JsonScheduledGoNoGo jsonScheduledBenchmark = (JsonScheduledGoNoGo)task;
-                ScheduledGoNoGo templateBenchmark = new ScheduledGoNoGo(jsonScheduledBenchmark);
+                ScheduledGoNoGo templateBenchmark = new ScheduledGoNoGo(new(), new(), jsonScheduledBenchmark);
                 return templateBenchmark;
             };
             if (typeof(JsonScheduledBenchmark).IsInstanceOfType(task))
             {
                 JsonScheduledBenchmark jsonScheduledBenchmark = (JsonScheduledBenchmark)task;
-                ScheduledBenchmark templateBenchmark = new ScheduledBenchmark(jsonScheduledBenchmark);
+                ScheduledBenchmark templateBenchmark = new ScheduledBenchmark(new(), new(), jsonScheduledBenchmark);
                 return templateBenchmark;
             };
             if (typeof(JsonScheduledMitigation).IsInstanceOfType(task))
             {
                 JsonScheduledMitigation jsonScheduledMitigation = (JsonScheduledMitigation)task;
-                ScheduledMitigation templateMitigation = new ScheduledMitigation(jsonScheduledMitigation);
+                ScheduledMitigation templateMitigation = new ScheduledMitigation(new(), new(), jsonScheduledMitigation);
                 return templateMitigation;
             };
             if (typeof(JsonScheduledTask).IsInstanceOfType(task))
             {
                 JsonScheduledTask jsonScheduledTask = (JsonScheduledTask)task;
-                ScheduledTask templateTask = new ScheduledTask(jsonScheduledTask);
+                ScheduledTask templateTask = new ScheduledTask(new(), new(), jsonScheduledTask);
                 return templateTask;
             };
             if (typeof(JsonTemplateGoNoGo).IsInstanceOfType(task))
             {
                 JsonTemplateGoNoGo jsonTemplateBenchmark = (JsonTemplateGoNoGo)task;
-                TemplateGoNoGo templateBenchmark = new TemplateGoNoGo(jsonTemplateBenchmark);
+                TemplateGoNoGo templateBenchmark = new TemplateGoNoGo(new(), new(), jsonTemplateBenchmark);
                 return templateBenchmark;
             };
             if (typeof(JsonTemplateBenchmark).IsInstanceOfType(task))
             {
                 JsonTemplateBenchmark jsonTemplateBenchmark = (JsonTemplateBenchmark)task;
-                TemplateBenchmark templateBenchmark = new TemplateBenchmark(jsonTemplateBenchmark);
+                TemplateBenchmark templateBenchmark = new TemplateBenchmark(new(), new(), jsonTemplateBenchmark);
                 return templateBenchmark;
             };
             if (typeof(JsonBenchmark).IsInstanceOfType(task))
             {
                 JsonBenchmark jsonBenchmark = (JsonBenchmark)task;
-                Benchmark benchmark = new Benchmark(jsonBenchmark);
+                Benchmark benchmark = new Benchmark(new(), new(), jsonBenchmark);
                 return benchmark;
             };
             if (typeof(JsonTemplateMitigation).IsInstanceOfType(task))
             {
                 JsonTemplateMitigation jsonTemplateMitigation = (JsonTemplateMitigation)task;
-                TemplateMitigation templateMitigation = new TemplateMitigation(jsonTemplateMitigation);
+                TemplateMitigation templateMitigation = new TemplateMitigation(new(), new(), jsonTemplateMitigation);
                 return templateMitigation;
             };
             if (typeof(JsonMitigation).IsInstanceOfType(task))
             {
                 JsonMitigation jsonMitigation = (JsonMitigation)task;
-                Mitigation mitigation = new Mitigation(jsonMitigation);
+                Mitigation mitigation = new Mitigation(new(), new(), jsonMitigation);
                 return mitigation;
             };
             if (typeof(JsonTemplateTask).IsInstanceOfType(task))
             {
                 JsonTemplateTask jsonTemplateTask = (JsonTemplateTask)task;
-                TemplateTask templateTask = new TemplateTask(jsonTemplateTask);
+                TemplateTask templateTask = new TemplateTask(new(),new(),jsonTemplateTask);
                 return templateTask;
             };
             if (typeof(JsonTask).IsInstanceOfType(task))
@@ -232,80 +234,87 @@ namespace FinalProject
         {
             Init();
         }
-        public Task(Boolean interactive)
+        public Task(BackoutPlan plan, Risks risks, Boolean interactive)
         {
-            Init(interactive);
+            Init(plan, risks, interactive);
         }
-        public Task(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        public Task(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        public Task(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        public Task(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        public Task(DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        public Task(BackoutPlan plan, Risks risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        public Task(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        public Task(BackoutPlan plan, Risks risks, Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        public Task(Task task, Boolean interactive = false)
+        public Task(BackoutPlan plan, Risks risks, Task task, Boolean interactive = false)
         {
-            Init(task, interactive);
+            Init(plan, risks, task, interactive);
         }
-        protected override void Init(Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
-            Init("", NameType.Thing, "", TaskType.Task, TaskState.Template, "", new(), new(), 0, 0, 0, interactive);
+            Init(plan, risks, "", NameType.Thing, "", TaskType.Task, TaskState.Template, "", new(), new(), 0, 0, 0, interactive);
         }
-        protected virtual void Init(String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, true, interactive);
         }
-        protected virtual void Init(DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
-            Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
+            Init(plan, risks, Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
         }
-        protected virtual void Init(Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean useTaskCreate, Boolean interactive)
         {
-            base.Init(Name, Description, interactive);
-            if (interactive)
+            this.TaskType = TaskType;
+            this.TaskState = TaskState;
+            if (TaskType == TaskType.Task && TaskState == TaskState.Template && interactive)
             {
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                if (TaskType == TaskType.Task && TaskState == TaskState.Template)
+                RequestTaskType();
+                RequestTaskState();
+            }
+            if (useTaskCreate && !(this.TaskType == TaskType.Task && this.TaskState == TaskState.Template))
+            {
+                CreateTask(this, this.TaskType, this.TaskState, plan, risks, interactive);
+            } else  {
+                base.Init(Name, Description, interactive);
+                if (interactive)
                 {
-                    RequestTaskType();
-                    RequestTaskState();
+                    this.TaskType = TaskType;
+                    this.TaskState = TaskState;
+                    this.Command = Command;
+                    this.AssignedRoles = AssignedRoles;
+                    this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
+                    this.PreWaitTimeSeconds = PreWaitTimeSeconds;
+                    this.DurationSeconds = DurationSeconds;
+                    this.PostWaitTimeSeconds = PostWaitTimeSeconds;
+                    RequestCommand();
+                    RequestAssignedRoles();
+                    RequestRequiredPreRequisiteTasks();
+                    RequestPreWaitTimeSeconds();
+                    RequestDurationSeconds();
+                    RequestPostWaitTimeSeconds();
                 }
-                RequestCommand();
-                RequestAssignedRoles();
-                RequestRequiredPreRequisiteTasks();
-                RequestPreWaitTimeSeconds();
-                RequestDurationSeconds();
-                RequestPostWaitTimeSeconds();
-            }
-            else
-            {
-                this.Command = Command;
-                this.AssignedRoles = AssignedRoles;
-                this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
-                this.PreWaitTimeSeconds = PreWaitTimeSeconds;
-                this.DurationSeconds = DurationSeconds;
-                this.PostWaitTimeSeconds = PostWaitTimeSeconds;
-                this.TaskType = TaskType;
-                this.TaskState = TaskState;
+                else
+                {
+                    this.Command = Command;
+                    this.AssignedRoles = AssignedRoles;
+                    this.RequiredPreRequisiteTasks = RequiredPreRequisiteTasks;
+                    this.PreWaitTimeSeconds = PreWaitTimeSeconds;
+                    this.DurationSeconds = DurationSeconds;
+                    this.PostWaitTimeSeconds = PostWaitTimeSeconds;
+                    this.TaskType = TaskType;
+                    this.TaskState = TaskState;
+                }
             }
         }
-        protected virtual void Init(Task task, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, Task task, Boolean interactive = false)
         {
             base.Init(task, interactive);
             Name = task.Name;
@@ -319,7 +328,7 @@ namespace FinalProject
             DurationSeconds = task.DurationSeconds;
             PostWaitTimeSeconds = task.PostWaitTimeSeconds;
         }
-        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Boolean interactive = false)
         {
             switch (riskName)
             {
@@ -757,73 +766,73 @@ namespace FinalProject
             switch (typeof(TaskType).FullName)
             {
                 case "FinalProject.ScheduledMitigation":
-                    return (TaskType)(Task)new ScheduledMitigation(risks, interactive);
+                    return (TaskType)(Task)new ScheduledMitigation(plan, risks, interactive);
                 case "FinalProject.ScheduledGoNoGo":
-                    return (TaskType)(Task)new ScheduledGoNoGo(plan, interactive);
+                    return (TaskType)(Task)new ScheduledGoNoGo(plan, risks, interactive);
                 case "FinalProject.ScheduledBenchmark":
-                    return (TaskType)(Task)new ScheduledBenchmark(interactive);
+                    return (TaskType)(Task)new ScheduledBenchmark(plan, risks, interactive);
                 case "FinalProject.ScheduledTask":
-                    return (TaskType)(Task)new ScheduledTask(interactive);
+                    return (TaskType)(Task)new ScheduledTask(plan, risks, interactive);
                 case "FinalProject.TemplateMitigation":
-                    return (TaskType)(Task)new TemplateMitigation(risks, interactive);
+                    return (TaskType)(Task)new TemplateMitigation(plan, risks, interactive);
                 case "FinalProject.TemplateGoNoGo":
-                    return (TaskType)(Task)new TemplateGoNoGo(plan, interactive);
+                    return (TaskType)(Task)new TemplateGoNoGo(plan, risks, interactive);
                 case "FinalProject.TemplateBenchmark":
-                    return (TaskType)(Task)new TemplateBenchmark(interactive);
+                    return (TaskType)(Task)new TemplateBenchmark(plan, risks, interactive);
                 case "FinalProject.TemplateTask":
-                    return (TaskType)(Task)new TemplateTask(interactive);
+                    return (TaskType)(Task)new TemplateTask(plan, risks, interactive);
                 case "FinalProject.Mitigation":
-                    return (TaskType)(Task)new Mitigation(risks, interactive);
+                    return (TaskType)(Task)new Mitigation(plan, risks, interactive);
                 case "FinalProject.GoNoGo":
-                    return (TaskType)(Task)new GoNoGo(plan, interactive);
+                    return (TaskType)(Task)new GoNoGo(plan, risks, interactive);
                 case "FinalProject.Benchmark":
-                    return (TaskType)(Task)new Benchmark(interactive);
+                    return (TaskType)(Task)new Benchmark(plan, risks, interactive);
                 case "FinalProject.Task":
-                    return (TaskType)new Task(interactive);
+                    return (TaskType)new Task(plan, risks, interactive);
                 default:
                     //String naem = typeof(Task).FullName;
                     //Console.WriteLine(Name);
-                    return (TaskType)new Task(interactive);
+                    return (TaskType)new Task(plan, risks, interactive);
             }
         }
-        internal TaskType Create<TaskType>(TaskType task) where TaskType : Task
+        internal TaskType Create<TaskType>(BackoutPlan plan, Risks risks, TaskType task) where TaskType : Task
         {
             switch(typeof(TaskType).FullName)
             {
                 case "FinalProject.ScheduledMitigation":
-                    return (TaskType)(Task)new ScheduledMitigation((ScheduledMitigation)(Task)task);
+                    return (TaskType)(Task)new ScheduledMitigation(plan, risks, (ScheduledMitigation)(Task)task);
                 case "FinalProject.ScheduledGoNoGo":
-                    return (TaskType)(Task)new ScheduledGoNoGo((ScheduledGoNoGo)(Task)task);
+                    return (TaskType)(Task)new ScheduledGoNoGo(plan, risks, (ScheduledGoNoGo)(Task)task);
                 case "FinalProject.ScheduledBenchmark":
-                    return (TaskType)(Task)new ScheduledBenchmark((ScheduledBenchmark)(Task)task);
+                    return (TaskType)(Task)new ScheduledBenchmark(plan, risks, (ScheduledBenchmark)(Task)task);
                 case "FinalProject.ScheduledTask":
-                    return (TaskType)(Task)new ScheduledTask((ScheduledTask)(Task)task);
+                    return (TaskType)(Task)new ScheduledTask(plan, risks, (ScheduledTask)(Task)task);
                 case "FinalProject.TemplateMitigation":
-                    return (TaskType)(Task)new TemplateMitigation((TemplateMitigation)(Task)task);
+                    return (TaskType)(Task)new TemplateMitigation(plan, risks, (TemplateMitigation)(Task)task);
                 case "FinalProject.TemplateGoNoGo":
-                    return (TaskType)(Task)new TemplateGoNoGo((TemplateGoNoGo)(Task)task);
+                    return (TaskType)(Task)new TemplateGoNoGo(plan, risks, (TemplateGoNoGo)(Task)task);
                 case "FinalProject.TemplateBenchmark":
-                    return (TaskType)(Task)new TemplateBenchmark((TemplateBenchmark)(Task)task);
+                    return (TaskType)(Task)new TemplateBenchmark(plan, risks, (TemplateBenchmark)(Task)task);
                 case "FinalProject.TemplateTask":
-                    return (TaskType)(Task)new TemplateTask((TemplateTask)(Task)task);
+                    return (TaskType)(Task)new TemplateTask(plan, risks, (TemplateTask)(Task)task);
                 case "FinalProject.Mitigation":
-                    return (TaskType)(Task)new Mitigation((Mitigation)(Task)task);
+                    return (TaskType)(Task)new Mitigation(plan, risks, (Mitigation)(Task)task);
                 case "FinalProject.GoNoGo":
-                    return (TaskType)(Task)new GoNoGo((GoNoGo)(Task)task);
+                    return (TaskType)(Task)new GoNoGo(plan, risks, (GoNoGo)(Task)task);
                 case "FinalProject.Benchmark":
-                    return (TaskType)(Task)new Benchmark((Benchmark)(Task)task);
+                    return (TaskType)(Task)new Benchmark(plan, risks, (Benchmark)(Task)task);
                 case "FinalProject.Task":
-                    return (TaskType)new Task(task);
+                    return (TaskType)new Task(plan, risks, task);
                 default:
                     //String naem = typeof(Task).FullName;
                     //Console.WriteLine(Name);
-                    return (TaskType)new Task(task);
+                    return (TaskType)new Task(plan, risks, task);
             }
         }
-        internal virtual Task CreateCopy(String newName)
+        internal virtual Task CreateCopy(BackoutPlan plan, Risks risks, String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
-            Task result = new(this);
+            Task result = new(plan, risks, this);
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }
@@ -955,7 +964,7 @@ namespace FinalProject
                 }
             }
         }
-        public static Task CreateTask(TaskType type, TaskState state)
+        public static Task CreateTask(Task task, TaskType type, TaskState state, BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
             switch (type)
             {
@@ -963,133 +972,63 @@ namespace FinalProject
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateTask();
+                            task = new TemplateTask(plan, risks, interactive);
+                            break;
                         case TaskState.Scheduled:
-                            return new ScheduledTask();
+                            task = new ScheduledTask(plan, risks, interactive);
+                            break;
                         default:
-                            return new TemplateTask();
+                            task = new TemplateTask(plan, risks, interactive);
+                            break;
                     }
+                    break;
                 case TaskType.Benchmark:
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateBenchmark();
+                            task = new TemplateBenchmark(plan, risks, interactive);
+                            break;
                         case TaskState.Scheduled:
-                            return new ScheduledBenchmark();
+                            task = new ScheduledBenchmark(plan, risks, interactive);
+                            break;
                         default:
-                            return new TemplateBenchmark();
+                            task = new TemplateBenchmark(plan, risks, interactive);
+                            break;
                     }
+                    break;
                 case TaskType.GoNoGo:
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateGoNoGo();
+                            task = new TemplateGoNoGo(plan, risks, interactive);
+                            break;
                         case TaskState.Scheduled:
-                            return new ScheduledGoNoGo();
+                            task = new ScheduledGoNoGo(plan, risks, interactive);
+                            break;
                         default:
-                            return new TemplateGoNoGo();
+                            task = new TemplateGoNoGo(plan, risks, interactive);
+                            break;
                     }
+                    break;
                 case TaskType.Mitigation:
                     switch (state)
                     {
                         case TaskState.Template:
-                            return new TemplateMitigation();
+                            task = new TemplateMitigation(plan, risks, interactive);
+                            break;
                         case TaskState.Scheduled:
-                            return new ScheduledMitigation();
+                            task = new ScheduledMitigation(plan, risks, interactive);
+                            break;
                         default:
-                            return new TemplateMitigation();
+                            task = new TemplateMitigation(plan, risks, interactive);
+                            break;
                     }
+                    break;
                 default:
-                    return new TemplateTask();
+                    task = new TemplateTask(plan, risks, interactive);
+                    break;
             }
-        }
-        internal static Task CreateTask(TaskType type, TaskState state, String taskName, String taskDescription, Risks risks)
-        {
-            Task result;
-            switch (type)
-            {
-                case TaskType.Task:
-                    switch (state)
-                    {
-                        case TaskState.Template:
-                            result = new TemplateTask(false);
-                            result.Name = taskName;
-                            result.Description= taskDescription;
-                            return result;
-                        case TaskState.Scheduled:
-                            result = new ScheduledTask(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        default:
-                            result = new TemplateTask(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                    }
-                case TaskType.Benchmark:
-                    switch (state)
-                    {
-                        case TaskState.Template:
-                            result = new TemplateBenchmark(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        case TaskState.Scheduled:
-                            result = new ScheduledBenchmark(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        default:
-                            result = new TemplateBenchmark(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                    }
-                case TaskType.GoNoGo:
-                    switch (state)
-                    {
-                        case TaskState.Template:
-                            result = new TemplateGoNoGo(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        case TaskState.Scheduled:
-                            result = new ScheduledGoNoGo(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        default:
-                            result = new TemplateGoNoGo(false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                    }
-                case TaskType.Mitigation:
-                    switch (state)
-                    {
-                        case TaskState.Template:
-                            result = new TemplateMitigation(risks, false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        case TaskState.Scheduled:
-                            result = new ScheduledMitigation(risks, false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                        default:
-                            result = new TemplateMitigation(risks, false);
-                            result.Name = taskName;
-                            result.Description = taskDescription;
-                            return result;
-                    }
-                default:
-                    result = new TemplateTask(false);
-                    result.Name = taskName;
-                    result.Description = taskDescription;
-                    return result;
-            }
+            return task;
         }
     }
 }

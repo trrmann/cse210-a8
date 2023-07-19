@@ -346,16 +346,6 @@ namespace FinalProject
                 Console.WriteLine(String.Join('\\', parts));
             }
         }
-        internal void Allocate()
-        {
-            /*TODO - Allocate*/
-            throw new NotImplementedException();
-        }
-        internal void Deallocate()
-        {
-            /*TODO - Allocate*/
-            throw new NotImplementedException();
-        }
         internal void AddRisk() => Risks.Add(this);
         internal void CopyRisk() => Risks.Copy(this);
         internal void EditRisk() => Risks.Edit(this);
@@ -437,16 +427,6 @@ namespace FinalProject
             Console.WriteLine($"{Description}");
             ListRisksBackOut();
             ListTasksBackOut();
-        }
-        internal void AllocateBackOut()
-        {
-            /*TODO - AllocateBackOut*/
-            throw new NotImplementedException();
-        }
-        internal void DeallocateBackOut()
-        {
-            /*TODO - DeallocateBackOut*/
-            throw new NotImplementedException();
         }
         internal void AddRiskBackOut() => BackoutPlan.Risks.Add(this);
         internal void CopyRiskBackOut() => BackoutPlan.Risks.Copy(this);

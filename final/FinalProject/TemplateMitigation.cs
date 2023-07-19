@@ -106,63 +106,58 @@ namespace FinalProject
     public class TemplateMitigation : TemplateTask
     {
         internal static new string ObjectNameDisplay { get; } = "template mitigation task";
-        internal Mitigation Mitigation { get; set; } = new (new Risks(), false);
+        internal Mitigation Mitigation { get; set; } = new (new(), new(), false);
         internal Risk Risk { get { return Mitigation.Risk; } set { Mitigation.Risk = value; } }
         public TemplateMitigation()
         {
             Init();
         }
-        public TemplateMitigation(Risks risks, Boolean interactive)
+        public TemplateMitigation(BackoutPlan plan, Risks risks, Boolean interactive)
         {
-            Init(risks, interactive);
+            Init(plan, risks, interactive);
         }
-        public TemplateMitigation(Risks Risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(BackoutPlan plan, Risks Risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(Risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, Risks, name, type, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        public TemplateMitigation(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(BackoutPlan plan, Risks risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(riskName, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, risks, Name, riskDescription, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        public TemplateMitigation(Risks Risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(BackoutPlan plan, Risks Risks, DescribedObject name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(Risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, Risks, name, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        public TemplateMitigation(Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        public TemplateMitigation(BackoutPlan plan, Risks risks, Name name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, risks, name, Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        public TemplateMitigation(TemplateMitigation task, Boolean interactive = false)
+        public TemplateMitigation(BackoutPlan plan, Risks risks, TemplateMitigation task, Boolean interactive = false)
         {
-            Init(task, interactive);
+            Init(plan, risks, task, interactive);
         }
-        public TemplateMitigation(TemplateMitigation task)
+        public TemplateMitigation(BackoutPlan plan, Risks risks, TemplateMitigation task)
         {
             Init(task);
         }
-        protected override void Init(Boolean interactive = false)
+        protected override void Init(BackoutPlan plan, Risks risks, Boolean interactive = false)
         {
-            Risks risks = new Risks();
-            Init(risks, interactive);
-        }
-        protected virtual void Init(Risks risks, Boolean interactive = false)
-        {
-            Init(risks, "", NameType.Thing, "", TaskType.Mitigation, TaskState.Template, "", new(), new(), 0, 0, 0, new(), interactive);
+            Init(plan, risks, "", NameType.Thing, "", TaskType.Mitigation, TaskState.Template, "", new(), new(), 0, 0, 0, new(), interactive);
         }
 
-        protected virtual void Init(Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks risks, String name, NameType type, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, risks, new Name(name, type), Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, false, interactive);
         }
 
-        protected virtual void Init(Risks Risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks Risks, DescribedObject Name, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
-            Init(Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
+            Init(plan, Risks, Name.Name, Name.Description, TaskType, TaskState, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, Risk, interactive);
         }
-        protected virtual void Init(Risks Risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks Risks, Name Name, String Description, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean useTaskCreate, Boolean interactive)
         {
-            base.Init(Name, Description, TaskType.Mitigation, TaskState.Template, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, interactive);
-            Mitigation = new Mitigation(Risks, false);
+            base.Init(plan, Risks, Name, Description, TaskType.Mitigation, TaskState.Template, Command, AssignedRoles, RequiredPreRequisiteTasks, PreWaitTimeSeconds, DurationSeconds, PostWaitTimeSeconds, useTaskCreate , interactive);
+            Mitigation = new Mitigation(plan, Risks, false);
             if (interactive)
             {
                 this.Risk = Risk;
@@ -177,9 +172,9 @@ namespace FinalProject
                 this.TaskState = TaskState.Template;
             }
         }
-        protected void Init(TemplateMitigation task, Boolean interactive = false)
+        protected void Init(BackoutPlan plan, Risks Risks, TemplateMitigation task, Boolean interactive = false)
         {
-            base.Init(task, interactive);
+            base.Init(plan, Risks, task, interactive);
             Name = task.Name;
             Description = task.Description;
             this.TaskType = TaskType.Mitigation;
@@ -192,7 +187,7 @@ namespace FinalProject
             PostWaitTimeSeconds = task.PostWaitTimeSeconds;
             Risk = task.Risk;
         }
-        protected virtual void Init(String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
+        protected virtual void Init(BackoutPlan plan, Risks Risks, String riskName, String riskDescription, TaskType TaskType, TaskState TaskState, String Command, List<String> AssignedRoles, List<String> RequiredPreRequisiteTasks, int PreWaitTimeSeconds, int DurationSeconds, int PostWaitTimeSeconds, Risk Risk, Boolean interactive = false)
         {
             switch (riskName)
             {
@@ -213,7 +208,7 @@ namespace FinalProject
                     break;
             }
         }
-        protected void Init(TemplateMitigation task)
+        protected void Init(BackoutPlan plan, Risks Risks, TemplateMitigation task)
         {
             Name = task.Name;
             Description = task.Description;
@@ -369,10 +364,10 @@ namespace FinalProject
                 }
             }
         }
-        internal override TemplateMitigation CreateCopy(String newName)
+        internal override TemplateMitigation CreateCopy(BackoutPlan plan, Risks risks, String newName)
         {
             //Task result = CreateTask(TaskType, TaskState);
-            TemplateMitigation result = new(this);
+            TemplateMitigation result = new(plan, risks, this);
             result.Name = new Name(newName, NameType.Thing);
             return result;
         }
